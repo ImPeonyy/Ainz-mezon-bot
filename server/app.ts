@@ -3,13 +3,15 @@ const { MezonClient } = require('mezon-sdk');
 const express = require('express');
 const cors = require('cors');
 
+import { ChannelMessageContent, IEmbedProps } from 'mezon-sdk';
+
 dotenv.config();
 
 const app = express();
 
 app.use(cors());
 
-const embedElement = {
+const embedElement: IEmbedProps = {
     color: '#f3aab5',
     title: 'Ainz Ooal Gown',
     description: "Hi I'm Ainz Ooal Gown",
@@ -30,16 +32,20 @@ async function main() {
 
     await client.login();
 
-    client.onChannelMessage(async (event) => {
+    const messagePayload: ChannelMessageContent = {
+        t: 'Check out our latest platform update!',
+        embed: [embedElement]
+    };
+
+
+    client.onChannelMessage(async (event: any) => {
         if (event?.content?.t === '*hi') {
             const channelFetch = await client.channels.fetch(event.channel_id);
             const messageFetch = await channelFetch.messages.fetch(
                 event.message_id
             );
 
-            await messageFetch.reply({
-                embed: [embedElement]
-            });
+            await messageFetch.reply(messagePayload);
         }
     });
 }
