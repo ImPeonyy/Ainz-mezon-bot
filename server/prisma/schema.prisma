@@ -1,0 +1,169 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EAttackType {
+  Physical
+  Magical
+}
+
+enum EPetRole {
+  Tank
+  Mage
+  Support
+  Assassin
+  Warrior
+}
+
+enum EElemental {
+  Metal
+  Wood
+  Water
+  Fire
+  Earth
+}
+
+enum ERarity {
+  Uncommon
+  Common
+  Rare
+  Epic
+  Legendary
+  Mythic
+  Limited
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  mezon_id  String   @unique
+  z_coin    Int      @default(0)
+  avatar    String   @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfmEu4YN6-g4qQAnwyk7fx0YF5QrVvPM8rAw&s")
+  created_at DateTime @default(now())
+  updated_at DateTime?
+
+  userPets UserPet[]
+  teams    Team[]
+}
+
+model Rarity {
+  id        String   @id @default(uuid())
+  type      ERarity  @unique
+  catch_rate Float
+
+  statistics Statistics[]
+}
+
+model Statistics {
+  id              String     @id @default(uuid())
+  name            String
+  type            String     @unique
+  attack_type     EAttackType
+  role            EPetRole
+  element_type    EElemental?
+  rarity          ERarity
+  rarityRef       Rarity     @relation(fields: [rarity], references: [type])
+  hp              Int
+  mana            Int
+  ad              Int
+  ap              Int
+  ar              Int
+  mr              Int
+  mana_to_cast    Int
+  hp_per_level    Int
+  ad_per_level    Int
+  ap_per_level    Int
+  ar_per_level    Int
+  mr_per_level    Int
+  created_at      DateTime   @default(now())
+  updated_at      DateTime?
+
+  pets            Pet[]
+}
+
+model Pet {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  statistic   String
+  statRef     Statistics @relation(fields: [statistic], references: [type])
+  created_at  DateTime   @default(now())
+  updated_at  DateTime?
+
+  userPets    UserPet[]
+}
+
+model UserPet {
+  id              String   @id @default(uuid())
+  user_id         String
+  pet_id          Int
+  nickname        String?
+  level           Int      @default(1)
+  exp             Int      @default(0)
+  additional_hp   Int
+  additional_mana Int
+  additional_ad   Int
+  additional_ap   Int
+  additional_ar   Int
+  additional_mr   Int
+  is_lock         Boolean  @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime?
+
+  user            User     @relation(fields: [user_id], references: [id])
+  pet             Pet      @relation(fields: [pet_id], references: [id])
+
+  teamMembers     TeamMember[]
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  user_id   String
+  name      String
+  created_at DateTime @default(now())
+  updated_at DateTime?
+
+  user     User      @relation(fields: [user_id], references: [id])
+  members  TeamMember[]
+  battlesA Battle[]  @relation("TeamA")
+  battlesB Battle[]  @relation("TeamB")
+  wins     Battle[]  @relation("WinningTeam")
+}
+
+model TeamMember {
+  id           String   @id @default(uuid())
+  team_id      String
+  user_pet_id  String
+  position     Int
+  created_at   DateTime @default(now())
+  updated_at   DateTime?
+
+  team         Team     @relation(fields: [team_id], references: [id])
+  userPet      UserPet  @relation(fields: [user_pet_id], references: [id])
+}
+
+model Battle {
+  id              String   @id @default(uuid())
+  team_a_id       String
+  team_b_id       String
+  winner_team_id  String
+  started_at      DateTime @default(now())
+  ended_at        DateTime?
+  created_at      DateTime @default(now())
+  updated_at      DateTime?
+
+  teamA           Team     @relation("TeamA", fields: [team_a_id], references: [id])
+  teamB           Team     @relation("TeamB", fields: [team_b_id], references: [id])
+  winner          Team     @relation("WinningTeam", fields: [winner_team_id], references: [id])
+}

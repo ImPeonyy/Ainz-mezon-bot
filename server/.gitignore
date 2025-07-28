@@ -42,3 +42,4 @@ next-env.d.ts
 
 # Mezon cache
 /mezon-cache
+/generated/prisma
