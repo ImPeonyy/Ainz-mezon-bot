@@ -1,4 +1,8 @@
-import { ChannelMessageContent, IEmbedProps } from 'mezon-sdk';
+import { ChannelMessageContent, EmojiOnMessage, IEmbedProps } from 'mezon-sdk';
+
+import { ACTIONS } from '@/constants/Constant';
+import { EActionType } from '@/constants/Enum';
+import { Pet } from '@prisma/client';
 
 export const textMessage = (message: string) => {
     const messagePayload: ChannelMessageContent = {
@@ -14,4 +18,49 @@ export const embedMessage = (embed: IEmbedProps) => {
         embed: [embedPayload]
     };
     return messagePayload;
+};
+
+export const emojiMessage = (emoji: EmojiOnMessage) => {
+    const messagePayload: ChannelMessageContent = {
+        ej: [emoji]
+    };
+    return messagePayload;
+};
+
+export const bagMessage = (pets: Pet[]) => {
+    let messagePayload: ChannelMessageContent = {
+        t: 'Your bag contains the following pets:\n',
+        ej: []
+    };
+
+    pets.forEach((pet) => {
+        messagePayload.ej?.push({
+            emojiid: pet.mezon_emoji_id,
+            s: messagePayload.t?.length || 0,
+            e: messagePayload.t?.length || 0 + 1
+        });
+        messagePayload.t += ` : ${pet.name}\t`;
+    });
+
+    return messagePayload;
+};
+
+export const getActionMessage = (
+    action: string,
+    actor: string,
+    target?: string
+) => {
+    if (!ACTIONS[action]) {
+        return {
+            t: `**${actor}** does something mysterious...`
+        };
+    }
+
+    const actionConfig = ACTIONS[action];
+
+    const message = actionConfig.getMessage(actor, target);
+
+    return {
+        t: message
+    };
 };

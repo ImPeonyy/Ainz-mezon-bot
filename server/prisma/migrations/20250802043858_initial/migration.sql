@@ -15,7 +15,8 @@ CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "mezon_id" TEXT NOT NULL,
-    "z_coin" INTEGER NOT NULL,
+    "z_coin" INTEGER NOT NULL DEFAULT 0,
+    "avatar" TEXT NOT NULL DEFAULT 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfmEu4YN6-g4qQAnwyk7fx0YF5QrVvPM8rAw&s',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
@@ -23,9 +24,21 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "UserDailyActivities" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "daily" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "UserDailyActivities_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Rarity" (
     "id" TEXT NOT NULL,
-    "type" "ERarity" NOT NULL,
+    "name" TEXT NOT NULL,
+    "type" "ERarity",
     "catch_rate" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "Rarity_pkey" PRIMARY KEY ("id")
@@ -35,11 +48,10 @@ CREATE TABLE "Rarity" (
 CREATE TABLE "Statistics" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
     "attack_type" "EAttackType" NOT NULL,
     "role" "EPetRole" NOT NULL,
     "element_type" "EElemental",
-    "rarity" "ERarity" NOT NULL,
+    "rarity_id" TEXT NOT NULL,
     "hp" INTEGER NOT NULL,
     "mana" INTEGER NOT NULL,
     "ad" INTEGER NOT NULL,
@@ -62,8 +74,9 @@ CREATE TABLE "Statistics" (
 CREATE TABLE "Pet" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "mezon_emoji_id" TEXT NOT NULL,
     "description" TEXT,
-    "statistic" TEXT NOT NULL,
+    "statistic_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
@@ -72,7 +85,7 @@ CREATE TABLE "Pet" (
 
 -- CreateTable
 CREATE TABLE "UserPet" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "user_id" TEXT NOT NULL,
     "pet_id" INTEGER NOT NULL,
     "nickname" TEXT,
@@ -84,7 +97,7 @@ CREATE TABLE "UserPet" (
     "additional_ap" INTEGER NOT NULL,
     "additional_ar" INTEGER NOT NULL,
     "additional_mr" INTEGER NOT NULL,
-    "is_lock" BOOLEAN NOT NULL DEFAULT false,
+    "lock" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
@@ -96,6 +109,7 @@ CREATE TABLE "Team" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "order" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
@@ -106,7 +120,7 @@ CREATE TABLE "Team" (
 CREATE TABLE "TeamMember" (
     "id" TEXT NOT NULL,
     "team_id" TEXT NOT NULL,
-    "user_pet_id" TEXT NOT NULL,
+    "user_pet_id" INTEGER NOT NULL,
     "position" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
@@ -134,17 +148,14 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 -- CreateIndex
 CREATE UNIQUE INDEX "User_mezon_id_key" ON "User"("mezon_id");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Rarity_type_key" ON "Rarity"("type");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Statistics_type_key" ON "Statistics"("type");
+-- AddForeignKey
+ALTER TABLE "UserDailyActivities" ADD CONSTRAINT "UserDailyActivities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Statistics" ADD CONSTRAINT "Statistics_rarity_fkey" FOREIGN KEY ("rarity") REFERENCES "Rarity"("type") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Statistics" ADD CONSTRAINT "Statistics_rarity_id_fkey" FOREIGN KEY ("rarity_id") REFERENCES "Rarity"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Pet" ADD CONSTRAINT "Pet_statistic_fkey" FOREIGN KEY ("statistic") REFERENCES "Statistics"("type") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Pet" ADD CONSTRAINT "Pet_statistic_id_fkey" FOREIGN KEY ("statistic_id") REFERENCES "Statistics"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserPet" ADD CONSTRAINT "UserPet_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
