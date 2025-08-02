@@ -1,5 +1,7 @@
 import { ChannelMessageContent, EmojiOnMessage, IEmbedProps } from 'mezon-sdk';
 
+import { ACTIONS } from '@/constants/Constant';
+import { EActionType } from '@/constants/Enum';
 import { Pet } from '@prisma/client';
 
 export const textMessage = (message: string) => {
@@ -41,4 +43,24 @@ export const bagMessage = (pets: Pet[]) => {
     });
 
     return messagePayload;
+};
+
+export const getActionMessage = (
+    action: string,
+    actor: string,
+    target?: string
+) => {
+    if (!ACTIONS[action]) {
+        return {
+            t: `**${actor}** does something mysterious...`
+        };
+    }
+
+    const actionConfig = ACTIONS[action];
+
+    const message = actionConfig.getMessage(actor, target);
+
+    return {
+        t: message
+    };
 };
