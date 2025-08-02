@@ -1,4 +1,4 @@
-import { createUser, getUser } from '@/services/user.service';
+import { createUser, getUser, updateUser } from '@/services/user.service';
 import { embedMessage, textMessage } from '@/utils/message.util';
 
 export const getUserController = async (mezon_id: string) => {
@@ -67,6 +67,44 @@ export const createUserController = async (
         });
     } catch (error) {
         console.log('Error creating user:', error);
+        return textMessage('Internal server error');
+    }
+};
+
+export const updateUserController = async (
+    username: string,
+    mezon_id: string,
+    avatar: string
+) => {
+    try {
+        if (!username || !mezon_id) {
+            return textMessage('Error retrieving username or mezon id');
+        }
+
+        const existingUser = await getUser(mezon_id);
+
+        if (!existingUser) {
+            return textMessage('User not found');
+        }
+
+        const user = await updateUser({ username, mezon_id, avatar });
+
+        return embedMessage({
+            color: '#f3aab5',
+            title: 'Update User Success!',
+            fields: [
+                { name: 'Username', value: user?.username || '', inline: true },
+                { name: 'Mezon ID', value: user?.mezon_id || '', inline: true },
+                {
+                    name: 'Z-Coin',
+                    value: user?.z_coin?.toString() || '',
+                    inline: true
+                }
+            ],
+            image: { url: user?.avatar || '' }
+        });
+    } catch (error) {
+        console.log('Error updating user:', error);
         return textMessage('Internal server error');
     }
 };

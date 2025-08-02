@@ -18,3 +18,15 @@ export const createUser = async (data: Prisma.UserCreateInput) => {
         }
     });
 };
+
+export const updateUser = async (data: Prisma.UserUpdateInput) => {
+    return await prisma.user.update({
+        where: {
+            mezon_id: data.mezon_id as string
+        },
+        data: {
+            username: data.username,
+            avatar: data.avatar
+        }
+    });
+};

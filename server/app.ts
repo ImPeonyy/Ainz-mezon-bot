@@ -5,7 +5,8 @@ const cors = require('cors');
 
 import {
     createUserController,
-    getUserController
+    getUserController,
+    updateUserController
 } from './controllers/user.controller';
 
 dotenv.config();
@@ -32,6 +33,20 @@ async function main() {
                 avatar
             );
             messageFetch.reply(createUserPayload);
+        }
+
+        if (event?.content?.t === '*ainz update') {
+            const channelFetch = await client.channels.fetch(event.channel_id);
+            const messageFetch = await channelFetch.messages.fetch(
+                event.message_id
+            );
+            const { sender_id, display_name, avatar } = event;
+            const updateUserPayload = await updateUserController(
+                display_name,
+                sender_id,
+                avatar
+            );
+            messageFetch.reply(updateUserPayload);
         }
 
         if (event?.content?.t === '*ainz info') {
