@@ -28,3 +28,9 @@ export enum EElemental {
     Fire = 'Fire',
     Earth = 'Earth'
 }
+
+export enum EActionType {
+    Self = 'self',
+    Interactive = 'interactive',
+    Flexible = 'flexible'
+}
