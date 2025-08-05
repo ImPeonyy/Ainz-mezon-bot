@@ -4,15 +4,21 @@ import {
     getUserController,
     updateUserController
 } from './user.controller';
-import { embedMessage, getActionMessage } from '@/utils/message.util';
 import { getActionGif, getMeme } from '@/services/misc.service';
+import { getActorName, getTargetFromMention } from '@/utils/misc.util';
 
 import { EActionType } from '@/constants/Enum';
+import { embedMessage } from '@/utils/message.util';
 import { textMessage } from '@/utils/message.util';
 
-export const getActionController = async (event: any, action: string) => {
+export const getActionController = async (
+    event: any,
+    action: string,
+    mentionTarget?: string | null
+) => {
     try {
-        const { sender_id, display_name, avatar } = event;
+        const { sender_id, display_name, avatar, clan_nick, references } =
+            event;
 
         if (
             Object.keys(COMMANDS).includes(action) ||
@@ -47,9 +53,12 @@ export const getActionController = async (event: any, action: string) => {
             }
 
             if (Object.keys(ACTIONS).includes(action)) {
-                const actor = display_name;
-                const target =
-                    event.references?.[0]?.message_sender_display_name;
+                const actor = getActorName(display_name, clan_nick);
+                let target = references?.[0]?.message_sender_display_name;
+                if (mentionTarget) {
+                    target = getTargetFromMention(mentionTarget);
+                }
+
                 const actionGifPayload = await getActionGifController(
                     actor,
                     action,
@@ -112,13 +121,11 @@ export const getActionGifController = async (
 
         const action = ACTIONS[actionType];
 
-        // Kiểm tra logic cho từng loại action
         if (action.type === EActionType.Interactive && !target) {
             return textMessage('Target not found for interactive action');
         }
 
         if (action.type === EActionType.Flexible && !target) {
-            // Flexible actions có thể không cần target
             const actionGif = await getActionGif(actionType);
 
             if (
@@ -145,7 +152,6 @@ export const getActionGifController = async (
             });
         }
 
-        // Cho Interactive actions hoặc Flexible actions có target
         const actionGif = await getActionGif(actionType);
 
         if (
