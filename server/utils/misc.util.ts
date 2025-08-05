@@ -16,3 +16,19 @@ export function parseActionCommand(content: string): ParsedAction {
     const [, trigger, action, targetRaw = null] = match;
     return { trigger, action, targetRaw };
 }
+
+export function getActorName(display_name: string, clan_nick: string) {
+    if (clan_nick !== '') {
+        return clan_nick;
+    }
+
+    return display_name;
+}
+
+export function getTargetFromMention(content: string | null) {
+    if (!content) return null;
+
+    const target = content.slice(1);
+
+    return target;
+}

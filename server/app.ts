@@ -47,11 +47,14 @@ async function main() {
                     event.message_id
                 );
 
-                const { action } = parseActionCommand(event?.content?.t);
+                const { action, targetRaw } = parseActionCommand(
+                    event?.content?.t
+                );
 
                 const messagePayload = await getActionController(
                     event,
-                    action || 'invalid command'
+                    action || 'invalid command',
+                    targetRaw
                 );
 
                 if (messagePayload) {
