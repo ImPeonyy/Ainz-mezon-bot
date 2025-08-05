@@ -11,7 +11,7 @@ export const ACTIONS = {
     // SELF ACTIONS
     blush: {
         type: EActionType.Self,
-        getMessage: (user: string) => `${user} đang đỏ mặt!`
+        getMessage: (user: string) => `${user} đang cảm thấy ngượng ngùng!`
     },
     bored: {
         type: EActionType.Self,
@@ -27,15 +27,11 @@ export const ACTIONS = {
     },
     run: {
         type: EActionType.Self,
-        getMessage: (user: string) => `${user} đang chạy!`
+        getMessage: (user: string) => `${user} đang sủi!`
     },
     sleep: {
         type: EActionType.Self,
         getMessage: (user: string) => `${user} đang ngủ!`
-    },
-    smile: {
-        type: EActionType.Self,
-        getMessage: (user: string) => `${user} đang mỉm cười!`
     },
     smug: {
         type: EActionType.Self,
@@ -47,7 +43,7 @@ export const ACTIONS = {
     },
     yawn: {
         type: EActionType.Self,
-        getMessage: (user: string) => `${user} đang ngáp!`
+        getMessage: (user: string) => `${user} đang cảm thấy buồn ngủ!`
     },
     nom: {
         type: EActionType.Self,
@@ -58,7 +54,7 @@ export const ACTIONS = {
     baka: {
         type: EActionType.Interactive,
         getMessage: (user: string, target?: string) =>
-            `${user}: ${target} baka!`
+            `${user} đang chửi ${target} là m ngu !`
     },
     laugh: {
         type: EActionType.Interactive,
@@ -88,7 +84,7 @@ export const ACTIONS = {
     thumbsup: {
         type: EActionType.Interactive,
         getMessage: (user: string, target?: string) =>
-            `${user} đã tặng 1 like cho ${target}!`
+            `${user} đã tặng cho ${target} 1 like !`
     },
     wave: {
         type: EActionType.Interactive,
@@ -108,7 +104,7 @@ export const ACTIONS = {
     bite: {
         type: EActionType.Interactive,
         getMessage: (user: string, target?: string) =>
-            `${user} đã cắn ${target}!`
+            `${user} đang cắn ${target}!`
     },
     cuddle: {
         type: EActionType.Interactive,
@@ -143,12 +139,12 @@ export const ACTIONS = {
     kick: {
         type: EActionType.Interactive,
         getMessage: (user: string, target?: string) =>
-            `${user} đang đá ${target}!`
+            `${user} đã đá vào mặt ${target}!`
     },
     kiss: {
         type: EActionType.Interactive,
         getMessage: (user: string, target?: string) =>
-            `${user} đã hôn ${target}!`
+            `${user} đang hôn ${target}!`
     },
     pat: {
         type: EActionType.Interactive,
@@ -168,17 +164,17 @@ export const ACTIONS = {
     punch: {
         type: EActionType.Interactive,
         getMessage: (user: string, target?: string) =>
-            `${user} đang đấm ${target}!`
+            `${user} đã đấm vào mặt ${target}!`
     },
     shoot: {
         type: EActionType.Interactive,
         getMessage: (user: string, target?: string) =>
-            `${user} đã bắn ${target}!`
+            `${user} đã bắn vào mặt ${target}!`
     },
     slap: {
         type: EActionType.Interactive,
         getMessage: (user: string, target?: string) =>
-            `${user} đã tát ${target}!`
+            `${user} đã tát vào mặt ${target}!`
     },
     tickle: {
         type: EActionType.Interactive,
@@ -217,5 +213,12 @@ export const ACTIONS = {
         type: EActionType.Flexible,
         getMessage: (user: string, target?: string) =>
             target ? `"${user}" đang dỗi "${target}"!` : `${user} đang dỗi!`
+    },
+    smile: {
+        type: EActionType.Flexible,
+        getMessage: (user: string, target?: string) =>
+            target
+                ? `${user} đang mỉm cười với ${target}!`
+                : `${user} đang mỉm cười!`
     }
 };
