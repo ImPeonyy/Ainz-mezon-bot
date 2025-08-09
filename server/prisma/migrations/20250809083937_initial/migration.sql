@@ -10,6 +10,15 @@ CREATE TYPE "EElemental" AS ENUM ('Metal', 'Wood', 'Water', 'Fire', 'Earth');
 -- CreateEnum
 CREATE TYPE "ERarity" AS ENUM ('Uncommon', 'Common', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Limited');
 
+-- CreateEnum
+CREATE TYPE "ETargetPosition" AS ENUM ('Front', 'Back', 'All', 'Random', 'Self', 'LowestHP', 'HighestHP', 'Nearest', 'Farthest');
+
+-- CreateEnum
+CREATE TYPE "EEffectTarget" AS ENUM ('Ally', 'Enemy');
+
+-- CreateEnum
+CREATE TYPE "EEffect" AS ENUM ('Heal', 'Burn', 'Poison', 'BuffStat', 'DebuffStat', 'RemoveBuff', 'RemoveDebuff');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -38,10 +47,63 @@ CREATE TABLE "UserDailyActivities" (
 CREATE TABLE "Rarity" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "mezon_emoji_id" TEXT NOT NULL,
     "type" "ERarity",
     "catch_rate" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "Rarity_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AutoAttack" (
+    "id" TEXT NOT NULL,
+    "pet_id" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "damage" INTEGER NOT NULL,
+    "attack_type" "EAttackType" NOT NULL,
+    "attack_position" "ETargetPosition" NOT NULL,
+    "target_count" INTEGER NOT NULL DEFAULT 1,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "AutoAttack_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PassiveSkill" (
+    "id" TEXT NOT NULL,
+    "pet_id" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "effect_target" "EEffectTarget" NOT NULL,
+    "target_position" "ETargetPosition" NOT NULL,
+    "target_count" INTEGER NOT NULL DEFAULT 1,
+    "effect" "EEffect" NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "PassiveSkill_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ActiveSkill" (
+    "id" TEXT NOT NULL,
+    "pet_id" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "mana_cost" INTEGER NOT NULL,
+    "attack_type" "EAttackType" NOT NULL,
+    "attack_position" "ETargetPosition" NOT NULL,
+    "attack_target_count" INTEGER NOT NULL DEFAULT 1,
+    "effect_target" "EEffectTarget" NOT NULL,
+    "target_position" "ETargetPosition" NOT NULL,
+    "effect_target_count" INTEGER NOT NULL DEFAULT 1,
+    "effect" "EEffect" NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "ActiveSkill_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -51,7 +113,6 @@ CREATE TABLE "Statistics" (
     "attack_type" "EAttackType" NOT NULL,
     "role" "EPetRole" NOT NULL,
     "element_type" "EElemental",
-    "rarity_id" TEXT NOT NULL,
     "hp" INTEGER NOT NULL,
     "mana" INTEGER NOT NULL,
     "ad" INTEGER NOT NULL,
@@ -77,6 +138,7 @@ CREATE TABLE "Pet" (
     "mezon_emoji_id" TEXT NOT NULL,
     "description" TEXT,
     "statistic_id" TEXT NOT NULL,
+    "rarity_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
@@ -148,14 +210,32 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 -- CreateIndex
 CREATE UNIQUE INDEX "User_mezon_id_key" ON "User"("mezon_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "AutoAttack_pet_id_key" ON "AutoAttack"("pet_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PassiveSkill_pet_id_key" ON "PassiveSkill"("pet_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ActiveSkill_pet_id_key" ON "ActiveSkill"("pet_id");
+
 -- AddForeignKey
 ALTER TABLE "UserDailyActivities" ADD CONSTRAINT "UserDailyActivities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Statistics" ADD CONSTRAINT "Statistics_rarity_id_fkey" FOREIGN KEY ("rarity_id") REFERENCES "Rarity"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AutoAttack" ADD CONSTRAINT "AutoAttack_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PassiveSkill" ADD CONSTRAINT "PassiveSkill_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ActiveSkill" ADD CONSTRAINT "ActiveSkill_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pet" ADD CONSTRAINT "Pet_statistic_id_fkey" FOREIGN KEY ("statistic_id") REFERENCES "Statistics"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Pet" ADD CONSTRAINT "Pet_rarity_id_fkey" FOREIGN KEY ("rarity_id") REFERENCES "Rarity"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserPet" ADD CONSTRAINT "UserPet_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
