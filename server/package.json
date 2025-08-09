@@ -9,7 +9,8 @@
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "prettier": "prettier --check .",
-        "prettier:fix": "prettier --write ."
+        "prettier:fix": "prettier --write .",
+        "seed": "prisma db seed"
     },
     "keywords": [],
     "author": "",
@@ -23,6 +24,9 @@
         "got": "^14.4.7",
         "mezon-sdk": "^2.8.0",
         "typescript": "^5.8.3"
+    },
+    "prisma": {
+        "seed": "tsx prisma/seed/index.ts"
     },
     "devDependencies": {
         "@eslint/css": "^0.10.0",

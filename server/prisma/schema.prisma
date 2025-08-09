@@ -7,7 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ENUMS
+// ========================= ENUMS =========================
+
 enum EAttackType {
   Physical
   Magical
@@ -39,16 +40,43 @@ enum ERarity {
   Limited
 }
 
-// TABLES
+enum ETargetPosition {
+  Front
+  Back
+  All
+  Random
+  Self
+  LowestHP
+  HighestHP
+  Nearest
+  Farthest
+}
+
+enum EEffectTarget {
+  Ally
+  Enemy
+}
+
+enum EEffect {
+  Heal
+  Burn
+  Poison
+  BuffStat
+  DebuffStat
+  RemoveBuff
+  RemoveDebuff
+}
+
+// ========================= TABLES =========================
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  mezon_id  String   @unique
-  z_coin    Int      @default(0)
-  avatar    String   @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfmEu4YN6-g4qQAnwyk7fx0YF5QrVvPM8rAw&s")
-  created_at DateTime @default(now())
-  updated_at DateTime?
+  id              String                 @id @default(uuid())
+  username        String                 @unique
+  mezon_id        String                 @unique
+  z_coin          Int                    @default(0)
+  avatar          String                 @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfmEu4YN6-g4qQAnwyk7fx0YF5QrVvPM8rAw&s")
+  created_at      DateTime               @default(now())
+  updated_at      DateTime?
 
   dailyActivities UserDailyActivities[]
   userPets        UserPet[]
@@ -56,32 +84,80 @@ model User {
 }
 
 model UserDailyActivities {
-  id         String   @id @default(uuid())
-  user_id    String
-  daily      Int?
-  created_at DateTime @default(now())
-  updated_at DateTime?
+  id              String                 @id @default(uuid())
+  user_id         String
+  daily           Int?
+  created_at      DateTime               @default(now())
+  updated_at      DateTime?
 
-  user       User     @relation(fields: [user_id], references: [id])
+  user            User                   @relation(fields: [user_id], references: [id])
 }
 
 model Rarity {
-  id         String       @id @default(uuid())
-  name       String
-  type       ERarity? 
-  catch_rate Float
+  id              String                 @id @default(uuid())
+  name            String
+  mezon_emoji_id  String
+  type            ERarity?
+  catch_rate      Float
 
-  statistics Statistics[] 
+  pets      Pet[]
+}
+
+model AutoAttack {
+  id              String                 @id @default(uuid())
+  pet_id          Int                    @unique
+  name            String
+  description     String?
+  damage          Int
+  attack_type     EAttackType
+  attack_position ETargetPosition
+  target_count    Int                    @default(1)
+  created_at      DateTime               @default(now())
+  updated_at      DateTime?
+
+  pet             Pet                    @relation(fields: [pet_id], references: [id])
+}
+
+model PassiveSkill {
+  id              String                 @id @default(uuid())
+  pet_id          Int                    @unique
+  name            String
+  description     String?
+  effect_target   EEffectTarget
+  target_position ETargetPosition
+  target_count    Int                    @default(1)
+  effect          EEffect
+  created_at      DateTime               @default(now())
+  updated_at      DateTime?
+
+  pet             Pet                    @relation(fields: [pet_id], references: [id])
+}
+
+model ActiveSkill {
+  id                  String             @id @default(uuid())
+  pet_id              Int                @unique
+  name                String
+  description         String?
+  mana_cost           Int
+  attack_type         EAttackType
+  attack_position     ETargetPosition
+  attack_target_count Int                @default(1)
+  effect_target       EEffectTarget
+  target_position     ETargetPosition
+  effect_target_count Int                @default(1)
+  effect              EEffect
+  created_at          DateTime           @default(now())
+  updated_at          DateTime?
+
+  pet                 Pet                @relation(fields: [pet_id], references: [id])
 }
 
 model Statistics {
-  id              String     @id @default(uuid())
+  id              String                 @id @default(uuid())
   name            String
   attack_type     EAttackType
   role            EPetRole
   element_type    EElemental?
-  rarity_id       String     
-  rarityRef       Rarity     @relation(fields: [rarity_id], references: [id])
   hp              Int
   mana            Int
   ad              Int
@@ -94,85 +170,90 @@ model Statistics {
   ap_per_level    Int
   ar_per_level    Int
   mr_per_level    Int
-  created_at      DateTime   @default(now())
+  created_at      DateTime               @default(now())
   updated_at      DateTime?
 
   pets            Pet[]
 }
 
 model Pet {
-  id              Int        @id @default(autoincrement())
+  id              Int                    @id @default(autoincrement())
   name            String
   mezon_emoji_id  String
   description     String?
   statistic_id    String
-  statRef         Statistics @relation(fields: [statistic_id], references: [id])
-  created_at      DateTime   @default(now())
+  rarity_id       String
+  created_at      DateTime               @default(now())
   updated_at      DateTime?
 
   userPets        UserPet[]
+  autoAttack      AutoAttack?
+  passiveSkill    PassiveSkill?
+  activeSkill     ActiveSkill?
+  statistic       Statistics             @relation(fields: [statistic_id], references: [id])
+  rarity          Rarity                 @relation(fields: [rarity_id], references: [id])
 }
 
 model UserPet {
-  id              Int      @id @default(autoincrement())
+  id              Int                    @id @default(autoincrement())
   user_id         String
   pet_id          Int
   nickname        String?
-  level           Int      @default(1)
-  exp             Int      @default(0)
+  level           Int                    @default(1)
+  exp             Int                    @default(0)
   additional_hp   Int
   additional_mana Int
   additional_ad   Int
   additional_ap   Int
   additional_ar   Int
   additional_mr   Int
-  lock            Boolean  @default(false)
-  created_at      DateTime @default(now())
+  lock            Boolean                @default(false)
+  created_at      DateTime               @default(now())
   updated_at      DateTime?
 
-  user            User     @relation(fields: [user_id], references: [id])
-  pet             Pet      @relation(fields: [pet_id], references: [id])
+  user            User                   @relation(fields: [user_id], references: [id])
+  pet             Pet                    @relation(fields: [pet_id], references: [id])
   teamMembers     TeamMember[]
 }
 
 model Team {
-  id         String   @id @default(uuid())
-  user_id    String
-  name       String
-  order      Int
-  created_at DateTime @default(now())
-  updated_at DateTime?
+  id              String                 @id @default(uuid())
+  user_id         String
+  name            String
+  order           Int
+  created_at      DateTime               @default(now())
+  updated_at      DateTime?
 
-  user     User      @relation(fields: [user_id], references: [id])
-  members  TeamMember[]
-  battlesA Battle[]  @relation("TeamA")
-  battlesB Battle[]  @relation("TeamB")
-  wins     Battle[]  @relation("WinningTeam")
+  user            User                   @relation(fields: [user_id], references: [id])
+  members         TeamMember[]
+  battlesA        Battle[]               @relation("TeamA")
+  battlesB        Battle[]               @relation("TeamB")
+  wins            Battle[]               @relation("WinningTeam")
 }
 
 model TeamMember {
-  id           String   @id @default(uuid())
-  team_id      String
-  user_pet_id  Int
-  position     Int
-  created_at   DateTime @default(now())
-  updated_at   DateTime?
+  id              String                 @id @default(uuid())
+  team_id         String
+  user_pet_id     Int
+  position        Int
+  created_at      DateTime               @default(now())
+  updated_at      DateTime?
 
-  team         Team     @relation(fields: [team_id], references: [id])
-  userPet      UserPet  @relation(fields: [user_pet_id], references: [id])
+  team            Team                   @relation(fields: [team_id], references: [id])
+  userPet         UserPet                @relation(fields: [user_pet_id], references: [id])
 }
 
 model Battle {
-  id              String   @id @default(uuid())
+  id              String                 @id @default(uuid())
   team_a_id       String
   team_b_id       String
   winner_team_id  String
-  started_at      DateTime @default(now())
+  started_at      DateTime               @default(now())
   ended_at        DateTime?
-  created_at      DateTime @default(now())
+  created_at      DateTime               @default(now())
   updated_at      DateTime?
 
-  teamA           Team     @relation("TeamA", fields: [team_a_id], references: [id])
-  teamB           Team     @relation("TeamB", fields: [team_b_id], references: [id])
-  winner          Team     @relation("WinningTeam", fields: [winner_team_id], references: [id])
+  teamA           Team                   @relation("TeamA", fields: [team_a_id], references: [id])
+  teamB           Team                   @relation("TeamB", fields: [team_b_id], references: [id])
+  winner          Team                   @relation("WinningTeam", fields: [winner_team_id], references: [id])
 }
