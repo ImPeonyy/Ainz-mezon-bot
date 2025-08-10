@@ -157,6 +157,20 @@ export const petSeedData: PetSeed[] = [
         rarity_id: 5
     },
     {
+        name: 'Lunar Monkey',
+        mezon_emoji_id: '7359939117018127739',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Rooster',
+        mezon_emoji_id: '7359939230398954679',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
         name: 'Lunar Dog',
         mezon_emoji_id: '7359939274893697177',
         description: 'Coming soon',
@@ -166,20 +180,6 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Pig',
         mezon_emoji_id: '7359939317916230055',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Lunar Monkey',
-        mezon_emoji_id: '7359939117018127739',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-     {
-        name: 'Lunar Rooster',
-        mezon_emoji_id: '7359939230398954679',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -209,7 +209,7 @@ export const petSeedData: PetSeed[] = [
     },
     {
         name: 'Cancer',
-        mezon_emoji_id: '7359862939396115055', 
+        mezon_emoji_id: '7359862939396115055',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -262,7 +262,7 @@ export const petSeedData: PetSeed[] = [
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
-    },    
+    },
     {
         name: 'Pisces',
         mezon_emoji_id: '7359863177060978875',
@@ -270,7 +270,6 @@ export const petSeedData: PetSeed[] = [
         statistic_id: 6,
         rarity_id: 6
     },
-    
 
     // Four Symbols
     {
@@ -300,5 +299,5 @@ export const petSeedData: PetSeed[] = [
         description: 'Coming soon',
         statistic_id: 7,
         rarity_id: 7
-    },
+    }
 ];

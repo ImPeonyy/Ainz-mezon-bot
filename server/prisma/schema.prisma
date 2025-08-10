@@ -59,12 +59,23 @@ enum EEffectTarget {
 
 enum EEffect {
   Heal
-  Burn
-  Poison
+  DOT
   BuffStat
   DebuffStat
   RemoveBuff
   RemoveDebuff
+  Silence
+  ReducedHealing
+  LifeSteal
+  Revive
+  Thorns
+}
+
+enum EStat {
+  Hp
+  Mana
+  Atk
+  Def
 }
 
 // ========================= TABLES =========================
@@ -131,6 +142,7 @@ model PassiveSkill {
   target_position ETargetPosition
   target_count    Int                    @default(1)
   effect          EEffect
+  effect_stat     EStat?          
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
@@ -150,6 +162,7 @@ model ActiveSkill {
   effect_target_position      ETargetPosition?
   effect_target_count         Int?               @default(1)
   effect                      EEffect?
+  effect_stat                 EStat?
   created_at                  DateTime           @default(now())
   updated_at                  DateTime           @default(now())          @updatedAt         
 
