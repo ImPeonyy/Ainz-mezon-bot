@@ -40,7 +40,7 @@ export const seedPets = async () => {
     }
 };
 
-const petSeedData: PetSeed[] = [
+export const petSeedData: PetSeed[] = [
     // Mythical Creatures (Epic)
     {
         name: 'Basilisk',
@@ -99,87 +99,87 @@ const petSeedData: PetSeed[] = [
         rarity_id: 4
     },
 
-    // Chinese Zodiac
+    // Chinese Zodiac (Legendary)
     {
-        name: 'Pig',
-        mezon_emoji_id: '7359939317916230055',
+        name: 'Lunar Rat',
+        mezon_emoji_id: '7359938752431810782',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
     },
     {
-        name: 'Dog',
-        mezon_emoji_id: '7359939274893697177',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Rooster',
-        mezon_emoji_id: '7359939230398954679',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Monkey',
-        mezon_emoji_id: '7359939117018127739',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Goat',
-        mezon_emoji_id: '7359939079661840579',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Horse',
-        mezon_emoji_id: '7359939033460169061',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Snake',
-        mezon_emoji_id: '7359939001056393190',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Dragon',
-        mezon_emoji_id: '7359938940833032841',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Cat',
-        mezon_emoji_id: '7359938879013831780',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Tiger',
-        mezon_emoji_id: '7359938837038813309',
-        description: 'Coming soon',
-        statistic_id: 5,
-        rarity_id: 5
-    },
-    {
-        name: 'Ox',
+        name: 'Lunar Ox',
         mezon_emoji_id: '7359938804694634440',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
     },
     {
-        name: 'Rat',
-        mezon_emoji_id: '7359938752431810782',
+        name: 'Lunar Tiger',
+        mezon_emoji_id: '7359938837038813309',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Cat',
+        mezon_emoji_id: '7359938879013831780',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Dragon',
+        mezon_emoji_id: '7359938940833032841',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Snake',
+        mezon_emoji_id: '7359939001056393190',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Horse',
+        mezon_emoji_id: '7359939033460169061',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Goat',
+        mezon_emoji_id: '7359939079661840579',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Dog',
+        mezon_emoji_id: '7359939274893697177',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Pig',
+        mezon_emoji_id: '7359939317916230055',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+    {
+        name: 'Lunar Monkey',
+        mezon_emoji_id: '7359939117018127739',
+        description: 'Coming soon',
+        statistic_id: 5,
+        rarity_id: 5
+    },
+     {
+        name: 'Lunar Rooster',
+        mezon_emoji_id: '7359939230398954679',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -194,22 +194,8 @@ const petSeedData: PetSeed[] = [
         rarity_id: 6
     },
     {
-        name: 'Aquarius',
-        mezon_emoji_id: '7359862895473998969',
-        description: 'Coming soon',
-        statistic_id: 6,
-        rarity_id: 6
-    },
-    {
-        name: 'Cancer',
-        mezon_emoji_id: '7359862939396115055',
-        description: 'Coming soon',
-        statistic_id: 6,
-        rarity_id: 6
-    },
-    {
-        name: 'Capricorn',
-        mezon_emoji_id: '7359862990820691942',
+        name: 'Taurus',
+        mezon_emoji_id: '7359863322598722629',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -222,8 +208,22 @@ const petSeedData: PetSeed[] = [
         rarity_id: 6
     },
     {
+        name: 'Cancer',
+        mezon_emoji_id: '7359862939396115055', 
+        description: 'Coming soon',
+        statistic_id: 6,
+        rarity_id: 6
+    },
+    {
         name: 'Leo',
         mezon_emoji_id: '7359863083358580971',
+        description: 'Coming soon',
+        statistic_id: 6,
+        rarity_id: 6
+    },
+    {
+        name: 'Virgo',
+        mezon_emoji_id: '7359863373819759972',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -236,8 +236,8 @@ const petSeedData: PetSeed[] = [
         rarity_id: 6
     },
     {
-        name: 'Pisces',
-        mezon_emoji_id: '7359863177060978875',
+        name: 'Scorpius',
+        mezon_emoji_id: '7359863273097857497',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -250,28 +250,36 @@ const petSeedData: PetSeed[] = [
         rarity_id: 6
     },
     {
-        name: 'Scorpio',
-        mezon_emoji_id: '7359863273097857497',
+        name: 'Capricorn',
+        mezon_emoji_id: '7359862990820691942',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
     },
     {
-        name: 'Taurus',
-        mezon_emoji_id: '7359863322598722629',
+        name: 'Aquarius',
+        mezon_emoji_id: '7359862895473998969',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
-    },
+    },    
     {
-        name: 'Virgo',
-        mezon_emoji_id: '7359863373819759972',
+        name: 'Pisces',
+        mezon_emoji_id: '7359863177060978875',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
     },
+    
 
     // Four Symbols
+    {
+        name: 'Azure Dragon',
+        mezon_emoji_id: '7359865845194434505',
+        description: 'Coming soon',
+        statistic_id: 7,
+        rarity_id: 7
+    },
     {
         name: 'White Tiger',
         mezon_emoji_id: '7359877318742843139',
@@ -293,11 +301,4 @@ const petSeedData: PetSeed[] = [
         statistic_id: 7,
         rarity_id: 7
     },
-    {
-        name: 'Azure Dragon',
-        mezon_emoji_id: '7359865845194434505',
-        description: 'Coming soon',
-        statistic_id: 7,
-        rarity_id: 7
-    }
 ];
