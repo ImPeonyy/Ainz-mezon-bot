@@ -1,4 +1,6 @@
-import { ERarity } from '@/constants/Enum';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export type PetSeed = {
     name: string;
@@ -8,7 +10,37 @@ export type PetSeed = {
     rarity_id: number;
 };
 
-export const petSeedData: PetSeed[] = [
+export const seedPets = async () => {
+    for (const pet of petSeedData) {
+        const existing = await prisma.pet.findFirst({
+            where: { name: pet.name }
+        });
+
+        if (!existing) {
+            await prisma.pet.create({
+                data: {
+                    name: pet.name,
+                    mezon_emoji_id: pet.mezon_emoji_id,
+                    description: pet.description,
+                    statistic_id: pet.statistic_id,
+                    rarity_id: pet.rarity_id
+                }
+            });
+        } else {
+            await prisma.pet.update({
+                where: { id: existing.id },
+                data: {
+                    mezon_emoji_id: pet.mezon_emoji_id,
+                    description: pet.description,
+                    statistic_id: pet.statistic_id,
+                    rarity_id: pet.rarity_id
+                }
+            });
+        }
+    }
+};
+
+const petSeedData: PetSeed[] = [
     // Mythical Creatures (Epic)
     {
         name: 'Basilisk',
@@ -170,7 +202,7 @@ export const petSeedData: PetSeed[] = [
     },
     {
         name: 'Cancer',
-        mezon_emoji_id: '7359862939396115055', 
+        mezon_emoji_id: '7359862939396115055',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -267,5 +299,5 @@ export const petSeedData: PetSeed[] = [
         description: 'Coming soon',
         statistic_id: 7,
         rarity_id: 7
-    },
+    }
 ];

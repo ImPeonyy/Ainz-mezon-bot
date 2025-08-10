@@ -1,4 +1,6 @@
-import { ERarity } from '@/constants/Enum';
+import { ERarity, PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export type RaritySeed = {
     name: string;
@@ -7,7 +9,35 @@ export type RaritySeed = {
     catch_rate: number;
 };
 
-export const raritySeedData: RaritySeed[] = [
+export const seedRarities = async () => {
+    for (const rarity of raritySeedData) {
+        const existing = await prisma.rarity.findFirst({
+            where: { name: rarity.name }
+        });
+
+        if (!existing) {
+            await prisma.rarity.create({
+                data: {
+                    name: rarity.name,
+                    mezon_emoji_id: rarity.mezon_emoji_id,
+                    type: rarity.type ?? null,
+                    catch_rate: rarity.catch_rate
+                }
+            });
+        } else {
+            await prisma.rarity.update({
+                where: { id: existing.id },
+                data: {
+                    mezon_emoji_id: rarity.mezon_emoji_id,
+                    type: rarity.type ?? null,
+                    catch_rate: rarity.catch_rate
+                }
+            });
+        }
+    }
+};
+
+const raritySeedData: RaritySeed[] = [
     {
         name: 'Common',
         mezon_emoji_id: '7359939378409694674',
