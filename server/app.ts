@@ -31,38 +31,42 @@ async function main() {
     await client.login();
 
     client.onChannelMessage(async (event: any) => {
-        try {
-            if (event.sender_id === client.clientId) {
-                return;
-            }
-
-            const trigger = extractFirstTokenWithAsterisk(
-                event?.content?.t
-            )?.toLowerCase();
-            if (trigger === '*ainz' || trigger === '*a') {
-                const channelFetch = await client.channels.fetch(
-                    event.channel_id
-                );
-                const messageFetch = await channelFetch.messages.fetch(
-                    event.message_id
-                );
-
-                const { action, targetRaw } = parseActionCommand(
-                    event?.content?.t
-                );
-
-                const messagePayload = await getActionController(
-                    event,
-                    action || 'invalid command',
-                    targetRaw
-                );
-
-                if (messagePayload) {
-                    await messageFetch.reply(messagePayload);
+        if (event.channel_id === process.env.CHANNEL_ID) {
+            try {
+                if (event.sender_id === client.clientId) {
+                    return;
                 }
+
+                const trigger = extractFirstTokenWithAsterisk(
+                    event?.content?.t
+                )?.toLowerCase();
+                if (trigger === '*ainz' || trigger === '*a') {
+                    const channelFetch = await client.channels.fetch(
+                        event.channel_id
+                    );
+                    const messageFetch = await channelFetch.messages.fetch(
+                        event.message_id
+                    );
+
+                    const { action, targetRaw } = parseActionCommand(
+                        event?.content?.t
+                    );
+
+                    const messagePayload = await getActionController(
+                        event,
+                        action || 'invalid command',
+                        targetRaw
+                    );
+
+                    if (messagePayload) {
+                        await messageFetch.reply(messagePayload);
+                    }
+                }
+            } catch (error) {
+                console.error('Error in channel message handler:', error);
             }
-        } catch (error) {
-            console.error('Error in channel message handler:', error);
+        } else {
+            console.log('not in channel', event.channel_id);
         }
     });
 }
