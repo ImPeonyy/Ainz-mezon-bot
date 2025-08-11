@@ -78,6 +78,11 @@ enum EStat {
   Def
 }
 
+enum ESkillType {
+  Passive
+  Active
+}
+
 // ========================= TABLES =========================
 
 model User {
@@ -99,7 +104,8 @@ model User {
 model UserDailyActivities {
   id              String                 @id @default(uuid())
   user_id         String
-  daily           Int?
+  daily           Int                    @default(0)
+  hunt            Int                    @default(0)
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
@@ -138,11 +144,6 @@ model PassiveSkill {
   pet_id          Int                    @unique
   name            String
   description     String?
-  effect_target   EEffectTarget
-  target_position ETargetPosition
-  target_count    Int                    @default(1)
-  effect          EEffect
-  effect_stat     EStat?          
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
@@ -155,18 +156,29 @@ model ActiveSkill {
   name                        String
   description                 String?
   mana_cost                   Int
-  attack_type                 EAttackType
-  attack_position             ETargetPosition
-  attack_target_count         Int                @default(1)
-  effect_target               EEffectTarget?
-  effect_target_position      ETargetPosition?
-  effect_target_count         Int?               @default(1)
-  effect                      EEffect?
-  effect_stat                 EStat?
+  attack_type                 EAttackType?
+  damage                      Int?
+  attack_position             ETargetPosition?
+  attack_target_count         Int?               @default(1)
   created_at                  DateTime           @default(now())
   updated_at                  DateTime           @default(now())          @updatedAt         
 
   pet                         Pet                @relation(fields: [pet_id], references: [id])
+}
+
+model Effect {
+  id                          Int                @id @default(autoincrement())
+  skill_type                  ESkillType
+  skill_id                    Int                
+  name                        String
+  description                 String?
+  effect_target               EEffectTarget
+  effect_target_position      ETargetPosition
+  effect_target_count         Int                @default(1)
+  effect                      EEffect
+  effect_stat                 EStat?
+  created_at                  DateTime           @default(now())
+  updated_at                  DateTime           @default(now())          @updatedAt     
 }
 
 model Statistics {
