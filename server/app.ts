@@ -3,12 +3,9 @@ const { MezonClient } = require('mezon-sdk');
 const express = require('express');
 const cors = require('cors');
 
-import {
-    extractFirstTokenWithAsterisk,
-    parseActionCommand
-} from './utils/misc.util';
+import { extractFirstTokenWithAsterisk, parseActionCommand } from '@/utils';
 
-import { getActionController } from './controllers/misc.controller';
+import { getActionController } from '@/controllers';
 
 dotenv.config();
 

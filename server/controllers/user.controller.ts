@@ -1,5 +1,5 @@
-import { createUser, getUser, updateUser } from '@/services/user.service';
-import { embedMessage, textMessage } from '@/utils/message.util';
+import { createUser, getUser, updateUser } from '@/services';
+import { embedMessage, textMessage } from '@/utils';
 
 export const getUserController = async (mezon_id: string) => {
     try {

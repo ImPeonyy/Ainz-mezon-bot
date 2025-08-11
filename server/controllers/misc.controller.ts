@@ -2,15 +2,18 @@ import { ACTIONS, COMMANDS } from '@/constants/Constant';
 import {
     createUserController,
     getUserController,
+    huntPetController,
     updateUserController
-} from './user.controller';
-import { getActionGif, getMeme } from '@/services/misc.service';
-import { getActorName, getTargetFromMention } from '@/utils/misc.util';
+} from '@/controllers';
+import {
+    embedMessage,
+    getActorName,
+    getTargetFromMention,
+    textMessage
+} from '@/utils';
+import { getActionGif, getMeme } from '@/services';
 
 import { EActionType } from '@/constants/Enum';
-import { embedMessage } from '@/utils/message.util';
-import { huntPetController } from './pet.controller';
-import { textMessage } from '@/utils/message.util';
 
 export const getActionController = async (
     event: any,

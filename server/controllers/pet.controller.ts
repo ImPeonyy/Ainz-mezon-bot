@@ -1,10 +1,8 @@
-import { emojisMessage, textMessage } from '@/utils/message.util';
+import { emojisMessage, huntPet, textMessage } from '@/utils';
+import { getPets, getRarities } from '@/services';
 
 import { EmojiOnMessage } from 'mezon-sdk';
-import { HuntPet } from '@/utils/hunt.util';
 import { LIMIT_PET_PER_HUNT } from '@/constants/Constant';
-import { getPets } from '@/services/pet.service';
-import { getRarities } from '@/services/rarity.service';
 
 export const huntPetController = async () => {
     try {
@@ -13,7 +11,7 @@ export const huntPetController = async () => {
         let yourPets: EmojiOnMessage[] = [];
 
         for (let i = 0; i < LIMIT_PET_PER_HUNT; i++) {
-            const pet = await HuntPet(rarities, pets);
+            const pet = await huntPet(rarities, pets);
             if (pet) {
                 yourPets.push({
                     emojiid: pet.mezon_emoji_id
