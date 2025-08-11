@@ -9,6 +9,7 @@ import { getActorName, getTargetFromMention } from '@/utils/misc.util';
 
 import { EActionType } from '@/constants/Enum';
 import { embedMessage } from '@/utils/message.util';
+import { huntPetController } from './pet.controller';
 import { textMessage } from '@/utils/message.util';
 
 export const getActionController = async (
@@ -65,6 +66,11 @@ export const getActionController = async (
                     target
                 );
                 return actionGifPayload;
+            }
+
+            if (action === COMMANDS.hunt) {
+                const huntPetPayload = await huntPetController();
+                return huntPetPayload;
             }
         }
 
