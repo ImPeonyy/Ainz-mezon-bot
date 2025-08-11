@@ -1,36 +1,15 @@
-export enum ERarity {
-    Uncommon = 'Uncommon',
-    Common = 'Common',
-    Rare = 'Rare',
-    Epic = 'Epic',
-    Legendary = 'Legendary',
-    Mythic = 'Mythic',
-    Limited = 'Limited'
-}
-
-export enum EAttackType {
-    Physical = 'Physical',
-    Magical = 'Magical'
-}
-
-export enum EPetRole {
-    Tank = 'Tank',
-    Mage = 'Mage',
-    Support = 'Support',
-    Assassin = 'Assassin',
-    Warrior = 'Warrior'
-}
-
-export enum EElemental {
-    Metal = 'Metal',
-    Wood = 'Wood',
-    Water = 'Water',
-    Fire = 'Fire',
-    Earth = 'Earth'
-}
-
 export enum EActionType {
     Self = 'self',
     Interactive = 'interactive',
     Flexible = 'flexible'
+}
+
+export enum ERarityColor {
+    Common = '#9fa6b0',
+    Uncommon = '#4fb279',
+    Rare = '#52b2da',
+    Epic = '#958ad8',
+    Legendary = '#ffca4a',
+    Mythic = '#f5622e',
+    Limited = '#ffffff'
 }

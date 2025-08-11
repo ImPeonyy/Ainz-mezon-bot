@@ -1,4 +1,5 @@
-import { raritySeedData } from './rarities';
-import { statisticsSeedData } from './statistics';
+import { seedPets } from './pets';
+import { seedRarities } from './rarities';
+import { seedStatistics } from './statistics';
 
-export { raritySeedData, statisticsSeedData };
+export { seedPets, seedRarities, seedStatistics };

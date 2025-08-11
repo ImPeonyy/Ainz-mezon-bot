@@ -17,7 +17,10 @@ CREATE TYPE "ETargetPosition" AS ENUM ('Front', 'Back', 'All', 'Random', 'Self',
 CREATE TYPE "EEffectTarget" AS ENUM ('Ally', 'Enemy');
 
 -- CreateEnum
-CREATE TYPE "EEffect" AS ENUM ('Heal', 'Burn', 'Poison', 'BuffStat', 'DebuffStat', 'RemoveBuff', 'RemoveDebuff');
+CREATE TYPE "EEffect" AS ENUM ('Heal', 'DOT', 'BuffStat', 'DebuffStat', 'RemoveBuff', 'RemoveDebuff', 'Silence', 'ReducedHealing', 'LifeSteal', 'Revive', 'Thorns');
+
+-- CreateEnum
+CREATE TYPE "EStat" AS ENUM ('Hp', 'Mana', 'Atk', 'Def');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -84,6 +87,7 @@ CREATE TABLE "PassiveSkill" (
     "target_position" "ETargetPosition" NOT NULL,
     "target_count" INTEGER NOT NULL DEFAULT 1,
     "effect" "EEffect" NOT NULL,
+    "effect_stat" "EStat",
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -104,6 +108,7 @@ CREATE TABLE "ActiveSkill" (
     "effect_target_position" "ETargetPosition",
     "effect_target_count" INTEGER DEFAULT 1,
     "effect" "EEffect",
+    "effect_stat" "EStat",
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

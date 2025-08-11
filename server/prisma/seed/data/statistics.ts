@@ -1,4 +1,12 @@
-import { EAttackType, EElemental, EPetRole, ERarity } from '@/constants/Enum';
+import {
+    EAttackType,
+    EElemental,
+    EPetRole,
+    ERarity,
+    PrismaClient
+} from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export type StatisticsSeed = {
     name: string;
@@ -19,7 +27,60 @@ export type StatisticsSeed = {
     mr_per_level: number;
 };
 
-export const statisticsSeedData: StatisticsSeed[] = [
+export const seedStatistics = async () => {
+    for (const statistic of statisticsSeedData) {
+        const existing = await prisma.statistics.findFirst({
+            where: { name: statistic.name }
+        });
+
+        if (!existing) {
+            await prisma.statistics.create({
+                data: {
+                    name: statistic.name,
+                    attack_type: statistic.attack_type,
+                    role: statistic.role,
+                    element_type: statistic.element_type ?? null,
+                    rarity: statistic.rarity,
+                    hp: statistic.hp,
+                    mana: statistic.mana,
+                    ad: statistic.ad,
+                    ap: statistic.ap,
+                    ar: statistic.ar,
+                    mr: statistic.mr,
+                    hp_per_level: statistic.hp_per_level,
+                    ad_per_level: statistic.ad_per_level,
+                    ap_per_level: statistic.ap_per_level,
+                    ar_per_level: statistic.ar_per_level,
+                    mr_per_level: statistic.mr_per_level
+                }
+            });
+        } else {
+            await prisma.statistics.update({
+                where: { id: existing.id },
+                data: {
+                    name: statistic.name,
+                    attack_type: statistic.attack_type,
+                    role: statistic.role,
+                    element_type: statistic.element_type ?? null,
+                    rarity: statistic.rarity,
+                    hp: statistic.hp,
+                    mana: statistic.mana,
+                    ad: statistic.ad,
+                    ap: statistic.ap,
+                    ar: statistic.ar,
+                    mr: statistic.mr,
+                    hp_per_level: statistic.hp_per_level,
+                    ad_per_level: statistic.ad_per_level,
+                    ap_per_level: statistic.ap_per_level,
+                    ar_per_level: statistic.ar_per_level,
+                    mr_per_level: statistic.mr_per_level
+                }
+            });
+        }
+    }
+};
+
+const statisticsSeedData: StatisticsSeed[] = [
     {
         name: 'Common',
         attack_type: EAttackType.Physical,
