@@ -12,7 +12,11 @@ export const shuffleRarities = (rarities: Rarity[]) => {
 
 export const huntPet = (rarities: Rarity[], pets: Pet[]) => {
     const shuffledRarities = shuffleRarities(rarities);
-    const r = Math.random();
+    const totalCatchRate = shuffledRarities.reduce(
+        (acc, rarity) => acc + rarity.catch_rate,
+        0
+    );
+    const r = Math.random() * totalCatchRate;
     let sum = 0;
     for (const rarity of shuffledRarities) {
         sum += rarity.catch_rate;

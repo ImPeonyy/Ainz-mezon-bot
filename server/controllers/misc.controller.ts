@@ -1,4 +1,4 @@
-import { ACTIONS, COMMANDS } from '@/constants/Constant';
+import { ACTIONS, COMMANDS } from '@/constants/Commands';
 import {
     createUserController,
     getUserController,
@@ -130,11 +130,11 @@ export const getActionGifController = async (
 
         const action = ACTIONS[actionType];
 
-        if (action.type === EActionType.Interactive && !target) {
+        if (action.type === EActionType.INTERACTIVE && !target) {
             return textMessage('Target not found for interactive action');
         }
 
-        if (action.type === EActionType.Flexible && !target) {
+        if (action.type === EActionType.FLEXIBLE && !target) {
             const actionGif = await getActionGif(actionType);
 
             if (
