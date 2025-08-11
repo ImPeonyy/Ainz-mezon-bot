@@ -10,7 +10,7 @@ export const shuffleRarities = (rarities: Rarity[]) => {
     return arr;
 };
 
-export const HuntPet = (rarities: Rarity[], pets: Pet[]) => {
+export const huntPet = (rarities: Rarity[], pets: Pet[]) => {
     const shuffledRarities = shuffleRarities(rarities);
     const r = Math.random();
     let sum = 0;
