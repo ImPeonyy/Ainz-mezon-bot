@@ -4,7 +4,8 @@ export const COMMANDS = {
     init: 'init',
     info: 'info',
     update: 'update',
-    meme: 'meme'
+    meme: 'meme',
+    hunt: 'hunt'
 };
 
 export const ACTIONS = {
@@ -222,3 +223,5 @@ export const ACTIONS = {
                 : `${user} đang mỉm cười!`
     }
 };
+
+export const LIMIT_PET_PER_HUNT = 5;

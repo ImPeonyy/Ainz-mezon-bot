@@ -20,10 +20,28 @@ export const embedMessage = (embed: IEmbedProps) => {
     return messagePayload;
 };
 
-export const emojiMessage = (emoji: EmojiOnMessage) => {
+export const emojiMessage = (emoji: EmojiOnMessage[]) => {
     const messagePayload: ChannelMessageContent = {
-        ej: [emoji]
+        ej: emoji
     };
+    return messagePayload;
+};
+
+export const emojisMessage = (emojis: EmojiOnMessage[]) => {
+    let messagePayload: ChannelMessageContent = {
+        t: 'Your result:\n',
+        ej: []
+    };
+
+    emojis.forEach((emoji) => {
+        messagePayload.ej?.push({
+            emojiid: emoji.emojiid,
+            s: messagePayload.t?.length || 0,
+            e: messagePayload.t?.length || 0 + 1
+        });
+        messagePayload.t += ``;
+    });
+
     return messagePayload;
 };
 
