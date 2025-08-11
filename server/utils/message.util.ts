@@ -1,7 +1,6 @@
 import { ChannelMessageContent, EmojiOnMessage, IEmbedProps } from 'mezon-sdk';
 
-import { ACTIONS } from '@/constants/Constant';
-import { EActionType } from '@/constants/Enum';
+import { ACTIONS } from '@/constants/Commands';
 import { Pet } from '@prisma/client';
 
 export const textMessage = (message: string) => {
