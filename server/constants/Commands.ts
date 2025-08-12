@@ -5,7 +5,8 @@ export const COMMANDS = {
     info: 'info',
     update: 'update',
     meme: 'meme',
-    hunt: 'hunt'
+    hunt: 'hunt',
+    dex: 'dex'
 };
 
 export const ACTIONS = {

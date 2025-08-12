@@ -3,6 +3,7 @@ import { getPets, getRarities } from '@/services';
 
 import { EmojiOnMessage } from 'mezon-sdk';
 import { LIMIT_PET_PER_HUNT } from '@/constants/Constant';
+import { getPetDetailMessage } from '@/utils/message.util';
 
 export const huntPetController = async () => {
     try {
@@ -21,6 +22,16 @@ export const huntPetController = async () => {
         return emojisMessage(yourPets);
     } catch (error) {
         console.log('Error hunting pet:', error);
+        return textMessage('Internal server error');
+    }
+};
+
+export const dexController = async (petName: string) => {
+    try {
+        const pet = await getPetDetailMessage(petName);
+        return pet
+    } catch (error) {
+        console.log('Error getting pet:', error);
         return textMessage('Internal server error');
     }
 };

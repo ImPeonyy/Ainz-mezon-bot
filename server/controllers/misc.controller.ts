@@ -1,6 +1,7 @@
 import { ACTIONS, COMMANDS } from '@/constants/Commands';
 import {
     createUserController,
+    dexController,
     getUserController,
     huntPetController,
     updateUserController
@@ -74,6 +75,11 @@ export const getActionController = async (
             if (action === COMMANDS.hunt) {
                 const huntPetPayload = await huntPetController();
                 return huntPetPayload;
+            }
+
+            if (action === COMMANDS.dex) {
+                const petDetailPayload = await dexController(mentionTarget || '');
+                return petDetailPayload;
             }
         }
 

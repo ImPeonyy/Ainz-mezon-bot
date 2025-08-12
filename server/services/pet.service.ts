@@ -8,3 +8,25 @@ export const getPets = async () => {
         throw error;
     }
 };
+
+export const getPetDetail = async (petName: string) => {
+    try {
+        return prisma.pet.findFirst({
+            where: { 
+                name: {
+                    equals: petName,
+                    mode: 'insensitive'
+                }
+            },
+            include: {
+                statistic: true,
+                rarity: true,
+                autoAttack: true,
+                passiveSkill: true,
+                activeSkill: true
+            }
+        });
+    } catch (error) {
+        throw error;
+    }
+};

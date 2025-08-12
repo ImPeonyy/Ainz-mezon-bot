@@ -9,7 +9,7 @@ import {
     getMemeController
 } from './misc.controller';
 
-import { huntPetController } from './pet.controller';
+import { huntPetController, dexController } from './pet.controller';
 
 export {
     getActionController,
@@ -18,5 +18,6 @@ export {
     huntPetController,
     createUserController,
     updateUserController,
-    getActionGifController
+    getActionGifController,
+    dexController
 };
