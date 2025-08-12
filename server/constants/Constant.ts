@@ -1,9 +1,1 @@
 export const LIMIT_PET_PER_HUNT = 5;
-export const UNKNOWN = 'Unknown';
-export const COMMON = 'Common';
-export const UNCOMMON = 'Uncommon';
-export const RARE = 'Rare';
-export const EPIC = 'Epic';
-export const LEGENDARY = 'Legendary';
-export const MYTHIC = 'Mythic';
-export const LIMITED = 'Limited';

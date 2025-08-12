@@ -1,5 +1,4 @@
-import { COMMON, EPIC, LEGENDARY, LIMITED, MYTHIC, RARE, UNCOMMON } from '@/constants/Constant';
-import { ERarityColor, ERarityEmoji } from '@/constants/Enum';
+import { ERarityColor } from '@/constants/Enum';
 import { ParsedAction } from '@/constants/Type';
 
 export const extractFirstTokenWithAsterisk = (
@@ -39,43 +38,22 @@ export const getTargetFromMention = (content: string | null) => {
 
 export const getRarityColor = (rarity: string): string => {
     switch (rarity) {
-        case COMMON:
+        case 'Common':
             return ERarityColor.COMMON;
-        case UNCOMMON:
+        case 'Uncommon':
             return ERarityColor.UNCOMMON;
-        case RARE:
+        case 'Rare':
             return ERarityColor.RARE;
-        case EPIC:
+        case 'Epic':
             return ERarityColor.EPIC;
-        case LEGENDARY:
+        case 'Legendary':
             return ERarityColor.LEGENDARY;
-        case MYTHIC:
+        case 'Mythic':
             return ERarityColor.MYTHIC;
-        case LIMITED:
+        case 'Limited':
             return ERarityColor.LIMITED;
         default:
             return ERarityColor.COMMON; 
-    }
-};
-
-export const getRarityEmoji = (rarity: string): string => {
-    switch (rarity) {
-        case COMMON:
-            return ERarityEmoji.COMMON;
-        case UNCOMMON:
-            return ERarityEmoji.UNCOMMON;
-        case RARE:
-            return ERarityEmoji.RARE;
-        case EPIC:
-            return ERarityEmoji.EPIC;
-        case LEGENDARY:
-            return ERarityEmoji.LEGENDARY;
-        case MYTHIC:
-            return ERarityEmoji.MYTHIC;
-        case LIMITED:
-            return ERarityEmoji.LIMITED;
-        default:
-            return ERarityEmoji.COMMON; 
     }
 };
 
