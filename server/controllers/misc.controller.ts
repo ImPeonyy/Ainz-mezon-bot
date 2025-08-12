@@ -1,39 +1,16 @@
 import { ACTIONS, COMMANDS } from '@/constants/Commands';
-import {
-    createUserController,
-    getUserController,
-    huntPetController,
-    updateUserController
-} from '@/controllers';
-import {
-    embedMessage,
-    getActorName,
-    getTargetFromMention,
-    textMessage
-} from '@/utils';
+import { createUserController, dailyController, getUserController, huntPetController, updateUserController } from '@/controllers';
+import { embedMessage, getActorName, getTargetFromMention, textMessage } from '@/utils';
 import { getActionGif, getMeme } from '@/services';
-
 import { EActionType } from '@/constants/Enum';
 
-export const getActionController = async (
-    event: any,
-    action: string,
-    mentionTarget?: string | null
-) => {
+export const getActionController = async (event: any, action: string, mentionTarget?: string | null) => {
     try {
-        const { sender_id, display_name, avatar, clan_nick, references } =
-            event;
+        const { sender_id, display_name, avatar, clan_nick, references } = event;
 
-        if (
-            Object.keys(COMMANDS).includes(action) ||
-            Object.keys(ACTIONS).includes(action)
-        ) {
+        if (Object.keys(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (action === COMMANDS.init) {
-                const createUserPayload = await createUserController(
-                    display_name,
-                    sender_id,
-                    avatar
-                );
+                const createUserPayload = await createUserController(display_name, sender_id, avatar);
                 return createUserPayload;
             }
 
@@ -43,11 +20,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.update) {
-                const updateUserPayload = await updateUserController(
-                    display_name,
-                    sender_id,
-                    avatar
-                );
+                const updateUserPayload = await updateUserController(display_name, sender_id, avatar);
                 return updateUserPayload;
             }
 
@@ -63,17 +36,18 @@ export const getActionController = async (
                     target = getTargetFromMention(mentionTarget);
                 }
 
-                const actionGifPayload = await getActionGifController(
-                    actor,
-                    action,
-                    target
-                );
+                const actionGifPayload = await getActionGifController(actor, action, target);
                 return actionGifPayload;
             }
 
             if (action === COMMANDS.hunt) {
                 const huntPetPayload = await huntPetController();
                 return huntPetPayload;
+            }
+
+            if (action === COMMANDS.daily) {
+                const dailyPayload = await dailyController(sender_id);
+                return dailyPayload;
             }
         }
 
@@ -118,11 +92,7 @@ export const getMemeController = async () => {
     }
 };
 
-export const getActionGifController = async (
-    actor: string,
-    actionType: string,
-    target?: string
-) => {
+export const getActionGifController = async (actor: string, actionType: string, target?: string) => {
     try {
         if (!actionType || !Object.keys(ACTIONS).includes(actionType)) {
             return textMessage('Invalid action type');
@@ -137,11 +107,7 @@ export const getActionGifController = async (
         if (action.type === EActionType.FLEXIBLE && !target) {
             const actionGif = await getActionGif(actionType);
 
-            if (
-                !actionGif ||
-                !actionGif.results ||
-                actionGif.results.length === 0
-            ) {
+            if (!actionGif || !actionGif.results || actionGif.results.length === 0) {
                 return textMessage('Action gif not found, please try again');
             }
 
@@ -163,11 +129,7 @@ export const getActionGifController = async (
 
         const actionGif = await getActionGif(actionType);
 
-        if (
-            !actionGif ||
-            !actionGif.results ||
-            actionGif.results.length === 0
-        ) {
+        if (!actionGif || !actionGif.results || actionGif.results.length === 0) {
             return textMessage('Action gif not found, please try again');
         }
 

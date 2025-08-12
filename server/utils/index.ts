@@ -14,6 +14,7 @@ import {
 } from './misc.util';
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntPet, shuffleRarities } from './hunt.util';
+import { getDailyReward, getMidnightRemainingTime } from './userDailyActivity.util';
 
 export {
     getActorName,
@@ -29,5 +30,7 @@ export {
     getActionMessage,
     bagMessage,
     embedMessage,
-    emojiMessage
+    emojiMessage,
+    getDailyReward,
+    getMidnightRemainingTime
 };
