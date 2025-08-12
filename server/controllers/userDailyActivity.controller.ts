@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/db';
-import { getTodayUserDailyActivity, createUserDailyActivity } from '@/services/userDailyActivity.service';
 import { textMessage, getDailyReward, getMidnightRemainingTime } from '@/utils';
-import { getUser } from '@/services';
+import { getTodayUserDailyActivity, getUser } from '@/services';
 
 export const dailyController = async (mezon_id: string) => {
     try {

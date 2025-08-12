@@ -1,7 +1,4 @@
 import { USE_DAILY_ACTIVITY } from '@/constants/Constant';
-import { createUserDailyActivity, getTodayUserDailyActivity, updateTodayUserDailyActivity } from '@/services/userDailyActivity.service';
-
-
 
 export const getDailyReward =  () => {
     const zCoinReward = getRandomInt(

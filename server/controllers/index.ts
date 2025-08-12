@@ -10,6 +10,7 @@ import {
 } from './misc.controller';
 
 import { huntPetController } from './pet.controller';
+import { dailyController } from './userDailyActivity.controller';
 
 export {
     getActionController,
@@ -18,5 +19,6 @@ export {
     huntPetController,
     createUserController,
     updateUserController,
-    getActionGifController
+    getActionGifController,
+    dailyController
 };

@@ -1,8 +1,7 @@
 import { ACTIONS, COMMANDS } from '@/constants/Commands';
-import { createUserController, getUserController, huntPetController, updateUserController } from '@/controllers';
-import { dailyController, embedMessage, getActorName, getTargetFromMention, textMessage } from '@/utils';
+import { createUserController, dailyController, getUserController, huntPetController, updateUserController } from '@/controllers';
+import { embedMessage, getActorName, getTargetFromMention, textMessage } from '@/utils';
 import { getActionGif, getMeme } from '@/services';
-
 import { EActionType } from '@/constants/Enum';
 
 export const getActionController = async (event: any, action: string, mentionTarget?: string | null) => {
