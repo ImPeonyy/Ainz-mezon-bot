@@ -1,10 +1,9 @@
 import { ACTIONS, COMMANDS } from '@/constants/Commands';
 import { createUserController, getUserController, huntPetController, updateUserController } from '@/controllers';
-import { embedMessage, getActorName, getTargetFromMention, textMessage } from '@/utils';
+import { dailyController, embedMessage, getActorName, getTargetFromMention, textMessage } from '@/utils';
 import { getActionGif, getMeme } from '@/services';
 
 import { EActionType } from '@/constants/Enum';
-import { dailyController } from './userDailyActivity.controller';
 
 export const getActionController = async (event: any, action: string, mentionTarget?: string | null) => {
     try {
@@ -48,9 +47,7 @@ export const getActionController = async (event: any, action: string, mentionTar
             }
 
             if (action === COMMANDS.daily) {
-                console.log('Processing daily for user:', sender_id);
                 const dailyPayload = await dailyController(sender_id);
-                console.log('Daily payload:', dailyPayload);
                 return dailyPayload;
             }
         }

@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/db';
-import { USE_DAILY_ACTIVITY } from '@/constants/Constant';
 import { getTodayUserDailyActivity, createUserDailyActivity } from '@/services/userDailyActivity.service';
 import { textMessage, getDailyReward, getMidnightRemainingTime } from '@/utils';
 import { getUser } from '@/services';
@@ -20,8 +19,6 @@ export const dailyController = async (mezon_id: string) => {
             );
         }
 
-        // await createUserDailyActivity(user.id, 1, 0);
-
         // Random Z_COIN & EXP
         const dailyReward = getDailyReward();
 
@@ -40,8 +37,6 @@ export const dailyController = async (mezon_id: string) => {
                         exp: { increment: dailyReward.exp }
                     }
                 });
-
-                // Nếu đến đây mà không lỗi, transaction sẽ commit
             });
             return textMessage(
                 `🎉 Daily reward claimed successfully! You have received +${dailyReward.zCoin} 💰 ZCoin and +${dailyReward.exp} ⭐ EXP.`

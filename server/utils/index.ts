@@ -15,6 +15,7 @@ import {
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntPet, shuffleRarities } from './hunt.util';
 import { getDailyReward, getMidnightRemainingTime } from './userDailyActivity.util';
+import { dailyController } from '@/controllers/userDailyActivity.controller';
 
 export {
     getActorName,
@@ -32,5 +33,6 @@ export {
     embedMessage,
     emojiMessage,
     getDailyReward,
-    getMidnightRemainingTime
+    getMidnightRemainingTime,
+    dailyController
 };
