@@ -12,15 +12,16 @@ import {
     getTargetFromMention,
     parseActionCommand
 } from './misc.util';
+import { getDailyReward, getMidnightRemainingTime } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
-import { huntPet, shuffleRarities } from './hunt.util';
-import { getDailyReward, getMidnightRemainingTime } from './userDailyActivity.util';
+import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
 
 export {
     getActorName,
     getTargetFromMention,
     emojisMessage,
     textMessage,
+    huntCheck,
     huntPet,
     getRandomPet,
     getRarityPets,
