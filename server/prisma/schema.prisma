@@ -114,8 +114,8 @@ model UserDailyActivities {
 
 model Rarity {
   id              Int                    @id @default(autoincrement())
-  name            String
-  mezon_emoji_id  String
+  name            String                 @unique
+  mezon_emoji_id  String                 @unique
   type            ERarity?
   catch_rate      Float
   created_at      DateTime               @default(now())
@@ -207,8 +207,8 @@ model Statistics {
 
 model Pet {
   id              Int                    @id @default(autoincrement())
-  name            String
-  mezon_emoji_id  String
+  name            String                 @unique
+  mezon_emoji_id  String                 @unique
   description     String?
   statistic_id    Int
   rarity_id       Int
@@ -230,12 +230,12 @@ model UserPet {
   nickname        String?
   level           Int                    @default(1)
   exp             Int                    @default(0)
-  additional_hp   Int
-  additional_mana Int
-  additional_ad   Int
-  additional_ap   Int
-  additional_ar   Int
-  additional_mr   Int
+  additional_hp   Int                    @default(0)
+  additional_mana Int                    @default(0)
+  additional_ad   Int                    @default(0)
+  additional_ap   Int                    @default(0)
+  additional_ar   Int                    @default(0)
+  additional_mr   Int                    @default(0)
   lock            Boolean                @default(false)
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
