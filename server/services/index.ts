@@ -1,7 +1,13 @@
 import { createUser, getUser, updateUser } from '@/services/user.service';
+import {
+    createUserDailyActivity,
+    getTodayUserDailyActivity,
+    updateUserDailyActivity
+} from '@/services/userDailyActivity.service';
+import { createUserPet, createUserPets } from '@/services/userPet.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
+import { getPetDetail, getPets } from '@/services/pet.service';
 
-import { getPets, getPetDetail } from '@/services/pet.service';
 import { getRarities } from '@/services/rarity.service';
 
 export {
@@ -12,5 +18,10 @@ export {
     createUser,
     getUser,
     updateUser,
-    getPetDetail
+    getPetDetail,
+    createUserDailyActivity,
+    getTodayUserDailyActivity,
+    updateUserDailyActivity,
+    createUserPet,
+    createUserPets
 };

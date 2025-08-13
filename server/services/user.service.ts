@@ -1,4 +1,5 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+
 import { prisma } from '@/lib/db';
 
 export const getUser = async (mezon_id: string) => {
@@ -14,14 +15,13 @@ export const getUser = async (mezon_id: string) => {
     }
 };
 
-export const createUser = async (data: Prisma.UserCreateInput) => {
+export const createUser = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    data: Prisma.UserCreateInput
+) => {
     try {
-        return await prisma.user.create({
-            data: {
-                username: data.username,
-                mezon_id: data.mezon_id,
-                avatar: data.avatar
-            }
+        return await prismaClient.user.create({
+            data
         });
     } catch (error) {
         console.error('Error creating user:', error);
@@ -29,16 +29,15 @@ export const createUser = async (data: Prisma.UserCreateInput) => {
     }
 };
 
-export const updateUser = async (data: Prisma.UserUpdateInput) => {
+export const updateUser = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    where: Prisma.UserWhereUniqueInput,
+    data: Prisma.UserUpdateInput
+) => {
     try {
-        return await prisma.user.update({
-            where: {
-                mezon_id: data.mezon_id as string
-            },
-            data: {
-                username: data.username,
-                avatar: data.avatar
-            }
+        return await prismaClient.user.update({
+            where,
+            data: data
         });
     } catch (error) {
         console.error('Error updating user:', error);

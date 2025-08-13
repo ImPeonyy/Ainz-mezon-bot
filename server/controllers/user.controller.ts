@@ -1,6 +1,8 @@
 import { createUser, getUser, updateUser } from '@/services';
 import { embedMessage, textMessage } from '@/utils';
 
+import { prisma } from '@/lib/db';
+
 export const getUserController = async (mezon_id: string) => {
     try {
         if (!mezon_id) {
@@ -49,7 +51,7 @@ export const createUserController = async (
             return textMessage('User already exists');
         }
 
-        const user = await createUser({ username, mezon_id, avatar });
+        const user = await createUser(prisma, { username, mezon_id, avatar });
 
         return embedMessage({
             color: '#f3aab5',
@@ -87,7 +89,13 @@ export const updateUserController = async (
             return textMessage('User not found');
         }
 
-        const user = await updateUser({ username, mezon_id, avatar });
+        const user = await updateUser(
+            prisma,
+            {
+                id: existingUser.id
+            },
+            { username, mezon_id, avatar }
+        );
 
         return embedMessage({
             color: '#f3aab5',

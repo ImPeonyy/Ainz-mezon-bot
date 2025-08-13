@@ -15,6 +15,7 @@ import {
 import { getActionGif, getMeme } from '@/services';
 
 import { EActionType } from '@/constants/Enum';
+import { dailyController } from './userDailyActivity.controller';
 
 export const getActionController = async (
     event: any,
@@ -73,13 +74,19 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.hunt) {
-                const huntPetPayload = await huntPetController();
+                const huntPetPayload = await huntPetController(sender_id);
                 return huntPetPayload;
             }
 
             if (action === COMMANDS.dex) {
-                const petDetailPayload = await dexController(mentionTarget || '');
+                const petDetailPayload = await dexController(
+                    mentionTarget || ''
+                );
                 return petDetailPayload;
+            }
+            if (action === COMMANDS.daily) {
+                const dailyPayload = await dailyController(sender_id);
+                return dailyPayload;
             }
         }
 

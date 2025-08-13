@@ -1,5 +1,7 @@
-import { Pet, Rarity } from '@prisma/client';
-import { getRandomPet, getRarityPets } from './pet.util';
+import { Pet, Rarity, User, UserDailyActivities } from '@prisma/client';
+import { getRandomPet, getRarityPets } from '@/utils';
+
+import { USE_DAILY_ACTIVITY } from '@/constants/Constant';
 
 export const shuffleRarities = (rarities: Rarity[]) => {
     const arr = [...rarities];
@@ -28,4 +30,24 @@ export const huntPet = (rarities: Rarity[], pets: Pet[]) => {
             return null;
         }
     }
+};
+
+export const huntCheck = (
+    user: User,
+    todayActivity: UserDailyActivities | null
+) => {
+    if (!todayActivity) {
+        return USE_DAILY_ACTIVITY.HUNT.PRIORITY[1];
+    }
+    if (todayActivity && todayActivity.hunt === 0) {
+        return USE_DAILY_ACTIVITY.HUNT.PRIORITY[2];
+    }
+    if (
+        todayActivity &&
+        todayActivity.hunt === 1 &&
+        user.z_coin >= USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
+    ) {
+        return USE_DAILY_ACTIVITY.HUNT.PRIORITY[3];
+    }
+    return USE_DAILY_ACTIVITY.HUNT.PRIORITY[4];
 };

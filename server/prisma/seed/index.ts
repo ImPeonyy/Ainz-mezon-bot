@@ -1,13 +1,21 @@
-import { seedPets, seedRarities, seedStatistics } from './data';
+import {
+    seedActiveSkill,
+    seedAutoAttack,
+    seedPets,
+    seedRarities,
+    seedStatistics
+} from './data';
 
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-    await seedStatistics();
-    await seedRarities();
-    await seedPets();
+    // await seedStatistics();
+    // await seedRarities();
+    // await seedPets();
+    // await seedAutoAttack();
+    // await seedActiveSkill();
 }
 
 main()
