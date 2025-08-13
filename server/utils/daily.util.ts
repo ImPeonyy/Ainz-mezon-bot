@@ -1,13 +1,13 @@
 import { USE_DAILY_ACTIVITY } from '@/constants/Constant';
 
-export const getDailyReward =  () => {
+export const getDailyReward = () => {
     const zCoinReward = getRandomInt(
-        USE_DAILY_ACTIVITY.REWARD.DAILY.Z_COIN.MIN,
-        USE_DAILY_ACTIVITY.REWARD.DAILY.Z_COIN.MAX
+        USE_DAILY_ACTIVITY.DAILY.REWARD.Z_COIN.MIN,
+        USE_DAILY_ACTIVITY.DAILY.REWARD.Z_COIN.MAX
     );
     const expReward = getRandomInt(
-        USE_DAILY_ACTIVITY.REWARD.DAILY.EXP.MIN,
-        USE_DAILY_ACTIVITY.REWARD.DAILY.EXP.MAX
+        USE_DAILY_ACTIVITY.DAILY.REWARD.EXP.MIN,
+        USE_DAILY_ACTIVITY.DAILY.REWARD.EXP.MAX
     );
 
     return {
@@ -31,6 +31,3 @@ export function getMidnightRemainingTime() {
 export function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-
-

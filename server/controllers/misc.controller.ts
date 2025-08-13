@@ -41,7 +41,7 @@ export const getActionController = async (event: any, action: string, mentionTar
             }
 
             if (action === COMMANDS.hunt) {
-                const huntPetPayload = await huntPetController();
+                const huntPetPayload = await huntPetController(sender_id);
                 return huntPetPayload;
             }
 

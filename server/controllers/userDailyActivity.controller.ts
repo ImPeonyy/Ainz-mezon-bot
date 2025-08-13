@@ -1,6 +1,12 @@
+import {
+    createUserDailyActivity,
+    getTodayUserDailyActivity,
+    getUser,
+    updateUser
+} from '@/services';
+import { getDailyReward, getMidnightRemainingTime, textMessage } from '@/utils';
+
 import { prisma } from '@/lib/db';
-import { textMessage, getDailyReward, getMidnightRemainingTime } from '@/utils';
-import { getTodayUserDailyActivity, getUser } from '@/services';
 
 export const dailyController = async (mezon_id: string) => {
     try {
@@ -18,33 +24,44 @@ export const dailyController = async (mezon_id: string) => {
             );
         }
 
-        // Random Z_COIN & EXP
         const dailyReward = getDailyReward();
 
         try {
             await prisma.$transaction(async (tx) => {
-                await tx.userDailyActivities.create({
-                    data: { user_id: user.id, daily: 1 }
+                await createUserDailyActivity(tx, {
+                    user: {
+                        connect: {
+                            id: user.id
+                        }
+                    },
+                    daily: 1,
+                    hunt: 0
                 });
 
-                await tx.user.update({
-                    where: {
+                await updateUser(
+                    tx,
+                    {
                         id: user.id
                     },
-                    data: {
+                    {
                         z_coin: { increment: dailyReward.zCoin },
                         exp: { increment: dailyReward.exp }
                     }
-                });
+                );
             });
             return textMessage(
                 `🎉 Daily reward claimed successfully! You have received +${dailyReward.zCoin} 💰 ZCoin and +${dailyReward.exp} ⭐ EXP.`
             );
         } catch (err) {
             console.error('Transaction failed, rollback executed', err);
+            return textMessage(
+                '❌ Error occurred while processing the daily reward.'
+            );
         }
     } catch (error) {
         console.error(error);
-        return textMessage('❌ Server error occurred while processing the daily reward.');
+        return textMessage(
+            '❌ Server error occurred while processing the daily reward.'
+        );
     }
 };
