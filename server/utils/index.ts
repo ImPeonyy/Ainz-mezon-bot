@@ -18,6 +18,7 @@ import {
 import { getDailyReward, getMidnightRemainingTime } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
+import { getHelpMessage } from './help.util';
 
 export {
     getActorName,
@@ -39,5 +40,6 @@ export {
     getDailyReward,
     getMidnightRemainingTime,
     getRarityColor,
-    getUrlEmoji
+    getUrlEmoji,
+    getHelpMessage
 };
