@@ -1,0 +1,33 @@
+import { USE_DAILY_ACTIVITY } from '@/constants/Constant';
+
+export const getDailyReward = () => {
+    const zCoinReward = getRandomInt(
+        USE_DAILY_ACTIVITY.DAILY.REWARD.Z_COIN.MIN,
+        USE_DAILY_ACTIVITY.DAILY.REWARD.Z_COIN.MAX
+    );
+    const expReward = getRandomInt(
+        USE_DAILY_ACTIVITY.DAILY.REWARD.EXP.MIN,
+        USE_DAILY_ACTIVITY.DAILY.REWARD.EXP.MAX
+    );
+
+    return {
+        zCoin: zCoinReward,
+        exp: expReward
+    };
+};
+
+export function getMidnightRemainingTime() {
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+
+    const diffMs = midnight.getTime() - now.getTime();
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    return { hours, minutes };
+}
+
+export function getRandomInt(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}

@@ -1,35 +1,24 @@
-import { ACTIONS, COMMANDS } from '@/constants/Constant';
+import { ACTIONS, COMMANDS } from '@/constants/Commands';
 import {
     createUserController,
+    dexController,
     getUserController,
-    updateUserController
-} from './user.controller';
-import { getActionGif, getMeme } from '@/services/misc.service';
-import { getActorName, getTargetFromMention } from '@/utils/misc.util';
+    huntPetController,
+    updateUserController,
+    dailyController
+} from '@/controllers';
+import { embedMessage, getActorName, getTargetFromMention, textMessage, getHelpMessage } from '@/utils';
+import { getActionGif, getMeme } from '@/services';
 
 import { EActionType } from '@/constants/Enum';
-import { embedMessage } from '@/utils/message.util';
-import { textMessage } from '@/utils/message.util';
 
-export const getActionController = async (
-    event: any,
-    action: string,
-    mentionTarget?: string | null
-) => {
+export const getActionController = async (event: any, action: string, mentionTarget?: string | null) => {
     try {
-        const { sender_id, display_name, avatar, clan_nick, references } =
-            event;
+        const { sender_id, display_name, avatar, clan_nick, references } = event;
 
-        if (
-            Object.keys(COMMANDS).includes(action) ||
-            Object.keys(ACTIONS).includes(action)
-        ) {
+        if (Object.keys(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (action === COMMANDS.init) {
-                const createUserPayload = await createUserController(
-                    display_name,
-                    sender_id,
-                    avatar
-                );
+                const createUserPayload = await createUserController(display_name, sender_id, avatar);
                 return createUserPayload;
             }
 
@@ -39,11 +28,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.update) {
-                const updateUserPayload = await updateUserController(
-                    display_name,
-                    sender_id,
-                    avatar
-                );
+                const updateUserPayload = await updateUserController(display_name, sender_id, avatar);
                 return updateUserPayload;
             }
 
@@ -59,12 +44,28 @@ export const getActionController = async (
                     target = getTargetFromMention(mentionTarget);
                 }
 
-                const actionGifPayload = await getActionGifController(
-                    actor,
-                    action,
-                    target
-                );
+                const actionGifPayload = await getActionGifController(actor, action, target);
                 return actionGifPayload;
+            }
+
+            if (action === COMMANDS.hunt) {
+                const huntPetPayload = await huntPetController(sender_id);
+                return huntPetPayload;
+            }
+
+            if (action === COMMANDS.dex) {
+                const petDetailPayload = await dexController(mentionTarget || '');
+                return petDetailPayload;
+            }
+
+            if (action === COMMANDS.daily) {
+                const dailyPayload = await dailyController(sender_id);
+                return dailyPayload;
+            }
+
+            if (action === COMMANDS.help) {
+                const helpPayload = await getHelpController();
+                return helpPayload;
             }
         }
 
@@ -109,11 +110,7 @@ export const getMemeController = async () => {
     }
 };
 
-export const getActionGifController = async (
-    actor: string,
-    actionType: string,
-    target?: string
-) => {
+export const getActionGifController = async (actor: string, actionType: string, target?: string) => {
     try {
         if (!actionType || !Object.keys(ACTIONS).includes(actionType)) {
             return textMessage('Invalid action type');
@@ -121,18 +118,14 @@ export const getActionGifController = async (
 
         const action = ACTIONS[actionType];
 
-        if (action.type === EActionType.Interactive && !target) {
+        if (action.type === EActionType.INTERACTIVE && !target) {
             return textMessage('Target not found for interactive action');
         }
 
-        if (action.type === EActionType.Flexible && !target) {
+        if (action.type === EActionType.FLEXIBLE && !target) {
             const actionGif = await getActionGif(actionType);
 
-            if (
-                !actionGif ||
-                !actionGif.results ||
-                actionGif.results.length === 0
-            ) {
+            if (!actionGif || !actionGif.results || actionGif.results.length === 0) {
                 return textMessage('Action gif not found, please try again');
             }
 
@@ -154,11 +147,7 @@ export const getActionGifController = async (
 
         const actionGif = await getActionGif(actionType);
 
-        if (
-            !actionGif ||
-            !actionGif.results ||
-            actionGif.results.length === 0
-        ) {
+        if (!actionGif || !actionGif.results || actionGif.results.length === 0) {
             return textMessage('Action gif not found, please try again');
         }
 
@@ -178,6 +167,16 @@ export const getActionGifController = async (
         });
     } catch (error) {
         console.error('Error getting action gif:', error);
+        return textMessage('Internal server error');
+    }
+};
+
+export const getHelpController = () => {
+    try {
+        const helpMessage = getHelpMessage();
+        return helpMessage;
+    } catch (error) {
+        console.error('Error getting help message:', error);
         return textMessage('Internal server error');
     }
 };
