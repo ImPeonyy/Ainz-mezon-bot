@@ -12,7 +12,7 @@ export const getPets = () => {
 export const getPetDetail = async (petName: string) => {
     try {
         return prisma.pet.findFirst({
-            where: { 
+            where: {
                 name: {
                     equals: petName,
                     mode: 'insensitive'
@@ -27,6 +27,7 @@ export const getPetDetail = async (petName: string) => {
             }
         });
     } catch (error) {
+        console.error('Error getting pets:', error);
         throw error;
     }
 };

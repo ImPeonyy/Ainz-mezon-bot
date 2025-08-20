@@ -1,10 +1,8 @@
 import { ChannelMessageContent, EmojiOnMessage, IEmbedProps } from 'mezon-sdk';
 
 import { ACTIONS } from '@/constants/Commands';
-import { Pet } from '@prisma/client';
-import { getPetDetail } from '@/services/pet.service';
-import { getRarityColor, getUrlEmoji } from './misc.util';
-import { UNKNOWN } from '@/constants/Constant';
+import { Prisma, Pet } from '@prisma/client';
+import { getRarityColor, getUrlEmoji } from '@/utils';
 
 export const textMessage = (message: string) => {
     const messagePayload: ChannelMessageContent = {
@@ -65,11 +63,7 @@ export const bagMessage = (pets: Pet[]) => {
     return messagePayload;
 };
 
-export const getActionMessage = (
-    action: string,
-    actor: string,
-    target?: string
-) => {
+export const getActionMessage = (action: string, actor: string, target?: string) => {
     if (!ACTIONS[action]) {
         return {
             t: `**${actor}** does something mysterious...`
@@ -85,47 +79,42 @@ export const getActionMessage = (
     };
 };
 
-export const getPetDetailMessage = async (petName: any) => {
-    try {
-        const pet = await getPetDetail(petName);
+export const getDexMessage = (
+    pet: Prisma.PetGetPayload<{
+        include: { statistic: true; rarity: true; autoAttack: true; passiveSkill: true; activeSkill: true };
+    }>
+) => {
+    const statistic = pet.statistic;
 
-        if (!pet) {
-            return textMessage('Pet not found!');
+    const messageContent = [
+        {
+            name: 'Description',
+            value: pet?.description || 'No description',
+            inline: false
         }
-        const statistic = pet.statistic;
+    ];
 
-        const messageContent = [
-            {
-                name: 'Description',
-                value: pet?.description || UNKNOWN,
-                inline: false
-            }
-        ];
-
-        if (statistic) {
-            messageContent.push(
-                { name: 'Rarity', value: statistic.rarity, inline: true },
-                { name: 'Role', value: statistic.role, inline: true },
-                { name: 'Attack type', value: statistic.attack_type, inline: true },
-                { name: 'HP', value: statistic.hp.toString(), inline: true },
-                { name: 'AD', value: statistic.ad.toString(), inline: true },
-                { name: 'AR', value: statistic.ar.toString(), inline: true },
-                { name: 'Mana', value: statistic.mana.toString(), inline: true },
-                { name: 'AP', value: statistic.ap.toString(), inline: true },
-                { name: 'MR', value: statistic.mr.toString(), inline: true }
-            );
-        }
-
-        return embedMessage({
-            color: getRarityColor(statistic.rarity),
-            title: `${pet?.name} Information 🔍`,
-            thumbnail: { url: getUrlEmoji(pet.mezon_emoji_id) },
-            fields: messageContent,
-            footer: {
-                text: `📙 Pet Database • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
-            }
-        });
-    } catch (error) {
-        throw error;
+    if (statistic) {
+        messageContent.push(
+            { name: 'Rarity', value: statistic.rarity, inline: true },
+            { name: 'Role', value: statistic.role, inline: true },
+            { name: 'Attack type', value: statistic.attack_type, inline: true },
+            { name: 'HP', value: statistic.hp.toString(), inline: true },
+            { name: 'AD', value: statistic.ad.toString(), inline: true },
+            { name: 'AR', value: statistic.ar.toString(), inline: true },
+            { name: 'Mana', value: statistic.mana.toString(), inline: true },
+            { name: 'AP', value: statistic.ap.toString(), inline: true },
+            { name: 'MR', value: statistic.mr.toString(), inline: true }
+        );
     }
+
+    return embedMessage({
+        color: getRarityColor(statistic.rarity),
+        title: `${pet?.name} Information 🔍`,
+        thumbnail: { url: getUrlEmoji(pet.mezon_emoji_id) },
+        fields: messageContent,
+        footer: {
+            text: `📙 Ainz Ooal Gown • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
+        }
+    });
 };

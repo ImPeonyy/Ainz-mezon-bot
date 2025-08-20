@@ -1,9 +1,7 @@
 import { ERarityColor } from '@/constants/Enum';
 import { ParsedAction } from '@/constants/Type';
 
-export const extractFirstTokenWithAsterisk = (
-    content: string
-): string | null => {
+export const extractFirstTokenWithAsterisk = (content: string): string | null => {
     if (!content) return null;
 
     const match = content.match(/^\*\S+/);
@@ -37,24 +35,7 @@ export const getTargetFromMention = (content: string | null) => {
 };
 
 export const getRarityColor = (rarity: string): string => {
-    switch (rarity) {
-        case 'Common':
-            return ERarityColor.COMMON;
-        case 'Uncommon':
-            return ERarityColor.UNCOMMON;
-        case 'Rare':
-            return ERarityColor.RARE;
-        case 'Epic':
-            return ERarityColor.EPIC;
-        case 'Legendary':
-            return ERarityColor.LEGENDARY;
-        case 'Mythic':
-            return ERarityColor.MYTHIC;
-        case 'Limited':
-            return ERarityColor.LIMITED;
-        default:
-            return ERarityColor.COMMON; 
-    }
+    return ERarityColor[rarity.toUpperCase() as keyof typeof ERarityColor];
 };
 
 export const getUrlEmoji = (emojiId: string) => {
