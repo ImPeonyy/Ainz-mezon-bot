@@ -67,15 +67,7 @@ export const huntPetController = async (mezon_id: string) => {
                             yourPets.map((pet) => ({
                                 user_id: user.id,
                                 pet_id: pet.id,
-                                nickname: pet.name,
-                                level: 1,
-                                exp: 0,
-                                additional_hp: 0,
-                                additional_mana: 0,
-                                additional_ad: 0,
-                                additional_ap: 0,
-                                additional_ar: 0,
-                                additional_mr: 0
+                                nickname: pet.name
                             }))
                         );
                     });
@@ -112,15 +104,7 @@ export const huntPetController = async (mezon_id: string) => {
                             yourPets.map((pet) => ({
                                 user_id: user.id,
                                 pet_id: pet.id,
-                                nickname: pet.name,
-                                level: 1,
-                                exp: 0,
-                                additional_hp: 0,
-                                additional_mana: 0,
-                                additional_ad: 0,
-                                additional_ap: 0,
-                                additional_ar: 0,
-                                additional_mr: 0
+                                nickname: pet.name
                             }))
                         );
                     });
@@ -156,15 +140,7 @@ export const huntPetController = async (mezon_id: string) => {
                             yourPets.map((pet) => ({
                                 user_id: user.id,
                                 pet_id: pet.id,
-                                nickname: pet.name,
-                                level: 1,
-                                exp: 0,
-                                additional_hp: 0,
-                                additional_mana: 0,
-                                additional_ad: 0,
-                                additional_ap: 0,
-                                additional_ar: 0,
-                                additional_mr: 0
+                                nickname: pet.name
                             }))
                         );
                     });
