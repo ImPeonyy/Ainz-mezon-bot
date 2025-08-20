@@ -1,8 +1,7 @@
+import { ERarityColor } from '@/constants/Enum';
 import { ParsedAction } from '@/constants/Type';
 
-export const extractFirstTokenWithAsterisk = (
-    content: string
-): string | null => {
+export const extractFirstTokenWithAsterisk = (content: string): string | null => {
     if (!content) return null;
 
     const match = content.match(/^\*\S+/);
@@ -33,4 +32,12 @@ export const getTargetFromMention = (content: string | null) => {
     const target = content.slice(1);
 
     return target;
+};
+
+export const getRarityColor = (rarity: string): string => {
+    return ERarityColor[rarity.toUpperCase() as keyof typeof ERarityColor];
+};
+
+export const getUrlEmoji = (emojiId: string) => {
+    return `https://cdn.mezon.ai/emojis/${emojiId}.webp`;
 };

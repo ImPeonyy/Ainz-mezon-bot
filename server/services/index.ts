@@ -6,8 +6,8 @@ import {
 } from '@/services/userDailyActivity.service';
 import { createUserPet, createUserPets } from '@/services/userPet.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
+import { getPetDetail, getPets } from '@/services/pet.service';
 
-import { getPets } from '@/services/pet.service';
 import { getRarities } from '@/services/rarity.service';
 
 export {
@@ -18,6 +18,7 @@ export {
     createUser,
     getUser,
     updateUser,
+    getPetDetail,
     createUserDailyActivity,
     getTodayUserDailyActivity,
     updateUserDailyActivity,

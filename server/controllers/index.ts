@@ -3,13 +3,13 @@ import {
     getUserController,
     updateUserController
 } from './user.controller';
+import { dexController, huntPetController } from './pet.controller';
 import {
     getActionController,
     getActionGifController,
     getMemeController
 } from './misc.controller';
 
-import { huntPetController } from './pet.controller';
 import { dailyController } from './userDailyActivity.controller';
 
 export {
@@ -20,5 +20,6 @@ export {
     createUserController,
     updateUserController,
     getActionGifController,
+    dexController,
     dailyController
 };

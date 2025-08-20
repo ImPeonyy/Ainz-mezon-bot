@@ -4,13 +4,16 @@ import {
     emojiMessage,
     emojisMessage,
     getActionMessage,
+    getDexMessage,
     textMessage
 } from './message.util';
 import {
     extractFirstTokenWithAsterisk,
     getActorName,
     getTargetFromMention,
-    parseActionCommand
+    parseActionCommand,
+    getRarityColor,
+    getUrlEmoji
 } from './misc.util';
 import { getDailyReward, getMidnightRemainingTime } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
@@ -32,6 +35,9 @@ export {
     bagMessage,
     embedMessage,
     emojiMessage,
+    getDexMessage,
     getDailyReward,
-    getMidnightRemainingTime
+    getMidnightRemainingTime,
+    getRarityColor,
+    getUrlEmoji
 };

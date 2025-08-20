@@ -1,7 +1,15 @@
 import { ACTIONS, COMMANDS } from '@/constants/Commands';
-import { createUserController, dailyController, getUserController, huntPetController, updateUserController } from '@/controllers';
+import {
+    createUserController,
+    dexController,
+    getUserController,
+    huntPetController,
+    updateUserController,
+    dailyController
+} from '@/controllers';
 import { embedMessage, getActorName, getTargetFromMention, textMessage } from '@/utils';
 import { getActionGif, getMeme } from '@/services';
+
 import { EActionType } from '@/constants/Enum';
 
 export const getActionController = async (event: any, action: string, mentionTarget?: string | null) => {
@@ -45,6 +53,10 @@ export const getActionController = async (event: any, action: string, mentionTar
                 return huntPetPayload;
             }
 
+            if (action === COMMANDS.dex) {
+                const petDetailPayload = await dexController(mentionTarget || '');
+                return petDetailPayload;
+            }
             if (action === COMMANDS.daily) {
                 const dailyPayload = await dailyController(sender_id);
                 return dailyPayload;

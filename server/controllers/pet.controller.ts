@@ -2,6 +2,7 @@ import { LIMIT_PET_PER_HUNT, USE_DAILY_ACTIVITY } from '@/constants/Constant';
 import {
     createUserDailyActivity,
     createUserPets,
+    getPetDetail,
     getPets,
     getRarities,
     getTodayUserDailyActivity,
@@ -9,8 +10,7 @@ import {
     updateUser,
     updateUserDailyActivity
 } from '@/services';
-import { emojisMessage, huntCheck, huntPet, textMessage } from '@/utils';
-
+import { emojisMessage, huntCheck, huntPet, textMessage, getDexMessage } from '@/utils';
 import { Pet } from '@prisma/client';
 import { prisma } from '@/lib/db';
 
@@ -80,10 +80,7 @@ export const huntPetController = async (mezon_id: string) => {
                     return textMessage('Error when hunting pet!');
                 }
             }
-            if (
-                huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[2] &&
-                todayActivity
-            ) {
+            if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[2] && todayActivity) {
                 try {
                     await prisma.$transaction(async (tx) => {
                         await updateUserDailyActivity(
@@ -127,8 +124,7 @@ export const huntPetController = async (mezon_id: string) => {
                             },
                             {
                                 z_coin: {
-                                    decrement:
-                                        USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
+                                    decrement: USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
                                 }
                             }
                         );
@@ -158,6 +154,20 @@ export const huntPetController = async (mezon_id: string) => {
         return textMessage('Hunt pet failed!');
     } catch (error) {
         console.log('Error hunting pet:', error);
+        return textMessage('Internal server error');
+    }
+};
+
+export const dexController = async (petName: string) => {
+    try {
+        const pet = await getPetDetail(petName);
+        if (!pet) {
+            return textMessage('Pet not found!');
+        }
+        const dexMessagePayload = getDexMessage(pet);
+        return dexMessagePayload;
+    } catch (error) {
+        console.log('Error getting pet:', error);
         return textMessage('Internal server error');
     }
 };
