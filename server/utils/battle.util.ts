@@ -1,3 +1,4 @@
+import { IFPet } from "@/constants/Type";
 import { ETargetPosition } from "@prisma/client";
 
 export const manaAfterDealDamage = (hpBefore: number, hpAfter: number) => {
@@ -35,39 +36,75 @@ export const hpAfterDealDame = (
     return Math.max(0, currentHp - actualDamage);
 };
 
-export const getPositionHp = (targetHp: number[], isLowestHp: boolean) => {
-    const value = isLowestHp ? Math.min(...targetHp) : Math.max(...targetHp);
-    const index = targetHp.indexOf(value) + 1;
-    return { value, index };
+export const getPositionHp = (pets: IFPet[], isLowestHp: boolean, currentPosition: number) => {
+    let targetHp = isLowestHp ? Infinity : -Infinity;
+    let sameHpList: number[] = [];
+
+    const targetPositions = currentPosition % 2 === 1 ? [2, 4, 6] : [1, 3, 5];
+
+    pets.forEach((pet, i) => {
+        if (!pet.isAlive) return;
+
+        const currentHp = pet.stats.currentStats.hp;
+        const shouldUpdate = isLowestHp ? currentHp < targetHp : currentHp > targetHp;
+
+        if (shouldUpdate) {
+            targetHp = currentHp;
+            sameHpList = [targetPositions[i]];
+        } else if (currentHp === targetHp) {
+            sameHpList.push(targetPositions[i]);
+        }
+    });
+
+    const adjacentPosition = currentPosition % 2 === 1 ? currentPosition + 1 : currentPosition - 1;
+    if (sameHpList.includes(adjacentPosition)) {
+        return adjacentPosition;
+    }
+
+    return sameHpList.sort((a, b) =>
+        Math.abs(currentPosition - a) - Math.abs(currentPosition - b)
+    )[0];
 };
 
 export const getAttackPosition = (
     currentPosition: number,
     targetPosition: ETargetPosition,
-    targetHp?: number[]
+    pets?: IFPet[]
 ) => {
+    const enemyTargets = currentPosition % 2 === 1 ? [2, 4, 6] : [1, 3, 5];
+    const alivePositions = pets ? enemyTargets.filter((_, i) => pets[i]?.isAlive) : enemyTargets;
+
     switch (targetPosition) {
         case ETargetPosition.All:
-            return [1, 2, 3];
+            return alivePositions;
+
         case ETargetPosition.Random:
-            const randomPosition = Math.floor(Math.random() * 3) + 1;
-            return [randomPosition];
-        case ETargetPosition.Self:
-            return [currentPosition];
+            return [alivePositions[Math.floor(Math.random() * alivePositions.length)]]
+
         case ETargetPosition.LowestHP:
-            return targetHp ? [getPositionHp(targetHp, true).index] : [];
+            return pets ? [getPositionHp(pets, true, currentPosition)] : [];
+            
         case ETargetPosition.HighestHP:
-            return targetHp ? [getPositionHp(targetHp, false).index] : [];
+            return pets ? [getPositionHp(pets, false, currentPosition)] : [];
+
         case ETargetPosition.Nearest:
-            return currentPosition === 2 ? (Math.random() < 0.5 ? [1] : [3]) : [2];
+            const nearestPos = currentPosition + (currentPosition % 2 === 1 ? 1 : -1);
+            return alivePositions.includes(nearestPos) ? [nearestPos] : [alivePositions.sort((a, b) => Math.abs(currentPosition - a) - Math.abs(currentPosition - b))[0]];
+
         case ETargetPosition.Farthest:
-            if (currentPosition === 2) {
-                return Math.random() < 0.5 ? [1] : [3];
-            } else if (currentPosition === 1) {
-                return [3];
+            let farthestTargets: number[];
+            if (currentPosition === 1 || currentPosition === 6) {
+                farthestTargets = [currentPosition === 1 ? 6 : 1];
+            } else if (currentPosition === 2 || currentPosition === 5) {
+                farthestTargets = [currentPosition === 2 ? 5 : 2];
             } else {
-                return [1];
+                farthestTargets = currentPosition === 3 ? [2, 6] : [1, 5];
             }
+            
+            const aliveFarthest = farthestTargets.filter(pos => alivePositions.includes(pos));
+            return aliveFarthest.length > 0 ? [aliveFarthest[Math.floor(Math.random() * aliveFarthest.length)]] :
+                   [alivePositions.sort((a, b) => Math.abs(currentPosition - b) - Math.abs(currentPosition - a))[0]];
+
         default:
             return [];
     }
