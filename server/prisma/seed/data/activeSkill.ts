@@ -12,7 +12,6 @@ export type ActiveSkillSeed = {
     attack_type: EAttackType;
     damage?: number;
     attack_position?: ETargetPosition;
-    attack_target_count?: number;
 };
 
 export const seedActiveSkill = async () => {
@@ -30,8 +29,7 @@ export const seedActiveSkill = async () => {
                     mana_cost: activeSkill.mana_cost,
                     attack_type: activeSkill.attack_type,
                     damage: activeSkill.damage,
-                    attack_position: activeSkill.attack_position,
-                    attack_target_count: activeSkill.attack_target_count
+                    attack_position: activeSkill.attack_position
                 }
             });
         } else {
@@ -44,8 +42,7 @@ export const seedActiveSkill = async () => {
                     mana_cost: activeSkill.mana_cost,
                     attack_type: activeSkill.attack_type,
                     damage: activeSkill.damage,
-                    attack_position: activeSkill.attack_position,
-                    attack_target_count: activeSkill.attack_target_count
+                    attack_position: activeSkill.attack_position
                 }
             });
         }
@@ -53,6 +50,265 @@ export const seedActiveSkill = async () => {
 };
 
 export const activeSkillSeedData: ActiveSkillSeed[] = [
+    //Common
+    {
+        pet_id: 0,
+        name: 'Iron Fortress',
+        description: 'Biến thân thành pháo đài thép, tăng 30% DEF cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Unyielding Guard',
+        description: 'Tập trung sức mạnh, giảm 25% sát thương nhận vào cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Mystic Mirage',
+        description: 'Tự bao bọc bằng ảo ảnh, tăng 40% sát thương phép của bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Swamp Curse',
+        description: 'Hấp thụ sức mạnh đầm lầy, tăng 30% AP và có 20% cơ hội gây độc khi tấn công trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Dreamy Embrace',
+        description: 'Thiền định trong mộng, hồi 20% HP cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Moonlight Grace',
+        description: 'Ban phước ánh trăng, tăng 20% ATK và 15% tốc độ cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Phantom Hunt',
+        description: 'Tàng hình, tăng 40% ATK cho bản thân trong 1 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Shadow Ambush',
+        description: 'Rình rập trong bóng tối, tăng 50% ATK cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Savage Roar',
+        description: 'Cường hóa sức mạnh hoang dã, tăng 40% ATK cho bản thân trong 3 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Battle Spirit',
+        description: 'Khí thế chiến đấu, tăng 20% ATK cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 200,
+        attack_position: ETargetPosition.Self
+    },
+
+    //Uncommon
+    {
+        pet_id: 0,
+        name: 'Iron Fortress',
+        description: 'Biến thân thành pháo đài thép, tăng 30% DEF cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 205,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Unyielding Guard',
+        description: 'Tập trung sức mạnh, giảm 25% sát thương nhận vào cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 205,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Mystic Mirage',
+        description: 'Bao phủ ảo ảnh, tăng 40% sát thương phép cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 205,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Swamp Curse',
+        description: 'Hấp thụ sức mạnh đầm lầy, tăng 30% AP cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 205,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Dreamy Embrace',
+        description: 'Thiền định trong mộng, hồi 20% HP cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 205,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Moonlight Grace',
+        description: 'Ban phước ánh trăng, tăng 20% ATK cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 205,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Phantom Hunt',
+        description: 'Tàng hình, tăng 40% ATK cho bản thân trong 1 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 205,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Shadow Ambush',
+        description: 'Rình rập trong bóng tối, tăng 50% ATK cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 205,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Savage Roar',
+        description: 'Cường hóa sức mạnh hoang dã, tăng 40% ATK cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 100,
+        attack_position: ETargetPosition.Self
+    },
+    {
+        pet_id: 0,
+        name: 'Battle Spirit',
+        description: 'Khí thế chiến đấu, tăng 20% ATK cho bản thân trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 0,
+        attack_position: ETargetPosition.Self
+    },
+    //Epic
+    {
+        pet_id: 0,
+        name: 'Venomous Curse',
+        description:
+            'Hơi thở độc hại bao phủ chiến trường, gây 175% AP cho 3 mục tiêu, kèm 20% cơ hội Poison trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 175,
+        attack_position: ETargetPosition.Random
+    },
+    {
+        pet_id: 0,
+        name: 'Hellfire Fang',
+        description: 'Cú cắn bùng cháy địa ngục, gây 175% ATK cho 3 mục tiêu, đồng thời thiêu đốt (Burn) trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 175,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Dragon’s Wrath',
+        description: 'Phun lửa dữ dội, gây 175% AP cho 3 mục tiêu.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 175,
+        attack_position: ETargetPosition.Random
+    },
+    {
+        pet_id: 0,
+        name: 'Storm Dive',
+        description: 'Lao xuống như cơn bão, gây 192% ATK cho 2 mục tiêu.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 192,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Toxic Torrent',
+        description: 'Cơn lũ độc phun trào, gây 175% AP cho 3 mục tiêu, có 25% cơ hội Poison trong 2 lượt.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 175,
+        attack_position: ETargetPosition.Random
+    },
+    {
+        pet_id: 0,
+        name: 'Deadly Barrage',
+        description: 'Vung đuôi liên hoàn, gây 175% ATK cho 3 mục tiêu.',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 175,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Rebirth Flame',
+        description: 'Lửa tái sinh thiêu đốt, gây 192% AP cho 2 mục tiêu và hồi 20% HP cho bản thân.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 192,
+        attack_position: ETargetPosition.Random
+    },
+    {
+        pet_id: 0,
+        name: 'Miracle Light',
+        description: 'Hào quang thần diệu quét qua, gây 192% AP cho 2 mục tiêu và hồi 25% HP cho bản thân.',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 192,
+        attack_position: ETargetPosition.Random
+    },
+
+    //Legendary
     {
         pet_id: 9,
         name: 'Fatal Strike',
@@ -61,8 +317,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 235,
-        attack_position: ETargetPosition.LowestHP,
-        attack_target_count: 1
+        attack_position: ETargetPosition.LowestHP
     },
     {
         pet_id: 10,
@@ -80,8 +335,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 185,
-        attack_position: ETargetPosition.All,
-        attack_target_count: 3
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 12,
@@ -99,8 +353,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 185,
-        attack_position: ETargetPosition.All,
-        attack_target_count: 3
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 14,
@@ -110,8 +363,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 200,
-        attack_position: ETargetPosition.HighestHP,
-        attack_target_count: 2
+        attack_position: ETargetPosition.HighestHP
     },
     {
         pet_id: 15,
@@ -121,8 +373,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 235,
-        attack_position: ETargetPosition.Random,
-        attack_target_count: 1
+        attack_position: ETargetPosition.Random
     },
     {
         pet_id: 16,
@@ -140,8 +391,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 240,
-        attack_position: ETargetPosition.LowestHP,
-        attack_target_count: 1
+        attack_position: ETargetPosition.LowestHP
     },
     {
         pet_id: 18,
@@ -151,8 +401,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 185,
-        attack_position: ETargetPosition.All,
-        attack_target_count: 3
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 19,
