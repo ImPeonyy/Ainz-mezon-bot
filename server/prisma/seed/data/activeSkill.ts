@@ -238,7 +238,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         pet_id: 0,
         name: 'Venomous Curse',
         description:
-            'Hơi thở độc hại bao phủ chiến trường, gây 175% AP cho 3 mục tiêu, kèm 20% cơ hội Poison trong 2 lượt.',
+            'Hơi thở độc hại bao phủ chiến trường, gây 175% AP cho 3 mục tiêu, kèm 20% cơ hội Poison trong 2 lượt',
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 175,
@@ -247,7 +247,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
     {
         pet_id: 0,
         name: 'Hellfire Fang',
-        description: 'Cú cắn bùng cháy địa ngục, gây 175% ATK cho 3 mục tiêu, đồng thời thiêu đốt (Burn) trong 2 lượt.',
+        description: 'Cú cắn bùng cháy địa ngục, gây 175% ATK cho 3 mục tiêu, đồng thời thiêu đốt mỗi mục tiêu mất thêm 10% HP trong 2 lượt',
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 175,
@@ -256,7 +256,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
     {
         pet_id: 0,
         name: 'Dragon’s Wrath',
-        description: 'Phun lửa dữ dội, gây 175% AP cho 3 mục tiêu.',
+        description: 'Phun lửa dữ dội, gây 175% AP cho 3 mục tiêu, đồng thời giảm 10% ATK của mục tiêu trong 2 lượt',
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 175,
@@ -265,16 +265,16 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
     {
         pet_id: 0,
         name: 'Storm Dive',
-        description: 'Lao xuống như cơn bão, gây 192% ATK cho 2 mục tiêu.',
+        description: 'Lao xuống như cơn bão, gây 175% ATK cho 3 mục tiêu, đồng thời tăng 15% ATK cho bản thân trong 2 lượt',
         mana_cost: 100,
         attack_type: EAttackType.Physical,
-        damage: 192,
+        damage: 175,
         attack_position: ETargetPosition.Nearest
     },
     {
         pet_id: 0,
         name: 'Toxic Torrent',
-        description: 'Cơn lũ độc phun trào, gây 175% AP cho 3 mục tiêu, có 25% cơ hội Poison trong 2 lượt.',
+        description: 'Cơn lũ độc phun trào, gây 175% AP cho 3 mục tiêu, đồng thời hồi 10% HP cho Hydra mỗi mục tiêu trúng',
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 175,
@@ -283,7 +283,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
     {
         pet_id: 0,
         name: 'Deadly Barrage',
-        description: 'Vung đuôi liên hoàn, gây 175% ATK cho 3 mục tiêu.',
+        description: 'Vung đuôi liên hoàn, gây 175% ATK cho 3 mục tiêu, đồng thời giảm 15% DEF của mục tiêu trong 2 lượt',
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 175,
@@ -292,19 +292,19 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
     {
         pet_id: 0,
         name: 'Rebirth Flame',
-        description: 'Lửa tái sinh thiêu đốt, gây 192% AP cho 2 mục tiêu và hồi 20% HP cho bản thân.',
+        description: 'Lửa tái sinh thiêu đốt, gây 175% AP cho 3 mục tiêu, đồng thời hồi 20% HP cho bản thân',
         mana_cost: 100,
         attack_type: EAttackType.Magical,
-        damage: 192,
+        damage: 175,
         attack_position: ETargetPosition.Random
     },
     {
         pet_id: 0,
         name: 'Miracle Light',
-        description: 'Hào quang thần diệu quét qua, gây 192% AP cho 2 mục tiêu và hồi 25% HP cho bản thân.',
+        description: 'Hào quang thần diệu tấn công 175% AP cho 3 mục tiêu, đồng thời hồi 25% HP cho bản thân',
         mana_cost: 100,
         attack_type: EAttackType.Magical,
-        damage: 192,
+        damage: 175,
         attack_position: ETargetPosition.Random
     },
 

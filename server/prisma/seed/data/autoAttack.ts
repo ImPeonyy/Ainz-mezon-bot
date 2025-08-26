@@ -214,23 +214,23 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
     {
         pet_id: 0,
         name: 'Triple Bite',
-        description: 'Ba cái đầu đồng loạt táp, gây 92% ATK cho 2 mục tiêu.',
-        damage: 92,
+        description: 'Dùng 3 đầu cắn, gây 75% ATK cho 3 mục tiêu',
+        damage: 75,
         attack_type: EAttackType.Physical,
         attack_position: ETargetPosition.Nearest
     },
     {
         pet_id: 0,
         name: 'Fire Breath',
-        description: 'Hơi thở rực lửa, gây 92% AP cho 2 mục tiêu.',
-        damage: 92,
+        description: 'Hơi thở rực lửa, gây 75% AP cho 3 mục tiêu',
+        damage: 75,
         attack_type: EAttackType.Magical,
         attack_position: ETargetPosition.Random
     },
     {
         pet_id: 0,
         name: 'Sky Slash',
-        description: 'Cánh vuốt từ bầu trời, gây 125% ATK cho 1 mục tiêu.',
+        description: 'Cánh vuốt từ bầu trời, gây 125% ATK cho 1 mục tiêu',
         damage: 125,
         attack_type: EAttackType.Physical,
         attack_position: ETargetPosition.Nearest
@@ -238,15 +238,15 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
     {
         pet_id: 0,
         name: 'Multi-Head Strike',
-        description: 'Những cái đầu đồng loạt tấn công, gây 92% AP cho 2 mục tiêu.',
-        damage: 92,
+        description: 'Những cái đầu đồng loạt tấn công, gây 75% AP cho 3 mục tiêu',
+        damage: 75,
         attack_type: EAttackType.Magical,
         attack_position: ETargetPosition.Random
     },
     {
         pet_id: 0,
         name: 'Tail Pierce',
-        description: 'Cú đâm bằng đuôi tẩm nọc, gây 125% ATK cho 1 mục tiêu.',
+        description: 'Cú đâm bằng đuôi tẩm nọc, gây 125% ATK cho 1 mục tiêu',
         damage: 125,
         attack_type: EAttackType.Physical,
         attack_position: ETargetPosition.Nearest
@@ -254,8 +254,8 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
     {
         pet_id: 0,
         name: 'Flame Wing',
-        description: 'Vỗ cánh rực lửa, gây 92% AP cho 2 mục tiêu.',
-        damage: 92,
+        description: 'Quạt lửa, gây 75% AP cho 3 mục tiêu',
+        damage: 75,
         attack_type: EAttackType.Magical,
         attack_position: ETargetPosition.Random
     },
