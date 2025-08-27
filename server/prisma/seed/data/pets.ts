@@ -41,6 +41,150 @@ export const seedPets = async () => {
 };
 
 export const petSeedData: PetSeed[] = [
+    //Common
+    {
+        name: 'Elephant',
+        mezon_emoji_id: '7364683133987522279',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Rhinoceros',
+        mezon_emoji_id: '7364683316891742229',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Raccoon',
+        mezon_emoji_id: '7364683587207230928',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Frog',
+        mezon_emoji_id: '7364683675713254522',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Koala',
+        mezon_emoji_id: '7364683826746947317',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Rabbit',
+        mezon_emoji_id: '7364683964909625004',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Chameleon',
+        mezon_emoji_id: '7364684113642914837',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Ferret',
+        mezon_emoji_id: '7364684218516359305',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Boar',
+        mezon_emoji_id: '7364684386591267766',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+    {
+        name: 'Ram Sheep',
+        mezon_emoji_id: '7364684441621524749',
+        description: 'Coming soon',
+        statistic_id: 1,
+        rarity_id: 1
+    },
+
+    //Uncommon
+    {
+        name: 'Panda',
+        mezon_emoji_id: '7364686710908002637',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Pig',
+        mezon_emoji_id: '7364686809690789368',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Salamander',
+        mezon_emoji_id: '7364686968840447654',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Fox',
+        mezon_emoji_id: '7364686917436380728',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Butterfly',
+        mezon_emoji_id: '7364687323743528711',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Dolphin',
+        mezon_emoji_id: '7364687366039926281',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Scorpion',
+        mezon_emoji_id: '7364687596644916336',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Eagle',
+        mezon_emoji_id: '7364688014495286891',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Dino',
+        mezon_emoji_id: '7364691858330166336',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+    {
+        name: 'Lion',
+        mezon_emoji_id: '7364691886664733553',
+        description: 'Coming soon',
+        statistic_id: 2,
+        rarity_id: 2
+    },
+
     // Mythical Creatures (Epic)
     {
         name: 'Basilisk',
