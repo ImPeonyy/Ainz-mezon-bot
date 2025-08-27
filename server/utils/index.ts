@@ -18,6 +18,7 @@ import {
 import { getDailyReward, getMidnightRemainingTime } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
+import { getHelpMessage } from './help.util';
 import { manaAfterDealDamage } from './battle.util';
 
 export {
@@ -41,5 +42,6 @@ export {
     getMidnightRemainingTime,
     getRarityColor,
     getUrlEmoji,
+    getHelpMessage,
     manaAfterDealDamage
 };

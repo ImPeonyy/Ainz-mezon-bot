@@ -7,7 +7,8 @@ export const COMMANDS = {
     meme: 'meme',
     hunt: 'hunt',
     dex: 'dex',
-    daily: 'daily'
+    daily: 'daily',
+    help: 'help'
 };
 
 export const ACTIONS = {
@@ -56,161 +57,128 @@ export const ACTIONS = {
     // INTERACTIVE ACTIONS
     baka: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang chửi ${target} là m ngu !`
+        getMessage: (user: string, target?: string) => `${user} đang chửi ${target} là m ngu !`
     },
     laugh: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang cười vào mặt ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang cười vào mặt ${target}!`
     },
     lurk: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang lén lút nhìn ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang lén lút nhìn ${target}!`
     },
     nod: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đồng ý với ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đồng ý với ${target}!`
     },
     nope: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} không đồng ý với ${target}!`
+        getMessage: (user: string, target?: string) => `${user} không đồng ý với ${target}!`
     },
     stare: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang nhìn chằm chằm ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang nhìn chằm chằm ${target}!`
     },
     thumbsup: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã tặng cho ${target} 1 like !`
+        getMessage: (user: string, target?: string) => `${user} đã tặng cho ${target} 1 like !`
     },
     wave: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang đã vẫy tay với ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang đã vẫy tay với ${target}!`
     },
     wink: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang nháy mắt với ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang nháy mắt với ${target}!`
     },
     yeet: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã ném ${target} ra chuồng gà!`
+        getMessage: (user: string, target?: string) => `${user} đã ném ${target} ra chuồng gà!`
     },
     bite: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang cắn ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang cắn ${target}!`
     },
     cuddle: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã tặng cho ${target} 1 cái ôm!`
+        getMessage: (user: string, target?: string) => `${user} đã tặng cho ${target} 1 cái ôm!`
     },
     feed: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang đút cho ${target} ăn!`
+        getMessage: (user: string, target?: string) => `${user} đang đút cho ${target} ăn!`
     },
     handhold: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang nắm tay ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang nắm tay ${target}!`
     },
     handshake: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang bắt tay với ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang bắt tay với ${target}!`
     },
     highfive: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã đập tay với ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đã đập tay với ${target}!`
     },
     hug: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã ôm ${target} một cái thật chặt!`
+        getMessage: (user: string, target?: string) => `${user} đã ôm ${target} một cái thật chặt!`
     },
     kick: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã đá vào mặt ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đã đá vào mặt ${target}!`
     },
     kiss: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang hôn ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang hôn ${target}!`
     },
     pat: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang xoa đầu ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang xoa đầu ${target}!`
     },
     peck: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã hôn nhẹ lên má của ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đã hôn nhẹ lên má của ${target}!`
     },
     poke: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang chọc ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang chọc ${target}!`
     },
     punch: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã đấm vào mặt ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đã đấm vào mặt ${target}!`
     },
     shoot: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã bắn vào mặt ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đã bắn vào mặt ${target}!`
     },
     slap: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đã tát vào mặt ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đã tát vào mặt ${target}!`
     },
     tickle: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang cù ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đang cù ${target}!`
     },
     shrug: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) =>
-            `${user} đang không biết nói gì!`
+        getMessage: (user: string, target?: string) => `${user} đang không biết nói gì!`
     },
 
     // FLEXIBLE ACTIONS
     angry: {
         type: EActionType.FLEXIBLE,
         getMessage: (user: string, target?: string) =>
-            target
-                ? `${user} đang nổi giận với ${target}!`
-                : `${user} đang rất tức giận!`
+            target ? `${user} đang nổi giận với ${target}!` : `${user} đang rất tức giận!`
     },
     dance: {
         type: EActionType.FLEXIBLE,
         getMessage: (user: string, target?: string) =>
-            target
-                ? `${user} đang nhảy với ${target}!`
-                : `${user} đang nhảy trong sự cô đơn!`
+            target ? `${user} đang nhảy với ${target}!` : `${user} đang nhảy trong sự cô đơn!`
     },
     facepalm: {
         type: EActionType.FLEXIBLE,
         getMessage: (user: string, target?: string) =>
-            target
-                ? `${user} đang cảm thấy thất vọng về ${target}!`
-                : `${user} đang cảm thấy thất vọng!`
+            target ? `${user} đang cảm thấy thất vọng về ${target}!` : `${user} đang cảm thấy thất vọng!`
     },
     pout: {
         type: EActionType.FLEXIBLE,
@@ -220,8 +188,6 @@ export const ACTIONS = {
     smile: {
         type: EActionType.FLEXIBLE,
         getMessage: (user: string, target?: string) =>
-            target
-                ? `${user} đang mỉm cười với ${target}!`
-                : `${user} đang mỉm cười!`
+            target ? `${user} đang mỉm cười với ${target}!` : `${user} đang mỉm cười!`
     }
 };

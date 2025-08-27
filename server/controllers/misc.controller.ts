@@ -7,7 +7,7 @@ import {
     updateUserController,
     dailyController
 } from '@/controllers';
-import { embedMessage, getActorName, getTargetFromMention, textMessage } from '@/utils';
+import { embedMessage, getActorName, getTargetFromMention, textMessage, getHelpMessage } from '@/utils';
 import { getActionGif, getMeme } from '@/services';
 
 import { EActionType } from '@/constants/Enum';
@@ -57,9 +57,15 @@ export const getActionController = async (event: any, action: string, mentionTar
                 const petDetailPayload = await dexController(mentionTarget || '');
                 return petDetailPayload;
             }
+
             if (action === COMMANDS.daily) {
                 const dailyPayload = await dailyController(sender_id);
                 return dailyPayload;
+            }
+
+            if (action === COMMANDS.help) {
+                const helpPayload = await getHelpController();
+                return helpPayload;
             }
         }
 
@@ -161,6 +167,16 @@ export const getActionGifController = async (actor: string, actionType: string, 
         });
     } catch (error) {
         console.error('Error getting action gif:', error);
+        return textMessage('Internal server error');
+    }
+};
+
+export const getHelpController = () => {
+    try {
+        const helpMessage = getHelpMessage();
+        return helpMessage;
+    } catch (error) {
+        console.error('Error getting help message:', error);
         return textMessage('Internal server error');
     }
 };
