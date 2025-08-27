@@ -11,13 +11,13 @@ CREATE TYPE "EElemental" AS ENUM ('Metal', 'Wood', 'Water', 'Fire', 'Earth');
 CREATE TYPE "ERarity" AS ENUM ('Uncommon', 'Common', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Limited');
 
 -- CreateEnum
-CREATE TYPE "ETargetPosition" AS ENUM ('Front', 'Back', 'All', 'Random', 'Self', 'LowestHP', 'HighestHP', 'Nearest', 'Farthest');
+CREATE TYPE "ETargetPosition" AS ENUM ('All', 'Random', 'Self', 'LowestHP', 'HighestHP', 'Nearest', 'Farthest');
 
 -- CreateEnum
 CREATE TYPE "EEffectTarget" AS ENUM ('Ally', 'Enemy');
 
 -- CreateEnum
-CREATE TYPE "EEffect" AS ENUM ('Heal', 'DOT', 'BuffStat', 'DebuffStat', 'RemoveBuff', 'RemoveDebuff', 'Silence', 'ReducedHealing', 'LifeSteal', 'Revive', 'Thorns');
+CREATE TYPE "EEffect" AS ENUM ('Heal', 'DOT', 'BuffStat', 'DebuffStat', 'RemoveBuff', 'RemoveDebuff', 'Silence', 'ReducedHealing', 'LifeSteal', 'Revive');
 
 -- CreateEnum
 CREATE TYPE "EStat" AS ENUM ('Hp', 'Mana', 'Atk', 'Def');
@@ -30,7 +30,7 @@ CREATE TABLE "User" (
     "z_coin" INTEGER NOT NULL DEFAULT 0,
     "exp" INTEGER NOT NULL DEFAULT 0,
     "level" INTEGER NOT NULL DEFAULT 1,
-    "avatar" TEXT NOT NULL DEFAULT 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfmEu4YN6-g4qQAnwyk7fx0YF5QrVvPM8rAw&s',
+    "avatar" TEXT NOT NULL DEFAULT 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/spider-gwen-DLOjzOblyRzNGEngmQMOdf9VCWni6V.jpeg',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -41,7 +41,8 @@ CREATE TABLE "User" (
 CREATE TABLE "UserDailyActivities" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
-    "daily" INTEGER,
+    "daily" INTEGER NOT NULL DEFAULT 0,
+    "hunt" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -70,7 +71,6 @@ CREATE TABLE "AutoAttack" (
     "damage" INTEGER NOT NULL,
     "attack_type" "EAttackType" NOT NULL,
     "attack_position" "ETargetPosition" NOT NULL,
-    "target_count" INTEGER NOT NULL DEFAULT 1,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -83,11 +83,6 @@ CREATE TABLE "PassiveSkill" (
     "pet_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "effect_target" "EEffectTarget" NOT NULL,
-    "target_position" "ETargetPosition" NOT NULL,
-    "target_count" INTEGER NOT NULL DEFAULT 1,
-    "effect" "EEffect" NOT NULL,
-    "effect_stat" "EStat",
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -101,18 +96,47 @@ CREATE TABLE "ActiveSkill" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "mana_cost" INTEGER NOT NULL,
-    "attack_type" "EAttackType" NOT NULL,
-    "attack_position" "ETargetPosition" NOT NULL,
-    "attack_target_count" INTEGER NOT NULL DEFAULT 1,
-    "effect_target" "EEffectTarget",
-    "effect_target_position" "ETargetPosition",
-    "effect_target_count" INTEGER DEFAULT 1,
-    "effect" "EEffect",
-    "effect_stat" "EStat",
+    "attack_type" "EAttackType",
+    "damage" INTEGER,
+    "attack_position" "ETargetPosition",
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ActiveSkill_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ActiveSkillEffect" (
+    "id" SERIAL NOT NULL,
+    "active_skill_id" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "effect_target" "EEffectTarget" NOT NULL,
+    "effect_target_position" "ETargetPosition" NOT NULL,
+    "effect" "EEffect" NOT NULL,
+    "effect_stat" "EStat",
+    "value" INTEGER NOT NULL DEFAULT 0,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ActiveSkillEffect_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PassiveSkillEffect" (
+    "id" SERIAL NOT NULL,
+    "passive_skill_id" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "effect_target" "EEffectTarget" NOT NULL,
+    "effect_target_position" "ETargetPosition" NOT NULL,
+    "effect" "EEffect" NOT NULL,
+    "effect_stat" "EStat",
+    "value" INTEGER NOT NULL DEFAULT 0,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PassiveSkillEffect_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -145,6 +169,7 @@ CREATE TABLE "Pet" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "mezon_emoji_id" TEXT NOT NULL,
+    "avatar" TEXT,
     "description" TEXT,
     "statistic_id" INTEGER NOT NULL,
     "rarity_id" INTEGER NOT NULL,
@@ -162,12 +187,12 @@ CREATE TABLE "UserPet" (
     "nickname" TEXT,
     "level" INTEGER NOT NULL DEFAULT 1,
     "exp" INTEGER NOT NULL DEFAULT 0,
-    "additional_hp" INTEGER NOT NULL,
-    "additional_mana" INTEGER NOT NULL,
-    "additional_ad" INTEGER NOT NULL,
-    "additional_ap" INTEGER NOT NULL,
-    "additional_ar" INTEGER NOT NULL,
-    "additional_mr" INTEGER NOT NULL,
+    "additional_hp" INTEGER NOT NULL DEFAULT 0,
+    "additional_mana" INTEGER NOT NULL DEFAULT 0,
+    "additional_ad" INTEGER NOT NULL DEFAULT 0,
+    "additional_ap" INTEGER NOT NULL DEFAULT 0,
+    "additional_ar" INTEGER NOT NULL DEFAULT 0,
+    "additional_mr" INTEGER NOT NULL DEFAULT 0,
     "lock" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -220,6 +245,12 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 CREATE UNIQUE INDEX "User_mezon_id_key" ON "User"("mezon_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Rarity_name_key" ON "Rarity"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Rarity_mezon_emoji_id_key" ON "Rarity"("mezon_emoji_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "AutoAttack_pet_id_key" ON "AutoAttack"("pet_id");
 
 -- CreateIndex
@@ -227,6 +258,12 @@ CREATE UNIQUE INDEX "PassiveSkill_pet_id_key" ON "PassiveSkill"("pet_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ActiveSkill_pet_id_key" ON "ActiveSkill"("pet_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Pet_name_key" ON "Pet"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Pet_mezon_emoji_id_key" ON "Pet"("mezon_emoji_id");
 
 -- AddForeignKey
 ALTER TABLE "UserDailyActivities" ADD CONSTRAINT "UserDailyActivities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -239,6 +276,12 @@ ALTER TABLE "PassiveSkill" ADD CONSTRAINT "PassiveSkill_pet_id_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "ActiveSkill" ADD CONSTRAINT "ActiveSkill_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ActiveSkillEffect" ADD CONSTRAINT "ActiveSkillEffect_active_skill_id_fkey" FOREIGN KEY ("active_skill_id") REFERENCES "ActiveSkill"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PassiveSkillEffect" ADD CONSTRAINT "PassiveSkillEffect_passive_skill_id_fkey" FOREIGN KEY ("passive_skill_id") REFERENCES "PassiveSkill"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pet" ADD CONSTRAINT "Pet_statistic_id_fkey" FOREIGN KEY ("statistic_id") REFERENCES "Statistics"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
