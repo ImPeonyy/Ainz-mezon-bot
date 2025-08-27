@@ -5,7 +5,8 @@ import {
     getUserController,
     huntPetController,
     updateUserController,
-    dailyController
+    dailyController,
+    battleController
 } from '@/controllers';
 import { embedMessage, getActorName, getTargetFromMention, textMessage, getHelpMessage } from '@/utils';
 import { getActionGif, getMeme } from '@/services';
@@ -61,6 +62,11 @@ export const getActionController = async (event: any, action: string, mentionTar
             if (action === COMMANDS.daily) {
                 const dailyPayload = await dailyController(sender_id);
                 return dailyPayload;
+            }
+
+            if (action === COMMANDS.battle) {
+                const battlePayload = await battleController();
+                return battlePayload;
             }
 
             if (action === COMMANDS.help) {

@@ -27,3 +27,32 @@ export const createUserPets = async (
         throw error;
     }
 };
+
+export const getRandomUserPets = async (prismaClient: PrismaClient | Prisma.TransactionClient) => {
+    try {
+        const userPets = await prismaClient.userPet.findMany({
+            include: {
+                pet: {
+                    include: {
+                        statistic: true,
+                        rarity: true,
+                        autoAttack: true,
+                        passiveSkill: true,
+                        activeSkill: true
+                    }
+                }
+            }
+        });
+
+        if (userPets.length <= 3) {
+            return userPets;
+        }
+
+        const shuffled = userPets.sort(() => 0.5 - Math.random());
+
+        return shuffled.slice(0, 3);
+    } catch (error) {
+        console.error('Error getting random user pets:', error);
+        throw error;
+    }
+};

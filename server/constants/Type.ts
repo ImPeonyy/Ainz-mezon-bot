@@ -1,4 +1,4 @@
-import { EEffect } from '@prisma/client';
+import { EAttackType, EEffect, ETargetPosition } from '@prisma/client';
 
 export interface IMeme {
     postLink: string;
@@ -42,20 +42,22 @@ export interface IFStats {
 }
 
 export interface IFPet {
+    position: number;
+    isAlive: boolean;
     info: {
         nickname: string;
         level: number;
         autoAttack: {
             damage: number;
-            attackType: string;
-            attackPosition: string;
+            attackType: EAttackType;
+            attackPosition: ETargetPosition;
         };
         passiveSkill: {};
         activeSkill: {
             damage: number;
             manaCost: number;
-            attackType: string;
-            attackPosition: string;
+            attackType: EAttackType | null;
+            attackPosition: ETargetPosition | null;
             effects: IFEffectValue[];
         };
     };
@@ -69,13 +71,13 @@ export interface IFPet {
 export interface IFight {
     turn: number;
     teamA: {
-        AX: IFPet;
-        AY: IFPet;
-        AZ: IFPet;
+        1: IFPet;
+        3: IFPet;
+        5: IFPet;
     };
     teamB: {
-        BX: IFPet;
-        BY: IFPet;
-        BZ: IFPet;
+        2: IFPet;
+        4: IFPet;
+        6: IFPet;
     };
 }
