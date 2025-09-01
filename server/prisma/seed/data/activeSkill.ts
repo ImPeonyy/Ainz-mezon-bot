@@ -230,9 +230,57 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         description: 'Khí thế chiến đấu, tăng 20% ATK cho bản thân trong 2 lượt.',
         mana_cost: 100,
         attack_type: EAttackType.Physical,
+        damage: 100,
+        attack_position: ETargetPosition.Self
+    },
+
+    //Rare
+    {
+        pet_id: 0,
+        name: 'Iron Quill Shield',
+        description: 'Xù toàn bộ lông nhọn và co người lại, tăng 30% DEF cho bản thân trong 3 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
         damage: 0,
         attack_position: ETargetPosition.Self
     },
+    {
+        pet_id: 0,
+        name: 'Frozen Wave',
+        description: 'Xù toàn bộ lông nhọn và co người lại, tăng 30% DEF cho bản thân trong 3 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 0,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Night Wisdom',
+        description: 'Xù toàn bộ lông nhọn và co người lại, tăng 30% DEF cho bản thân trong 3 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 0,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Hive Fury',
+        description: 'Xù toàn bộ lông nhọn và co người lại, tăng 30% DEF cho bản thân trong 3 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 0,
+        attack_position: ETargetPosition.Random
+    },
+    {
+        pet_id: 0,
+        name: 'Tidal Blessing',
+        description: 'Gọi sức mạnh biển cả, hồi 225% AP máu cho 1 đồng minh',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 225,
+        attack_position: ETargetPosition.LowestHP
+    },
+
     //Epic
     {
         pet_id: 0,
@@ -242,16 +290,17 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 175,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
         name: 'Hellfire Fang',
-        description: 'Cú cắn bùng cháy địa ngục, gây 175% ATK cho 3 mục tiêu, đồng thời thiêu đốt mỗi mục tiêu mất thêm 10% HP trong 2 lượt',
+        description:
+            'Cú cắn bùng cháy địa ngục, gây 175% ATK cho 3 mục tiêu, đồng thời thiêu đốt mỗi mục tiêu mất thêm 10% HP trong 2 lượt',
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 175,
-        attack_position: ETargetPosition.Nearest
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
@@ -260,34 +309,37 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 175,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
         name: 'Storm Dive',
-        description: 'Lao xuống như cơn bão, gây 175% ATK cho 3 mục tiêu, đồng thời tăng 15% ATK cho bản thân trong 2 lượt',
+        description:
+            'Lao xuống như cơn bão, gây 175% ATK cho 3 mục tiêu, đồng thời tăng 15% ATK cho bản thân trong 2 lượt',
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 175,
-        attack_position: ETargetPosition.Nearest
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
         name: 'Toxic Torrent',
-        description: 'Cơn lũ độc phun trào, gây 175% AP cho 3 mục tiêu, đồng thời hồi 10% HP cho Hydra mỗi mục tiêu trúng',
+        description:
+            'Cơn lũ độc phun trào, gây 175% AP cho 3 mục tiêu, đồng thời hồi 10% HP cho Hydra mỗi mục tiêu trúng',
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 175,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
         name: 'Deadly Barrage',
-        description: 'Vung đuôi liên hoàn, gây 175% ATK cho 3 mục tiêu, đồng thời giảm 15% DEF của mục tiêu trong 2 lượt',
+        description:
+            'Vung đuôi liên hoàn, gây 175% ATK cho 3 mục tiêu, đồng thời giảm 15% DEF của mục tiêu trong 2 lượt',
         mana_cost: 100,
         attack_type: EAttackType.Physical,
         damage: 175,
-        attack_position: ETargetPosition.Nearest
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
@@ -296,7 +348,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 175,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
@@ -305,7 +357,7 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
         mana_cost: 100,
         attack_type: EAttackType.Magical,
         damage: 175,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
 
     //Legendary
@@ -418,5 +470,115 @@ export const activeSkillSeedData: ActiveSkillSeed[] = [
             'Hợi hóa thành tấm chắn kiên cường, tăng 20% DEF cho toàn bộ đồng minh và đồng thời Hợi còn hồi phục 10% HP tối đa cho bản thân mỗi lượt trong 2 lượt.',
         mana_cost: 100,
         attack_type: EAttackType.Physical
+    },
+
+    //Mythic
+    {
+        pet_id: 0,
+        name: 'Burning Rush',
+        description: 'Lao tới trong ngọn lửa, gây 245% ATK cho 1 mục tiêu và làm choáng 2 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 245,
+        attack_position: ETargetPosition.Random
+    },
+    {
+        pet_id: 0,
+        name: 'Iron Hide',
+        description: 'Tăng 40% DEF cho toàn đội trong 2 lượt, đồng thời gây 190% ATK sát thương và trừ thêm 10% HP cho 3 mục tiêu',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Mirror Illusion',
+        description: 'Triệu hồi bản sao, gây 190% ATK cho 3 mục tiêu và giảm 15% HP của chúng trong 2 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Shell Sanctuary',
+        description: 'Hồi 190% AP máu cho 3 đồng minh ngẫu nhiên và tăng 15% DEF trong 2 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Roar of Kings',
+        description: 'Gầm vang, gây 190% ATK cho 3 mục tiêu, đồng thời tăng 20% ATK toàn đội trong 2 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Sacred Light',
+        description: 'Ánh sáng tinh khiết, hồi 190% AP máu cho 3 đồng minh ngẫu nhiên và xóa 1 debuff',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Judgment',
+        description: 'Phán quyết công lý, gây 190% ATK cho 3 mục tiêu và giảm 20% ATK của chúng trong 2 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Death Sting',
+        description:'Cú chích chết người, gây 245% ATK cho 1 mục tiêu và khiến mục tiêu mất thêm 5% HP mỗi lượt trong 2 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 245,
+        attack_position: ETargetPosition.Random
+    },
+    {
+        pet_id: 0,
+        name: 'Meteor Arrow',
+        description: 'Mưa tên sao băng, gây 190% ATK cho 3 mục tiêu và giảm 10% HP của chúng trong 2 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Stone Guardian',
+        description: 'Triệu hồi sức mạnh núi đá, gây 190% ATK sát thương lên 3 mục tiêu, đồng thời tăng 30% DEF cho toàn đội trong 3 lượt và tạo 1 lá chắn = 15% HP tối đa',
+        mana_cost: 100,
+        attack_type: EAttackType.Physical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Wave of Life',
+        description:'Dội dòng chảy sự sống, hồi 190% AP máu cho 3 đồng minh ngẫu nhiên và tăng 10% HP cho toàn đội trong 2 lượt',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 190,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Ocean’s Embrace',
+        description: 'Sóng cả bao phủ, hồi 190% AP máu cho 3 đồng minh',
+        mana_cost: 100,
+        attack_type: EAttackType.Magical,
+        damage: 190,
+        attack_position: ETargetPosition.All
     }
 ];
