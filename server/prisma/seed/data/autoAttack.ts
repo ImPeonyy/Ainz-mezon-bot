@@ -202,6 +202,47 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         attack_type: EAttackType.Physical,
         attack_position: ETargetPosition.Nearest
     },
+    // Rare
+    {
+        pet_id: 0,
+        name: 'Dread Porcupine',
+        description: 'ấn công một mục tiêu, gây 115% ATK cho 1 mục tiêu',
+        damage: 115,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Penguin',
+        description: 'Ném cục băng nhỏ, gây 115% AP cho 1 mục tiêu',
+        damage: 115,
+        attack_type: EAttackType.Magical,
+        attack_position: ETargetPosition.Random
+    },
+    {
+        pet_id: 0,
+        name: 'Owl',
+        description: 'Dùng cánh phủ ánh sáng trăng, hồi 115% AP máu cho 1 đồng minh',
+        damage: 115,
+        attack_type: EAttackType.Magical,
+        attack_position: ETargetPosition.LowestHP
+    },
+    {
+        pet_id: 0,
+        name: 'Bee',
+        description: 'Đâm nhanh bằng nọc độc, gây 115% ATK cho 1 mục tiêu',
+        damage: 115,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.LowestHP
+    },
+    {
+        pet_id: 0,
+        name: 'Seahorse',
+        description: 'Quất mạnh chiếc đuôi cong, gây 115% ATK cho 1 mục tiêu',
+        damage: 115,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.Nearest
+    },
     //Epic
     {
         pet_id: 0,
@@ -217,7 +258,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         description: 'Dùng 3 đầu cắn, gây 75% ATK cho 3 mục tiêu',
         damage: 75,
         attack_type: EAttackType.Physical,
-        attack_position: ETargetPosition.Nearest
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
@@ -225,7 +266,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         description: 'Hơi thở rực lửa, gây 75% AP cho 3 mục tiêu',
         damage: 75,
         attack_type: EAttackType.Magical,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
@@ -241,7 +282,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         description: 'Những cái đầu đồng loạt tấn công, gây 75% AP cho 3 mục tiêu',
         damage: 75,
         attack_type: EAttackType.Magical,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
@@ -257,7 +298,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         description: 'Quạt lửa, gây 75% AP cho 3 mục tiêu',
         damage: 75,
         attack_type: EAttackType.Magical,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 0,
@@ -308,10 +349,10 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         pet_id: 13,
         name: 'Dragon Basic Attack',
         description:
-            'Đánh 2 mục tiêu gần nhất bằng 100% AP, 25% cơ hội thiêu đốt 2 mục tiêu trong 1 lượt (gây sát thương bằng 15% tổng sát thương của đòn đánh).',
+            'Đánh 3 mục tiêu gần nhất bằng 100% AP, 25% cơ hội thiêu đốt 2 mục tiêu trong 1 lượt (gây sát thương bằng 15% tổng sát thương của đòn đánh).',
         damage: 100,
         attack_type: EAttackType.Magical,
-        attack_position: ETargetPosition.Nearest
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 14,
@@ -325,10 +366,10 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
     {
         pet_id: 15,
         name: 'Horse Basic Attack',
-        description: 'Đánh ngẫu nhiên 2 mục tiêu bằng 100% AD và tăng 10% DEF cho bản thân trong 1 lượt.',
+        description: 'Đánh ngẫu nhiên 3 mục tiêu bằng 100% AD và tăng 10% DEF cho bản thân trong 1 lượt.',
         damage: 100,
         attack_type: EAttackType.Physical,
-        attack_position: ETargetPosition.Random
+        attack_position: ETargetPosition.All
     },
     {
         pet_id: 16,
@@ -341,7 +382,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
     {
         pet_id: 17,
         name: 'Monkey Basic Attack',
-        description: 'Đánh 2 mục tiêu trước mặt bằng 100% AD, mỗi đòn đánh có 30% cơ hội giảm 10% DEF trong 1 lượt.',
+        description: 'Đánh 3 mục tiêu trước mặt bằng 100% AD, mỗi đòn đánh có 30% cơ hội giảm 10% DEF trong 1 lượt.',
         damage: 100,
         attack_type: EAttackType.Physical,
         attack_position: ETargetPosition.All
@@ -368,6 +409,104 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         description: 'Đánh ngẫu nhiên 1 mục tiêu bằng 135% AD và hồi cho bản thân 5% HP tối đa.',
         damage: 135,
         attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.Random
+    },
+
+    //Mythic
+    {
+        pet_id: 0,
+        name: 'Horn Charge',
+        description: 'Húc mạnh bằng cặp sừng rực lửa, gây 145% ATK cho 1 mục tiêu',
+        damage: 145,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Earth Smash',
+        description: 'Dậm chân rung chuyển mặt đất, gây 90% ATK cho 3 mục tiêu',
+        damage: 90,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Twin Strike',
+        description: 'Song đao tấn công, gây 145% ATK cho 1 mục tiêu',
+        damage: 145,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Healing Wave',
+        description: 'Sóng nước dịu lành vỗ về, hồi 145% AP máu cho 1 đồng minh',
+        damage: 145,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.LowestHP
+    },
+    {
+        pet_id: 0,
+        name: 'Lion Claw',
+        description: 'Vung vuốt sắc bén, gây 145% ATK cho 1 mục tiêu',
+        damage: 145,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Purity Touch',
+        description: 'Bàn tay tinh khôi tỏa sáng, gây 145% ATK cho 1 mục tiêu',
+        damage: 145,
+        attack_type: EAttackType.Magical,
+        attack_position: ETargetPosition.LowestHP
+    },
+    {
+        pet_id: 0,
+        name: 'Scale Slash',
+        description: 'Nhát chém chuẩn xác, gây 145% ATK cho 1 mục tiêu',
+        damage: 145,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Venom Tail',
+        description: 'Vung đuôi mang nọc độc chí tử, gây 145% ATK cho 1 mục tiêu',
+        damage: 145,
+        attack_type: EAttackType.Magical,
+        attack_position: ETargetPosition.Nearest
+    },
+    {
+        pet_id: 0,
+        name: 'Arrow Shot',
+        description: 'Phóng mũi tên chớp nhoáng, gây 145% ATK cho 1 mục tiêu',
+        damage: 145,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.Farthest
+    },
+    {
+        pet_id: 0,
+        name: 'Mountain Strike',
+        description: 'Đập như núi lở, gây 90% ATK cho 3 mục tiêu',
+        damage: 90,
+        attack_type: EAttackType.Physical,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Water Flow',
+        description: 'Sóng chảy lan tỏa, gây 90% ATK cho 3 mục tiêu',
+        damage: 90,
+        attack_type: EAttackType.Magical,
+        attack_position: ETargetPosition.All
+    },
+    {
+        pet_id: 0,
+        name: 'Aqua Touch',
+        description: 'Dòng nước dịu dàng chữa lành, hồi 145% AP máu cho 1 đồng minh',
+        damage: 145,
+        attack_type: EAttackType.Magical,
         attack_position: ETargetPosition.Random
     }
 ];
