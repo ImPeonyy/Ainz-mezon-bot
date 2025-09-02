@@ -29,3 +29,9 @@ export const USE_DAILY_ACTIVITY = {
         }
     }
 };
+
+export const BATTLE = {
+    MANA_PER_HIT: 15
+};
+
+export const CLOUDINARY_BATTLE_FOLDER = 'Battle';

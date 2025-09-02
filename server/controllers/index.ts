@@ -1,15 +1,7 @@
-import {
-    createUserController,
-    getUserController,
-    updateUserController
-} from './user.controller';
+import { createUserController, getUserController, updateUserController } from './user.controller';
 import { dexController, huntPetController } from './pet.controller';
-import {
-    getActionController,
-    getActionGifController,
-    getMemeController
-} from './misc.controller';
-
+import { getActionController, getActionGifController, getMemeController } from './misc.controller';
+import { battleController } from './batlle.controller';
 import { dailyController } from './userDailyActivity.controller';
 
 export {
@@ -21,5 +13,6 @@ export {
     updateUserController,
     getActionGifController,
     dexController,
-    dailyController
+    dailyController,
+    battleController
 };

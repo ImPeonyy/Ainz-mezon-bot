@@ -9,7 +9,7 @@ datasource db {
 
 // ========================= ENUMS =========================
 
-enum EAttackType {
+enum EScalingType {
   Physical
   Magical
 }
@@ -75,11 +75,6 @@ enum EStat {
   Def
 }
 
-enum ESkillType {
-  Passive
-  Active
-}
-
 // ========================= TABLES =========================
 
 model User {
@@ -89,7 +84,7 @@ model User {
   z_coin          Int                    @default(0)
   exp             Int                    @default(0)
   level           Int                    @default(1)
-  avatar          String                 @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfmEu4YN6-g4qQAnwyk7fx0YF5QrVvPM8rAw&s")
+  avatar          String                 @default("https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/spider-gwen-DLOjzOblyRzNGEngmQMOdf9VCWni6V.jpeg")
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
@@ -127,7 +122,7 @@ model AutoAttack {
   name            String
   description     String?
   damage          Int
-  attack_type     EAttackType
+  scaling_type    EScalingType
   attack_position ETargetPosition
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
@@ -143,6 +138,7 @@ model PassiveSkill {
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
+  effects         PassiveSkillEffect[]
   pet             Pet                    @relation(fields: [pet_id], references: [id])
 }
 
@@ -152,19 +148,37 @@ model ActiveSkill {
   name                        String
   description                 String?
   mana_cost                   Int
-  attack_type                 EAttackType?
+  scaling_type                EScalingType?
   damage                      Int?
   attack_position             ETargetPosition?
   created_at                  DateTime           @default(now())
   updated_at                  DateTime           @default(now())          @updatedAt         
 
+  effects                     ActiveSkillEffect[]
   pet                         Pet                @relation(fields: [pet_id], references: [id])
 }
 
-model Effect {
+model ActiveSkillEffect {
   id                          Int                @id @default(autoincrement())
-  skill_type                  ESkillType
-  skill_id                    Int                
+  active_skill_id             Int                
+  name                        String
+  description                 String?
+  effect_target               EEffectTarget
+  effect_target_position      ETargetPosition
+  effect                      EEffect
+  effect_stat                 EStat?
+  scaling_type                EScalingType?
+  duration                    Int                @default(1)
+  value                       Int                @default(0)
+  created_at                  DateTime           @default(now())
+  updated_at                  DateTime           @default(now())          @updatedAt     
+
+  activeSkill                 ActiveSkill        @relation(fields: [active_skill_id], references: [id])
+}
+
+model PassiveSkillEffect {
+  id                          Int                @id @default(autoincrement())
+  passive_skill_id            Int                
   name                        String
   description                 String?
   effect_target               EEffectTarget
@@ -173,13 +187,15 @@ model Effect {
   effect_stat                 EStat?
   value                       Int                @default(0)
   created_at                  DateTime           @default(now())
-  updated_at                  DateTime           @default(now())          @updatedAt     
+  updated_at                  DateTime           @default(now())          @updatedAt
+
+  passiveSkill                PassiveSkill       @relation(fields: [passive_skill_id], references: [id])
 }
 
 model Statistics {
   id              Int                    @id @default(autoincrement())
   name            String
-  attack_type     EAttackType
+  scaling_type    EScalingType
   role            EPetRole
   element_type    EElemental?
   rarity          ERarity
@@ -204,6 +220,7 @@ model Pet {
   id              Int                    @id @default(autoincrement())
   name            String                 @unique
   mezon_emoji_id  String                 @unique
+  avatar          String?                
   description     String?
   statistic_id    Int
   rarity_id       Int

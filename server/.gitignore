@@ -43,3 +43,8 @@ next-env.d.ts
 # Mezon cache
 /mezon-cache
 /generated/prisma
+
+
+# Lock files
+package-lock.json
+yarn.lock

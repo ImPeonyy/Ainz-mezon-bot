@@ -35,11 +35,7 @@ export const getUserController = async (mezon_id: string) => {
     }
 };
 
-export const createUserController = async (
-    username: string,
-    mezon_id: string,
-    avatar: string
-) => {
+export const createUserController = async (username: string, mezon_id: string, avatar: string) => {
     try {
         if (!username || !mezon_id) {
             return textMessage('Error retrieving username or mezon id');
@@ -73,11 +69,7 @@ export const createUserController = async (
     }
 };
 
-export const updateUserController = async (
-    username: string,
-    mezon_id: string,
-    avatar: string
-) => {
+export const updateUserController = async (username: string, mezon_id: string, avatar: string) => {
     try {
         if (!username || !mezon_id) {
             return textMessage('Error retrieving username or mezon id');
