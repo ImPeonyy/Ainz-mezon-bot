@@ -19,7 +19,16 @@ import { getDailyReward, getMidnightRemainingTime } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
 import { getHelpMessage } from './help.util';
-import { manaAfterDealDamage, battleSimulation } from './battle.util';
+import {
+    manaAfterDealDamage,
+    getCurrentManaAfterReceive,
+    getAttackPosition,
+    getPositionByDistance,
+    getPositionByHp,
+    hpAfterDealDame,
+    processTeam,
+    processTurn
+} from './battle.util';
 
 export {
     getActorName,
@@ -44,5 +53,11 @@ export {
     getUrlEmoji,
     getHelpMessage,
     manaAfterDealDamage,
-    battleSimulation
+    getCurrentManaAfterReceive,
+    getAttackPosition,
+    getPositionByDistance,
+    getPositionByHp,
+    hpAfterDealDame,
+    processTeam,
+    processTurn
 };

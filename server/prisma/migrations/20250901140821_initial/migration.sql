@@ -1,29 +1,29 @@
 -- CreateEnum
-CREATE TYPE "EAttackType" AS ENUM ('Physical', 'Magical');
+CREATE TYPE "public"."EScalingType" AS ENUM ('Physical', 'Magical');
 
 -- CreateEnum
-CREATE TYPE "EPetRole" AS ENUM ('Tank', 'Mage', 'Support', 'Assassin', 'Warrior');
+CREATE TYPE "public"."EPetRole" AS ENUM ('Tank', 'Mage', 'Support', 'Assassin', 'Warrior');
 
 -- CreateEnum
-CREATE TYPE "EElemental" AS ENUM ('Metal', 'Wood', 'Water', 'Fire', 'Earth');
+CREATE TYPE "public"."EElemental" AS ENUM ('Metal', 'Wood', 'Water', 'Fire', 'Earth');
 
 -- CreateEnum
-CREATE TYPE "ERarity" AS ENUM ('Uncommon', 'Common', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Limited');
+CREATE TYPE "public"."ERarity" AS ENUM ('Uncommon', 'Common', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Limited');
 
 -- CreateEnum
-CREATE TYPE "ETargetPosition" AS ENUM ('All', 'Random', 'Self', 'LowestHP', 'HighestHP', 'Nearest', 'Farthest');
+CREATE TYPE "public"."ETargetPosition" AS ENUM ('All', 'Random', 'Self', 'LowestHP', 'HighestHP', 'Nearest', 'Farthest');
 
 -- CreateEnum
-CREATE TYPE "EEffectTarget" AS ENUM ('Ally', 'Enemy');
+CREATE TYPE "public"."EEffectTarget" AS ENUM ('Ally', 'Enemy');
 
 -- CreateEnum
-CREATE TYPE "EEffect" AS ENUM ('Heal', 'DOT', 'BuffStat', 'DebuffStat', 'RemoveBuff', 'RemoveDebuff', 'Silence', 'ReducedHealing', 'LifeSteal', 'Revive');
+CREATE TYPE "public"."EEffect" AS ENUM ('Heal', 'DOT', 'BuffStat', 'DebuffStat', 'RemoveBuff', 'RemoveDebuff', 'Silence', 'ReducedHealing', 'LifeSteal', 'Revive');
 
 -- CreateEnum
-CREATE TYPE "EStat" AS ENUM ('Hp', 'Mana', 'Atk', 'Def');
+CREATE TYPE "public"."EStat" AS ENUM ('Hp', 'Mana', 'Atk', 'Def');
 
 -- CreateTable
-CREATE TABLE "User" (
+CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "mezon_id" TEXT NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "UserDailyActivities" (
+CREATE TABLE "public"."UserDailyActivities" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "daily" INTEGER NOT NULL DEFAULT 0,
@@ -50,11 +50,11 @@ CREATE TABLE "UserDailyActivities" (
 );
 
 -- CreateTable
-CREATE TABLE "Rarity" (
+CREATE TABLE "public"."Rarity" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "mezon_emoji_id" TEXT NOT NULL,
-    "type" "ERarity",
+    "type" "public"."ERarity",
     "catch_rate" DOUBLE PRECISION NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -63,14 +63,14 @@ CREATE TABLE "Rarity" (
 );
 
 -- CreateTable
-CREATE TABLE "AutoAttack" (
+CREATE TABLE "public"."AutoAttack" (
     "id" SERIAL NOT NULL,
     "pet_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
     "damage" INTEGER NOT NULL,
-    "attack_type" "EAttackType" NOT NULL,
-    "attack_position" "ETargetPosition" NOT NULL,
+    "scaling_type" "public"."EScalingType" NOT NULL,
+    "attack_position" "public"."ETargetPosition" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -78,7 +78,7 @@ CREATE TABLE "AutoAttack" (
 );
 
 -- CreateTable
-CREATE TABLE "PassiveSkill" (
+CREATE TABLE "public"."PassiveSkill" (
     "id" SERIAL NOT NULL,
     "pet_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
@@ -90,15 +90,15 @@ CREATE TABLE "PassiveSkill" (
 );
 
 -- CreateTable
-CREATE TABLE "ActiveSkill" (
+CREATE TABLE "public"."ActiveSkill" (
     "id" SERIAL NOT NULL,
     "pet_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
     "mana_cost" INTEGER NOT NULL,
-    "attack_type" "EAttackType",
+    "scaling_type" "public"."EScalingType",
     "damage" INTEGER,
-    "attack_position" "ETargetPosition",
+    "attack_position" "public"."ETargetPosition",
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -106,15 +106,17 @@ CREATE TABLE "ActiveSkill" (
 );
 
 -- CreateTable
-CREATE TABLE "ActiveSkillEffect" (
+CREATE TABLE "public"."ActiveSkillEffect" (
     "id" SERIAL NOT NULL,
     "active_skill_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "effect_target" "EEffectTarget" NOT NULL,
-    "effect_target_position" "ETargetPosition" NOT NULL,
-    "effect" "EEffect" NOT NULL,
-    "effect_stat" "EStat",
+    "effect_target" "public"."EEffectTarget" NOT NULL,
+    "effect_target_position" "public"."ETargetPosition" NOT NULL,
+    "effect" "public"."EEffect" NOT NULL,
+    "effect_stat" "public"."EStat",
+    "scaling_type" "public"."EScalingType",
+    "duration" INTEGER NOT NULL DEFAULT 1,
     "value" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -123,15 +125,15 @@ CREATE TABLE "ActiveSkillEffect" (
 );
 
 -- CreateTable
-CREATE TABLE "PassiveSkillEffect" (
+CREATE TABLE "public"."PassiveSkillEffect" (
     "id" SERIAL NOT NULL,
     "passive_skill_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "effect_target" "EEffectTarget" NOT NULL,
-    "effect_target_position" "ETargetPosition" NOT NULL,
-    "effect" "EEffect" NOT NULL,
-    "effect_stat" "EStat",
+    "effect_target" "public"."EEffectTarget" NOT NULL,
+    "effect_target_position" "public"."ETargetPosition" NOT NULL,
+    "effect" "public"."EEffect" NOT NULL,
+    "effect_stat" "public"."EStat",
     "value" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -140,13 +142,13 @@ CREATE TABLE "PassiveSkillEffect" (
 );
 
 -- CreateTable
-CREATE TABLE "Statistics" (
+CREATE TABLE "public"."Statistics" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "attack_type" "EAttackType" NOT NULL,
-    "role" "EPetRole" NOT NULL,
-    "element_type" "EElemental",
-    "rarity" "ERarity" NOT NULL,
+    "scaling_type" "public"."EScalingType" NOT NULL,
+    "role" "public"."EPetRole" NOT NULL,
+    "element_type" "public"."EElemental",
+    "rarity" "public"."ERarity" NOT NULL,
     "hp" INTEGER NOT NULL,
     "mana" INTEGER NOT NULL,
     "ad" INTEGER NOT NULL,
@@ -165,7 +167,7 @@ CREATE TABLE "Statistics" (
 );
 
 -- CreateTable
-CREATE TABLE "Pet" (
+CREATE TABLE "public"."Pet" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "mezon_emoji_id" TEXT NOT NULL,
@@ -180,7 +182,7 @@ CREATE TABLE "Pet" (
 );
 
 -- CreateTable
-CREATE TABLE "UserPet" (
+CREATE TABLE "public"."UserPet" (
     "id" SERIAL NOT NULL,
     "user_id" TEXT NOT NULL,
     "pet_id" INTEGER NOT NULL,
@@ -201,7 +203,7 @@ CREATE TABLE "UserPet" (
 );
 
 -- CreateTable
-CREATE TABLE "Team" (
+CREATE TABLE "public"."Team" (
     "id" SERIAL NOT NULL,
     "user_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -213,7 +215,7 @@ CREATE TABLE "Team" (
 );
 
 -- CreateTable
-CREATE TABLE "TeamMember" (
+CREATE TABLE "public"."TeamMember" (
     "id" SERIAL NOT NULL,
     "team_id" INTEGER NOT NULL,
     "user_pet_id" INTEGER NOT NULL,
@@ -225,7 +227,7 @@ CREATE TABLE "TeamMember" (
 );
 
 -- CreateTable
-CREATE TABLE "Battle" (
+CREATE TABLE "public"."Battle" (
     "id" SERIAL NOT NULL,
     "team_a_id" INTEGER NOT NULL,
     "team_b_id" INTEGER NOT NULL,
@@ -239,76 +241,76 @@ CREATE TABLE "Battle" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+CREATE UNIQUE INDEX "User_username_key" ON "public"."User"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_mezon_id_key" ON "User"("mezon_id");
+CREATE UNIQUE INDEX "User_mezon_id_key" ON "public"."User"("mezon_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Rarity_name_key" ON "Rarity"("name");
+CREATE UNIQUE INDEX "Rarity_name_key" ON "public"."Rarity"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Rarity_mezon_emoji_id_key" ON "Rarity"("mezon_emoji_id");
+CREATE UNIQUE INDEX "Rarity_mezon_emoji_id_key" ON "public"."Rarity"("mezon_emoji_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "AutoAttack_pet_id_key" ON "AutoAttack"("pet_id");
+CREATE UNIQUE INDEX "AutoAttack_pet_id_key" ON "public"."AutoAttack"("pet_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "PassiveSkill_pet_id_key" ON "PassiveSkill"("pet_id");
+CREATE UNIQUE INDEX "PassiveSkill_pet_id_key" ON "public"."PassiveSkill"("pet_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ActiveSkill_pet_id_key" ON "ActiveSkill"("pet_id");
+CREATE UNIQUE INDEX "ActiveSkill_pet_id_key" ON "public"."ActiveSkill"("pet_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Pet_name_key" ON "Pet"("name");
+CREATE UNIQUE INDEX "Pet_name_key" ON "public"."Pet"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Pet_mezon_emoji_id_key" ON "Pet"("mezon_emoji_id");
+CREATE UNIQUE INDEX "Pet_mezon_emoji_id_key" ON "public"."Pet"("mezon_emoji_id");
 
 -- AddForeignKey
-ALTER TABLE "UserDailyActivities" ADD CONSTRAINT "UserDailyActivities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."UserDailyActivities" ADD CONSTRAINT "UserDailyActivities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AutoAttack" ADD CONSTRAINT "AutoAttack_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."AutoAttack" ADD CONSTRAINT "AutoAttack_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "public"."Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PassiveSkill" ADD CONSTRAINT "PassiveSkill_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."PassiveSkill" ADD CONSTRAINT "PassiveSkill_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "public"."Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ActiveSkill" ADD CONSTRAINT "ActiveSkill_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."ActiveSkill" ADD CONSTRAINT "ActiveSkill_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "public"."Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ActiveSkillEffect" ADD CONSTRAINT "ActiveSkillEffect_active_skill_id_fkey" FOREIGN KEY ("active_skill_id") REFERENCES "ActiveSkill"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."ActiveSkillEffect" ADD CONSTRAINT "ActiveSkillEffect_active_skill_id_fkey" FOREIGN KEY ("active_skill_id") REFERENCES "public"."ActiveSkill"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PassiveSkillEffect" ADD CONSTRAINT "PassiveSkillEffect_passive_skill_id_fkey" FOREIGN KEY ("passive_skill_id") REFERENCES "PassiveSkill"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."PassiveSkillEffect" ADD CONSTRAINT "PassiveSkillEffect_passive_skill_id_fkey" FOREIGN KEY ("passive_skill_id") REFERENCES "public"."PassiveSkill"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Pet" ADD CONSTRAINT "Pet_statistic_id_fkey" FOREIGN KEY ("statistic_id") REFERENCES "Statistics"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Pet" ADD CONSTRAINT "Pet_statistic_id_fkey" FOREIGN KEY ("statistic_id") REFERENCES "public"."Statistics"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Pet" ADD CONSTRAINT "Pet_rarity_id_fkey" FOREIGN KEY ("rarity_id") REFERENCES "Rarity"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Pet" ADD CONSTRAINT "Pet_rarity_id_fkey" FOREIGN KEY ("rarity_id") REFERENCES "public"."Rarity"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserPet" ADD CONSTRAINT "UserPet_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."UserPet" ADD CONSTRAINT "UserPet_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserPet" ADD CONSTRAINT "UserPet_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."UserPet" ADD CONSTRAINT "UserPet_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "public"."Pet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Team" ADD CONSTRAINT "Team_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Team" ADD CONSTRAINT "Team_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TeamMember" ADD CONSTRAINT "TeamMember_team_id_fkey" FOREIGN KEY ("team_id") REFERENCES "Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."TeamMember" ADD CONSTRAINT "TeamMember_team_id_fkey" FOREIGN KEY ("team_id") REFERENCES "public"."Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TeamMember" ADD CONSTRAINT "TeamMember_user_pet_id_fkey" FOREIGN KEY ("user_pet_id") REFERENCES "UserPet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."TeamMember" ADD CONSTRAINT "TeamMember_user_pet_id_fkey" FOREIGN KEY ("user_pet_id") REFERENCES "public"."UserPet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Battle" ADD CONSTRAINT "Battle_team_a_id_fkey" FOREIGN KEY ("team_a_id") REFERENCES "Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Battle" ADD CONSTRAINT "Battle_team_a_id_fkey" FOREIGN KEY ("team_a_id") REFERENCES "public"."Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Battle" ADD CONSTRAINT "Battle_team_b_id_fkey" FOREIGN KEY ("team_b_id") REFERENCES "Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Battle" ADD CONSTRAINT "Battle_team_b_id_fkey" FOREIGN KEY ("team_b_id") REFERENCES "public"."Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Battle" ADD CONSTRAINT "Battle_winner_team_id_fkey" FOREIGN KEY ("winner_team_id") REFERENCES "Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Battle" ADD CONSTRAINT "Battle_winner_team_id_fkey" FOREIGN KEY ("winner_team_id") REFERENCES "public"."Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

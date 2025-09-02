@@ -12,8 +12,15 @@ import { embedMessage, getActorName, getTargetFromMention, textMessage, getHelpM
 import { getActionGif, getMeme } from '@/services';
 
 import { EActionType } from '@/constants/Enum';
+import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 
-export const getActionController = async (event: any, action: string, mentionTarget?: string | null) => {
+export const getActionController = async (
+    event: any,
+    action: string,
+    channel: any,
+    message: Message,
+    mentionTarget?: string | null
+) => {
     try {
         const { sender_id, display_name, avatar, clan_nick, references } = event;
 
@@ -65,7 +72,7 @@ export const getActionController = async (event: any, action: string, mentionTar
             }
 
             if (action === COMMANDS.battle) {
-                const battlePayload = await battleController();
+                const battlePayload = await battleController(channel, message);
                 return battlePayload;
             }
 

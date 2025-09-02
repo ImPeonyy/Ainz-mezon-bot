@@ -1,6 +1,6 @@
 import { BATTLE } from '@/constants/Constant';
-import { IFight, IFPet } from '@/constants/Type';
-import { EAttackType, ETargetPosition, Prisma } from '@prisma/client';
+import { IBPet } from '@/constants/Type';
+import { EEffect, ERarity, EScalingType, EStat, ETargetPosition, Prisma } from '@prisma/client';
 
 export const manaAfterDealDamage = (hpBefore: number, hpAfter: number) => {
     const lostHpPercent = (hpBefore - hpAfter) / hpBefore;
@@ -25,21 +25,21 @@ export const manaAfterDealDamage = (hpBefore: number, hpAfter: number) => {
     }
 };
 
-export const hpAfterDealDame = (currentPet: IFPet, targetPet: IFPet) => {
-    const currentAttackType = currentPet.info.autoAttack.attackType;
+export const hpAfterDealDame = (currentPet: IBPet, targetPet: IBPet) => {
+    const currentAttackType = currentPet.info.autoAttack.scalingType;
     const currentAd = currentPet.stats.currentStats.ad;
     const currentAp = currentPet.stats.currentStats.ap;
     const targetAr = targetPet.stats.currentStats.ar;
     const targetMr = targetPet.stats.currentStats.mr;
 
     const totalDamage =
-        ((currentAttackType === EAttackType.Physical ? currentAd : currentAp) * currentPet.info.autoAttack.damage) /
+        ((currentAttackType === EScalingType.Physical ? currentAd : currentAp) * currentPet.info.autoAttack.damage) /
         100;
-    const actualDamage = Math.max(0, totalDamage - (currentAttackType === EAttackType.Physical ? targetAr : targetMr));
+    const actualDamage = Math.max(0, totalDamage - (currentAttackType === EScalingType.Physical ? targetAr : targetMr));
     return Math.floor(Math.max(0, targetPet.stats.currentStats.hp - actualDamage));
 };
 
-export const getPositionByHp = (currentPosition: number, targetPosition: ETargetPosition, targetPets: IFPet[]) => {
+export const getPositionByHp = (currentPosition: number, targetPosition: ETargetPosition, targetPets: IBPet[]) => {
     const petList: number[] = [];
     let value = 0;
     if (targetPosition === ETargetPosition.LowestHP) {
@@ -124,7 +124,7 @@ export const getPositionByDistance = (
     }
 };
 
-export const getAttackPosition = (currentPosition: number, targetPosition: ETargetPosition, targetPets: IFPet[]) => {
+export const getAttackPosition = (currentPosition: number, targetPosition: ETargetPosition, targetPets: IBPet[]) => {
     const alivePets = targetPets.filter((pet) => pet.isAlive);
 
     switch (targetPosition) {
@@ -156,17 +156,31 @@ export const getAttackPosition = (currentPosition: number, targetPosition: ETarg
     }
 };
 
+export const getCurrentManaAfterReceive = (currentMana: number, receivedMana: number, manaCost: number) => {
+    const manaAfterReceive = currentMana + receivedMana;
+    if (manaAfterReceive > manaCost) {
+        return manaCost;
+    }
+    return manaAfterReceive;
+};
+
 export const processTeam = (
     team: Prisma.UserPetGetPayload<{
         include: {
             pet: {
-                include: { statistic: true; rarity: true; autoAttack: true; passiveSkill: true; activeSkill: true };
+                include: {
+                    statistic: true;
+                    rarity: true;
+                    autoAttack: true;
+                    passiveSkill: { include: { effects: true } };
+                    activeSkill: { include: { effects: true } };
+                };
             };
         };
     }>[],
     teamOrder: 1 | 2
 ) => {
-    const processedTeam: IFPet[] = [];
+    const processedTeam: IBPet[] = [];
 
     for (const [index, userPet] of team.entries()) {
         if (userPet.pet.autoAttack && userPet.pet.activeSkill) {
@@ -175,19 +189,31 @@ export const processTeam = (
                 isAlive: true,
                 info: {
                     nickname: userPet.nickname || userPet.pet.name,
+                    avatar: userPet.pet.avatar || '',
+                    rarity: userPet.pet.rarity.type as ERarity,
                     level: userPet.level,
                     autoAttack: {
                         damage: userPet.pet.autoAttack.damage,
-                        attackType: userPet.pet.autoAttack.attack_type,
+                        scalingType: userPet.pet.autoAttack.scaling_type,
                         attackPosition: userPet.pet.autoAttack.attack_position
                     },
                     passiveSkill: userPet.pet.passiveSkill || {},
                     activeSkill: {
                         damage: userPet.pet.activeSkill.damage || 0,
                         manaCost: userPet.pet.activeSkill.mana_cost,
-                        attackType: userPet.pet.activeSkill.attack_type,
+                        scalingType: userPet.pet.activeSkill.scaling_type,
                         attackPosition: userPet.pet.activeSkill.attack_position,
-                        effects: []
+                        effects: userPet.pet.activeSkill.effects
+                            ? userPet.pet.activeSkill.effects.map((effect) => ({
+                                  effectTarget: effect.effect_target,
+                                  effectTargetPosition: effect.effect_target_position,
+                                  effectType: effect.effect,
+                                  effectStat: effect.effect_stat,
+                                  scalingType: effect.scaling_type,
+                                  duration: 1,
+                                  value: effect.value
+                              }))
+                            : []
                     }
                 },
                 stats: {
@@ -216,7 +242,7 @@ export const processTeam = (
     return processedTeam;
 };
 
-export const logPet = (pet: IFPet) => {
+export const logPet = (pet: IBPet) => {
     const { nickname, level } = pet.info;
     const { hp, mana, ad, ap, ar, mr } = pet.stats.currentStats;
 
@@ -228,133 +254,174 @@ export const logPet = (pet: IFPet) => {
     `;
 };
 
-export const battleSimulation = (
-    teamA: Prisma.UserPetGetPayload<{
-        include: {
-            pet: {
-                include: { statistic: true; rarity: true; autoAttack: true; passiveSkill: true; activeSkill: true };
-            };
-        };
-    }>[],
-    teamB: Prisma.UserPetGetPayload<{
-        include: {
-            pet: {
-                include: { statistic: true; rarity: true; autoAttack: true; passiveSkill: true; activeSkill: true };
-            };
-        };
-    }>[]
-) => {
-    const processedTeamA: IFPet[] = processTeam(teamA, 1);
-    const processedTeamB: IFPet[] = processTeam(teamB, 2);
-
-    let teamATurnQueue: number[] = [1, 3, 5];
-
-    let teamBTurnQueue: number[] = [2, 4, 6];
-
-    const fight: IFight = {
-        turn: 0,
-        teamA: {
-            1: processedTeamA[0],
-            3: processedTeamA[1],
-            5: processedTeamA[2]
-        },
-        teamB: {
-            2: processedTeamB[0],
-            4: processedTeamB[1],
-            6: processedTeamB[2]
-        }
-    };
-    console.log('💥 Starting battle...');
-    while (teamATurnQueue.length > 0 && teamBTurnQueue.length > 0) {
-        fight.turn++;
-        console.log('\n\n--------------------------');
-        console.log('🔄 Turn', fight.turn);
-        if (fight.turn % 2 !== 0) {
-            const currentPosition = teamATurnQueue.shift();
-            if (currentPosition) {
-                const currentPet = fight.teamA[currentPosition];
-                if (currentPet) {
-                    const targetPosition = getAttackPosition(
-                        currentPet.position,
-                        currentPet.info.autoAttack.attackPosition,
-                        [fight.teamB[2], fight.teamB[4], fight.teamB[6]]
-                    );
-                    if (targetPosition) {
-                        const deadPosition = new Set<number>();
-                        for (const position of targetPosition) {
-                            const targetPet = fight.teamB[position];
-                            const remainingHp = hpAfterDealDame(currentPet, targetPet);
-                            if (remainingHp > 0) {
-                                const receivedMana = manaAfterDealDamage(targetPet.stats.currentStats.hp, remainingHp);
-                                targetPet.stats.currentStats.mana += Math.ceil(
-                                    targetPet.stats.originalStats.mana * receivedMana
-                                );
-                            } else {
-                                targetPet.isAlive = false;
-                                deadPosition.add(position);
-                            }
-                            targetPet.stats.currentStats.hp = remainingHp;
-                        }
-                        teamBTurnQueue = teamBTurnQueue.filter((pos) => !deadPosition.has(pos));
-                        currentPet.stats.currentStats.mana += BATTLE.MANA_PER_HIT;
-                    }
-                    console.log(
-                        currentPet.position,
-                        currentPet.info.nickname,
-                        ' - ',
-                        currentPet.info.autoAttack.attackPosition
-                    );
-                    console.log(targetPosition);
-                    teamATurnQueue.push(currentPosition);
-                }
-            }
+export const processEffects = (pet: IBPet) => {
+    for (let i = pet.effects.length - 1; i >= 0; i--) {
+        const effect = pet.effects[i];
+        let appliedValue = 0;
+        if (effect.scalingType === EScalingType.Physical) {
+            appliedValue = (pet.stats.currentStats.ad * effect.value) / 100;
         } else {
-            const currentPosition = teamBTurnQueue.shift();
-            if (currentPosition) {
-                const currentPet = fight.teamB[currentPosition];
-                if (currentPet) {
-                    const targetPosition = getAttackPosition(
-                        currentPet.position,
-                        currentPet.info.autoAttack.attackPosition,
-                        [fight.teamA[1], fight.teamA[3], fight.teamA[5]]
-                    );
-                    if (targetPosition) {
-                        const deadPosition = new Set<number>();
-                        for (const position of targetPosition) {
-                            const targetPet = fight.teamA[position];
-                            const remainingHp = hpAfterDealDame(currentPet, targetPet);
-                            if (remainingHp > 0) {
-                                const receivedMana = manaAfterDealDamage(targetPet.stats.currentStats.hp, remainingHp);
-                                targetPet.stats.currentStats.mana += Math.ceil(
-                                    targetPet.stats.originalStats.mana * receivedMana
-                                );
-                            } else {
-                                targetPet.isAlive = false;
-                                deadPosition.add(position);
-                            }
-                            targetPet.stats.currentStats.hp = remainingHp;
-                        }
-                        teamATurnQueue = teamATurnQueue.filter((pos) => !deadPosition.has(pos));
-                        currentPet.stats.currentStats.mana += BATTLE.MANA_PER_HIT;
+            appliedValue = (pet.stats.currentStats.ap * effect.value) / 100;
+        }
+
+        switch (effect.effectType) {
+            case EEffect.Heal:
+                if (pet.stats.currentStats.hp + appliedValue > pet.stats.originalStats.hp) {
+                    pet.stats.currentStats.hp = pet.stats.originalStats.hp;
+                } else {
+                    pet.stats.currentStats.hp += appliedValue;
+                }
+                break;
+            case EEffect.DOT:
+                if (pet.stats.currentStats.hp - appliedValue < 0) {
+                    pet.stats.currentStats.hp = 0;
+                } else {
+                    pet.stats.currentStats.hp -= appliedValue;
+                }
+                break;
+            case EEffect.BuffStat:
+                if (effect.effectStat === EStat.Atk) {
+                    pet.stats.currentStats.ad += appliedValue;
+                    pet.stats.currentStats.ap += appliedValue;
+                } else if (effect.effectStat === EStat.Def) {
+                    pet.stats.currentStats.ar += appliedValue;
+                    pet.stats.currentStats.mr += appliedValue;
+                }
+                break;
+            case EEffect.DebuffStat:
+                if (effect.effectStat === EStat.Atk) {
+                    pet.stats.currentStats.ad -= appliedValue;
+                    pet.stats.currentStats.ap -= appliedValue;
+                } else if (effect.effectStat === EStat.Def) {
+                    pet.stats.currentStats.ar -= appliedValue;
+                    pet.stats.currentStats.mr -= appliedValue;
+                }
+                break;
+            case EEffect.RemoveBuff:
+                break;
+            case EEffect.RemoveDebuff:
+                break;
+            case EEffect.Silence:
+                break;
+            case EEffect.ReducedHealing:
+                break;
+            case EEffect.LifeSteal:
+                break;
+            case EEffect.Revive:
+                break;
+        }
+
+        // giảm duration
+        effect.duration--;
+
+        // nếu hết hạn thì xoá khỏi mảng
+        if (effect.duration <= 0) {
+            pet.effects.splice(i, 1);
+        }
+    }
+};
+
+export const processTurn = (
+    attackerQueue: number[],
+    attackerTeam: Record<number, IBPet>,
+    defenderQueue: number[],
+    defenderTeam: Record<number, IBPet>,
+    defenderPositions: number[]
+) => {
+    const currentPosition = attackerQueue.shift();
+    if (!currentPosition) return;
+
+    const currentPet = attackerTeam[currentPosition];
+    if (!currentPet) return;
+
+    // // --- Apply effects ---
+    // if (currentPet.effects.length > 0) {
+    //     for (const effect of currentPet.effects) {
+    //         if (effect.duration > 0) {
+    //             effect.duration--;
+    //         }
+    //     }
+    // }
+
+    // --- Active Skill ---
+    if (currentPet.stats.currentStats.mana === currentPet.info.activeSkill.manaCost) {
+        // --- Use active skill attack ---
+        if (currentPet.info.activeSkill.attackPosition && currentPet.info.activeSkill.damage) {
+            const ASTargetPosition = getAttackPosition(
+                currentPet.position,
+                currentPet.info.activeSkill.attackPosition,
+                defenderPositions.map((pos) => defenderTeam[pos])
+            );
+
+            if (ASTargetPosition) {
+                const deadPosition = new Set<number>();
+                for (const position of ASTargetPosition) {
+                    const targetPet = defenderTeam[position];
+                    const remainingHp = hpAfterDealDame(currentPet, targetPet);
+                    if (remainingHp > 0) {
+                        const receivedManaPercent = manaAfterDealDamage(targetPet.stats.currentStats.hp, remainingHp);
+                        const receivedMana = Math.ceil(targetPet.stats.currentStats.mana * receivedManaPercent);
+                        targetPet.stats.currentStats.mana = getCurrentManaAfterReceive(
+                            targetPet.stats.currentStats.mana,
+                            receivedMana,
+                            targetPet.info.activeSkill.manaCost
+                        );
+                    } else {
+                        targetPet.isAlive = false;
+                        deadPosition.add(position);
                     }
-                    console.log(
-                        currentPet.position,
-                        currentPet.info.nickname,
-                        ' - ',
-                        currentPet.info.autoAttack.attackPosition
-                    );
-                    console.log(targetPosition);
-                    teamBTurnQueue.push(currentPosition);
+                    targetPet.stats.currentStats.hp = remainingHp;
+                }
+                for (let i = defenderQueue.length - 1; i >= 0; i--) {
+                    if (deadPosition.has(defenderQueue[i])) {
+                        defenderQueue.splice(i, 1);
+                    }
                 }
             }
         }
-        console.log('teamATurnQueue', teamATurnQueue);
-        console.log('teamBTurnQueue', teamBTurnQueue);
-        console.log('Team A:', logPet(fight.teamA[1]), '\t', logPet(fight.teamA[3]), '\t', logPet(fight.teamA[5]));
-        console.log('Team B:', logPet(fight.teamB[2]), '\t', logPet(fight.teamB[4]), '\t', logPet(fight.teamB[6]));
+        currentPet.stats.currentStats.mana = 0;
+        attackerQueue.push(currentPosition);
+        return;
     }
-    return {
-        isOver: teamATurnQueue.length === 0 || teamBTurnQueue.length === 0,
-        winner: teamATurnQueue.length === 0 ? 'Team B' : 'Team A'
-    };
+
+    // --- Auto Attack ---
+    const AATargetPosition = getAttackPosition(
+        currentPet.position,
+        currentPet.info.autoAttack.attackPosition,
+        defenderPositions.map((pos) => defenderTeam[pos])
+    );
+
+    if (AATargetPosition) {
+        const deadPosition = new Set<number>();
+        for (const position of AATargetPosition) {
+            const targetPet = defenderTeam[position];
+            const remainingHp = hpAfterDealDame(currentPet, targetPet);
+            if (remainingHp > 0) {
+                const receivedManaPercent = manaAfterDealDamage(targetPet.stats.currentStats.hp, remainingHp);
+                const receivedMana = Math.ceil(targetPet.stats.currentStats.mana * receivedManaPercent);
+                targetPet.stats.currentStats.mana = getCurrentManaAfterReceive(
+                    targetPet.stats.currentStats.mana,
+                    receivedMana,
+                    targetPet.info.activeSkill.manaCost
+                );
+            } else {
+                targetPet.isAlive = false;
+                deadPosition.add(position);
+            }
+            targetPet.stats.currentStats.hp = remainingHp;
+        }
+        for (let i = defenderQueue.length - 1; i >= 0; i--) {
+            if (deadPosition.has(defenderQueue[i])) {
+                defenderQueue.splice(i, 1);
+            }
+        }
+
+        // attacker gain mana when doing auto attack
+        currentPet.stats.currentStats.mana = getCurrentManaAfterReceive(
+            currentPet.stats.currentStats.mana,
+            BATTLE.MANA_PER_HIT,
+            currentPet.info.activeSkill.manaCost
+        );
+    }
+    attackerQueue.push(currentPosition);
 };
