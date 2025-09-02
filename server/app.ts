@@ -40,7 +40,13 @@ async function main() {
 
                 const { action, targetRaw } = parseActionCommand(event?.content?.t);
 
-                const messagePayload = await getActionController(event, action || 'invalid command', targetRaw);
+                const messagePayload = await getActionController(
+                    event,
+                    action || 'invalid command',
+                    channelFetch,
+                    messageFetch,
+                    targetRaw
+                );
 
                 if (messagePayload) {
                     await messageFetch.reply(messagePayload);

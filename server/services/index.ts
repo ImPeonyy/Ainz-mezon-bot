@@ -7,9 +7,8 @@ import {
 import { createUserPet, createUserPets } from '@/services/userPet.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
 import { getPetDetail, getPets } from '@/services/pet.service';
-
 import { getRarities } from '@/services/rarity.service';
-
+import { uploadImageToCloudinary, deleteImagesFromCloudinary } from '@/services/cloudinary.service';
 export {
     getActionGif,
     getMeme,
@@ -23,5 +22,7 @@ export {
     getTodayUserDailyActivity,
     updateUserDailyActivity,
     createUserPet,
-    createUserPets
+    createUserPets,
+    uploadImageToCloudinary,
+    deleteImagesFromCloudinary
 };

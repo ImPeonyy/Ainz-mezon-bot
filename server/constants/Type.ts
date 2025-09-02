@@ -1,4 +1,4 @@
-import { EEffect } from '@prisma/client';
+import { EEffect, EEffectTarget, ERarity, EStat, EScalingType, ETargetPosition } from '@prisma/client';
 
 export interface IMeme {
     postLink: string;
@@ -25,14 +25,17 @@ export type ParsedAction = {
     targetRaw: string | null;
 };
 
-export interface IFEffectValue {
-    id: number;
+export interface IBEffect {
+    effectTarget: EEffectTarget;
+    effectTargetPosition: ETargetPosition;
     effectType: EEffect;
+    effectStat: EStat | null;
+    scalingType: EScalingType | null;
     duration: number;
     value: number;
 }
 
-export interface IFStats {
+export interface IBStats {
     hp: number;
     mana: number;
     ad: number;
@@ -41,41 +44,45 @@ export interface IFStats {
     mr: number;
 }
 
-export interface IFPet {
+export interface IBPet {
+    position: number;
+    isAlive: boolean;
     info: {
         nickname: string;
+        avatar: string;
+        rarity: ERarity;
         level: number;
         autoAttack: {
             damage: number;
-            attackType: string;
-            attackPosition: string;
+            scalingType: EScalingType;
+            attackPosition: ETargetPosition;
         };
         passiveSkill: {};
         activeSkill: {
             damage: number;
             manaCost: number;
-            attackType: string;
-            attackPosition: string;
-            effects: IFEffectValue[];
+            scalingType: EScalingType | null;
+            attackPosition: ETargetPosition | null;
+            effects: IBEffect[];
         };
     };
     stats: {
-        originalStats: IFStats;
-        currentStats: IFStats;
+        originalStats: IBStats;
+        currentStats: IBStats;
     };
-    effects: IFEffectValue[];
+    effects: IBEffect[];
 }
 
-export interface IFight {
+export interface IBattle {
     turn: number;
     teamA: {
-        AX: IFPet;
-        AY: IFPet;
-        AZ: IFPet;
+        1: IBPet;
+        3: IBPet;
+        5: IBPet;
     };
     teamB: {
-        BX: IFPet;
-        BY: IFPet;
-        BZ: IFPet;
+        2: IBPet;
+        4: IBPet;
+        6: IBPet;
     };
 }

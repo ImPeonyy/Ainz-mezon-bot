@@ -8,6 +8,7 @@ export const COMMANDS = {
     hunt: 'hunt',
     dex: 'dex',
     daily: 'daily',
+    battle: 'battle',
     help: 'help'
 };
 

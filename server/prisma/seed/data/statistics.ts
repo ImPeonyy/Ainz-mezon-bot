@@ -1,16 +1,10 @@
-import {
-    EAttackType,
-    EElemental,
-    EPetRole,
-    ERarity,
-    PrismaClient
-} from '@prisma/client';
+import { EScalingType, EElemental, EPetRole, ERarity, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export type StatisticsSeed = {
     name: string;
-    attack_type: EAttackType;
+    scaling_type: EScalingType;
     role: EPetRole;
     element_type: EElemental | null;
     rarity: ERarity;
@@ -37,7 +31,7 @@ export const seedStatistics = async () => {
             await prisma.statistics.create({
                 data: {
                     name: statistic.name,
-                    attack_type: statistic.attack_type,
+                    scaling_type: statistic.scaling_type,
                     role: statistic.role,
                     element_type: statistic.element_type ?? null,
                     rarity: statistic.rarity,
@@ -59,7 +53,7 @@ export const seedStatistics = async () => {
                 where: { id: existing.id },
                 data: {
                     name: statistic.name,
-                    attack_type: statistic.attack_type,
+                    scaling_type: statistic.scaling_type,
                     role: statistic.role,
                     element_type: statistic.element_type ?? null,
                     rarity: statistic.rarity,
@@ -83,7 +77,7 @@ export const seedStatistics = async () => {
 const statisticsSeedData: StatisticsSeed[] = [
     {
         name: 'Common',
-        attack_type: EAttackType.Physical,
+        scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
         element_type: null,
         rarity: ERarity.Common,
@@ -101,7 +95,7 @@ const statisticsSeedData: StatisticsSeed[] = [
     },
     {
         name: 'Uncommon',
-        attack_type: EAttackType.Physical,
+        scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
         element_type: null,
         rarity: ERarity.Uncommon,
@@ -119,7 +113,7 @@ const statisticsSeedData: StatisticsSeed[] = [
     },
     {
         name: 'Rare',
-        attack_type: EAttackType.Physical,
+        scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
         element_type: null,
         rarity: ERarity.Rare,
@@ -137,7 +131,7 @@ const statisticsSeedData: StatisticsSeed[] = [
     },
     {
         name: 'Epic',
-        attack_type: EAttackType.Physical,
+        scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
         element_type: null,
         rarity: ERarity.Epic,
@@ -155,7 +149,7 @@ const statisticsSeedData: StatisticsSeed[] = [
     },
     {
         name: 'Legendary',
-        attack_type: EAttackType.Physical,
+        scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
         element_type: null,
         rarity: ERarity.Legendary,
@@ -173,7 +167,7 @@ const statisticsSeedData: StatisticsSeed[] = [
     },
     {
         name: 'Mythic',
-        attack_type: EAttackType.Physical,
+        scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
         element_type: null,
         rarity: ERarity.Mythic,
@@ -191,7 +185,7 @@ const statisticsSeedData: StatisticsSeed[] = [
     },
     {
         name: 'Limited',
-        attack_type: EAttackType.Physical,
+        scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
         element_type: null,
         rarity: ERarity.Limited,

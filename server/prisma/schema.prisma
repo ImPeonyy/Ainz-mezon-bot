@@ -9,7 +9,7 @@ datasource db {
 
 // ========================= ENUMS =========================
 
-enum EAttackType {
+enum EScalingType {
   Physical
   Magical
 }
@@ -122,7 +122,7 @@ model AutoAttack {
   name            String
   description     String?
   damage          Int
-  attack_type     EAttackType
+  scaling_type    EScalingType
   attack_position ETargetPosition
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
@@ -148,7 +148,7 @@ model ActiveSkill {
   name                        String
   description                 String?
   mana_cost                   Int
-  attack_type                 EAttackType?
+  scaling_type                EScalingType?
   damage                      Int?
   attack_position             ETargetPosition?
   created_at                  DateTime           @default(now())
@@ -167,6 +167,8 @@ model ActiveSkillEffect {
   effect_target_position      ETargetPosition
   effect                      EEffect
   effect_stat                 EStat?
+  scaling_type                EScalingType?
+  duration                    Int                @default(1)
   value                       Int                @default(0)
   created_at                  DateTime           @default(now())
   updated_at                  DateTime           @default(now())          @updatedAt     
@@ -193,7 +195,7 @@ model PassiveSkillEffect {
 model Statistics {
   id              Int                    @id @default(autoincrement())
   name            String
-  attack_type     EAttackType
+  scaling_type    EScalingType
   role            EPetRole
   element_type    EElemental?
   rarity          ERarity
