@@ -14,10 +14,7 @@ export const shuffleRarities = (rarities: Rarity[]) => {
 
 export const huntPet = (rarities: Rarity[], pets: Pet[]) => {
     const shuffledRarities = shuffleRarities(rarities);
-    const totalCatchRate = shuffledRarities.reduce(
-        (acc, rarity) => acc + rarity.catch_rate,
-        0
-    );
+    const totalCatchRate = shuffledRarities.reduce((acc, rarity) => acc + rarity.catch_rate, 0);
     const r = Math.random() * totalCatchRate;
     let sum = 0;
     for (const rarity of shuffledRarities) {
@@ -32,21 +29,11 @@ export const huntPet = (rarities: Rarity[], pets: Pet[]) => {
     }
 };
 
-export const huntCheck = (
-    user: User,
-    todayActivity: UserDailyActivities | null
-) => {
-    if (!todayActivity) {
-        return USE_DAILY_ACTIVITY.HUNT.PRIORITY[1];
-    }
+export const huntCheck = (user: User, todayActivity: UserDailyActivities) => {
     if (todayActivity && todayActivity.hunt === 0) {
         return USE_DAILY_ACTIVITY.HUNT.PRIORITY[2];
     }
-    if (
-        todayActivity &&
-        todayActivity.hunt === 1 &&
-        user.z_coin >= USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
-    ) {
+    if (todayActivity && todayActivity.hunt === 1 && user.z_coin >= USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN) {
         return USE_DAILY_ACTIVITY.HUNT.PRIORITY[3];
     }
     return USE_DAILY_ACTIVITY.HUNT.PRIORITY[4];
