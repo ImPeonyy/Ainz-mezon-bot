@@ -11,7 +11,7 @@ type QueueItem = {
     error?: string;
 };
 
-type BlobItem = {
+type CloudinaryItem = {
     url: string;
     pathname: string;
     size: number;
@@ -22,7 +22,7 @@ type BlobItem = {
 export default function Home() {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [queue, setQueue] = useState<QueueItem[]>([]);
-    const [blobs, setBlobs] = useState<BlobItem[]>([]);
+    const [blobs, setBlobs] = useState<CloudinaryItem[]>([]);
     const [isListing, setIsListing] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
@@ -78,7 +78,7 @@ export default function Home() {
         files.forEach((f) => form.append("files", f));
 
         try {
-            const res = await fetch("/api/blob/upload", {
+            const res = await fetch("/api/cloudinary/upload", {
                 method: "POST",
                 body: form,
             });
@@ -132,8 +132,9 @@ export default function Home() {
     const fetchList = async () => {
         setIsListing(true);
         try {
-            const res = await fetch("/api/blob/list");
-            const data: { blobs?: BlobItem[] } = await res.json();
+            const res = await fetch("/api/cloudinary/list");
+            const data: { blobs?: CloudinaryItem[] } = await res.json();
+            console.log(data);
             setBlobs(data.blobs ?? []);
         } catch {
             // noop
