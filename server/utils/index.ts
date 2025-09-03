@@ -5,7 +5,8 @@ import {
     emojisMessage,
     getActionMessage,
     getDexMessage,
-    textMessage
+    textMessage,
+    getBattleMessage
 } from './message.util';
 import {
     extractFirstTokenWithAsterisk,
@@ -13,7 +14,11 @@ import {
     getTargetFromMention,
     parseActionCommand,
     getRarityColor,
-    getUrlEmoji
+    getUrlEmoji,
+    expToUserLevel,
+    userLevelUp,
+    expToPetLevel,
+    petLevelUp
 } from './misc.util';
 import { getDailyReward, getMidnightRemainingTime } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
@@ -29,7 +34,7 @@ import {
     processTeam,
     processTurn
 } from './battle.util';
-
+import { createBattleImage } from './battleCanvas.util';
 export {
     getActorName,
     getTargetFromMention,
@@ -59,5 +64,11 @@ export {
     getPositionByHp,
     hpAfterDealDame,
     processTeam,
-    processTurn
+    processTurn,
+    expToUserLevel,
+    userLevelUp,
+    expToPetLevel,
+    petLevelUp,
+    getBattleMessage,
+    createBattleImage
 };

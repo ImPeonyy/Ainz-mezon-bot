@@ -33,5 +33,7 @@ export const USE_DAILY_ACTIVITY = {
 export const BATTLE = {
     MANA_PER_HIT: 15
 };
-
+export const FAV_COLOR = '#F3AAB5';
 export const CLOUDINARY_BATTLE_FOLDER = 'Battle';
+export const BATTLE_CARD_HEIGHT = 460;
+export const BATTLE_CARD_WIDTH = 800;

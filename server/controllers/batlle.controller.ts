@@ -1,11 +1,18 @@
 import { getRandomUserPets } from '@/services/userPet.service';
 import { prisma } from '@/lib/db';
-import { embedMessage, processTeam, processTurn, textMessage } from '@/utils';
+import {
+    userLevelUp,
+    petLevelUp,
+    processTeam,
+    processTurn,
+    textMessage,
+    getBattleMessage,
+    createBattleImage
+} from '@/utils';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { IBattle, IBPet } from '@/constants/Type';
-import { createBattleImage } from '@/utils/battleCanvas.util';
 import { CLOUDINARY_BATTLE_FOLDER } from '@/constants/Constant';
-import { uploadImageToCloudinary, deleteImagesFromCloudinary, getUser } from '@/services';
+import { uploadImageToCloudinary, deleteImagesFromCloudinary, getUser, updateUser, updateUserPet } from '@/services';
 
 export const battleController = async (channel: any, message: Message) => {
     try {
@@ -28,7 +35,7 @@ export const battleController = async (channel: any, message: Message) => {
         let teamBTurnQueue: number[] = [2, 4, 6];
         const imageQueue: { public_id: string; secure_url: string }[] = [];
 
-        const fight: IBattle = {
+        const battle: IBattle = {
             turn: 0,
             teamA: {
                 1: processedTeamA[0],
@@ -43,60 +50,48 @@ export const battleController = async (channel: any, message: Message) => {
         };
 
         while (teamATurnQueue.length > 0 && teamBTurnQueue.length > 0) {
-            if (fight.turn === 0) {
+            if (battle.turn === 0) {
                 const imageBuffer = await createBattleImage(
-                    [fight.teamA[1], fight.teamA[3], fight.teamA[5]],
-                    [fight.teamB[2], fight.teamB[4], fight.teamB[6]]
+                    [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
+                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]]
                 );
                 const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
                 imageQueue.push(image);
-                await messageFetch.update(
-                    embedMessage({
-                        color: '#f3aab5',
-                        title: 'Battle started!',
-                        image: { url: image.secure_url }
-                    })
-                );
+                await messageFetch.update(getBattleMessage(currentUser, battle, image.secure_url, `Battle start!`));
             }
-            fight.turn++;
+            battle.turn++;
             console.log('\n\n--------------------------');
-            console.log('🔄 Turn', fight.turn);
-            if (fight.turn % 2 !== 0) {
-                processTurn(teamATurnQueue, fight.teamA, teamBTurnQueue, fight.teamB, [2, 4, 6]);
+            console.log('🔄 Turn', battle.turn);
+            if (battle.turn % 2 !== 0) {
+                processTurn(teamATurnQueue, battle.teamA, teamBTurnQueue, battle.teamB, [2, 4, 6]);
             } else {
-                processTurn(teamBTurnQueue, fight.teamB, teamATurnQueue, fight.teamA, [1, 3, 5]);
+                processTurn(teamBTurnQueue, battle.teamB, teamATurnQueue, battle.teamA, [1, 3, 5]);
             }
             console.log('teamATurnQueue', teamATurnQueue);
             console.log('teamBTurnQueue', teamBTurnQueue);
-            if (fight.turn % 3 === 0) {
+            if (battle.turn % 6 === 0) {
                 const imageBuffer = await createBattleImage(
-                    [fight.teamA[1], fight.teamA[3], fight.teamA[5]],
-                    [fight.teamB[2], fight.teamB[4], fight.teamB[6]]
+                    [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
+                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]]
                 );
                 const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
                 imageQueue.push(image);
                 await messageFetch.update(
-                    embedMessage({
-                        color: '#f3aab5',
-                        title: 'Battle in progress!',
-                        image: { url: image.secure_url }
-                    })
+                    getBattleMessage(currentUser, battle, image.secure_url, `Battle in progress! - Turn ${battle.turn}`)
                 );
             }
             if (teamATurnQueue.length === 0 || teamBTurnQueue.length === 0) {
                 const imageBuffer = await createBattleImage(
-                    [fight.teamA[1], fight.teamA[3], fight.teamA[5]],
-                    [fight.teamB[2], fight.teamB[4], fight.teamB[6]]
+                    [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
+                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]]
                 );
                 const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
                 imageQueue.push(image);
-                await messageFetch.update(
-                    embedMessage({
-                        color: '#f3aab5',
-                        title: 'Battle over!',
-                        image: { url: image.secure_url }
-                    })
-                );
+                const msg =
+                    teamATurnQueue.length === 0
+                        ? `You lost in ${battle.turn} turns! You gained 50 exp and 50 exp for each of your pets!`
+                        : `You won in ${battle.turn} turns! You gained 100 exp and 200 exp for each of your pets!`;
+                await messageFetch.update(getBattleMessage(currentUser, battle, image.secure_url, msg));
             }
         }
 
@@ -108,6 +103,73 @@ export const battleController = async (channel: any, message: Message) => {
 
         if (result.isOver) {
             deleteImagesFromCloudinary(imageQueue.slice(0, -1).map((image) => image.public_id));
+            if (result.winner === 'Team A') {
+                const isLevelUp = userLevelUp(currentUser.exp + 100, currentUser.level);
+                try {
+                    await prisma.$transaction(async (tx) => {
+                        await updateUser(
+                            tx,
+                            {
+                                id: currentUser.id
+                            },
+                            {
+                                exp: {
+                                    increment: 100
+                                },
+                                level: {
+                                    increment: isLevelUp ? 1 : 0
+                                }
+                            }
+                        );
+
+                        await Promise.all(
+                            processedTeamA.map((pet) => {
+                                const isLevelUp = petLevelUp(pet.info.exp + 200, pet.info.level);
+                                return updateUserPet(
+                                    tx,
+                                    { id: pet.id },
+                                    { exp: { increment: 200 }, level: { increment: isLevelUp ? 1 : 0 } }
+                                );
+                            })
+                        );
+                    });
+                } catch (error) {
+                    console.log('Error updating user:', error);
+                }
+            } else {
+                try {
+                    await prisma.$transaction(async (tx) => {
+                        const isLevelUp = userLevelUp(currentUser.exp + 50, currentUser.level);
+                        await updateUser(
+                            tx,
+                            {
+                                id: currentUser.id
+                            },
+                            {
+                                exp: {
+                                    increment: 50
+                                },
+                                level: {
+                                    increment: isLevelUp ? 1 : 0
+                                }
+                            }
+                        );
+
+                        await Promise.all(
+                            processedTeamA.map((pet) => {
+                                const isLevelUp = petLevelUp(pet.info.exp + 50, pet.info.level);
+                                return updateUserPet(
+                                    tx,
+                                    { id: pet.id },
+                                    { exp: { increment: 50 }, level: { increment: isLevelUp ? 1 : 0 } }
+                                );
+                            })
+                        );
+                    });
+                } catch (error) {
+                    console.log('Error updating user:', error);
+                }
+            }
         }
     } catch (error) {
         console.log('Error in battleController:', error);
