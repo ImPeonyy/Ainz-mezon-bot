@@ -1,5 +1,8 @@
 import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas';
 import { IBPet } from '@/constants/Type';
+import path from 'path';
+import fs from 'fs';
+import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH } from '@/constants/Constant';
 
 const drawTeamPets = async (
     ctx: CanvasRenderingContext2D,
@@ -7,7 +10,7 @@ const drawTeamPets = async (
     teamX: number,
     isRightTeam: boolean = false
 ): Promise<void> => {
-    const startY = 50;
+    const startY = 20;
     const spacing = 140;
     const maxPets = Math.min(team.length, 3);
 
@@ -46,15 +49,12 @@ const drawTeamPets = async (
 
         ctx.save();
         ctx.beginPath();
-        ctx.roundRect(x, y, cardWidth, cardHeight, 8);
         ctx.fill();
         ctx.stroke();
         ctx.restore();
 
         try {
-            const petImage = await loadImage(
-                'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756608539/spider-gwen_ui0d6g.jpg'
-            );
+            const petImage = await loadImage(pet.info.avatar);
             const avatarSize = 80;
 
             ctx.save();
@@ -63,6 +63,15 @@ const drawTeamPets = async (
             ctx.closePath();
             ctx.clip();
             ctx.drawImage(petImage, avatarX, y + 20, avatarSize, avatarSize);
+            ctx.restore();
+
+            // Draw avatar border
+            ctx.save();
+            ctx.beginPath();
+            ctx.roundRect(avatarX, y + 20, avatarSize, avatarSize, 8);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#F3AAB5';
+            ctx.stroke();
             ctx.restore();
         } catch (error) {
             console.error('Error drawing pet card:', error);
@@ -77,8 +86,13 @@ const drawTeamPets = async (
 
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 13px Arial';
-        ctx.textAlign = 'left';
-        ctx.fillText(pet.info.nickname ?? '', nameX, hpY - 6);
+        if (isRightTeam) {
+            ctx.textAlign = 'left';
+            ctx.fillText(pet.info.nickname ?? '', nameX, hpY - 10);
+        } else {
+            ctx.textAlign = 'right';
+            ctx.fillText(pet.info.nickname ?? '', nameX + barWidth, hpY - 10);
+        }
 
         ctx.fillStyle = '#1A1A1A';
         ctx.fillRect(barsX, hpY, barWidth, barHeight);
@@ -144,8 +158,8 @@ const drawTeamPets = async (
 };
 
 const renderBattleCanvas = async (teamA: IBPet[], teamB: IBPet[]): Promise<Buffer> => {
-    const width = 800;
-    const height = 600;
+    const width = BATTLE_CARD_WIDTH;
+    const height = BATTLE_CARD_HEIGHT;
 
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');

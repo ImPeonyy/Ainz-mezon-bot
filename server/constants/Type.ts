@@ -45,13 +45,16 @@ export interface IBStats {
 }
 
 export interface IBPet {
+    id: number;
     position: number;
     isAlive: boolean;
     info: {
         nickname: string;
+        mezon_emoji_id: string;
         avatar: string;
         rarity: ERarity;
         level: number;
+        exp: number;
         autoAttack: {
             damage: number;
             scalingType: EScalingType;

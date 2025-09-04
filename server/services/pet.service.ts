@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 export const getPets = () => {
     try {
@@ -28,6 +29,22 @@ export const getPetDetail = async (petName: string) => {
         });
     } catch (error) {
         console.error('Error getting pets:', error);
+        throw error;
+    }
+};
+
+export const updateUserPet = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    where: Prisma.UserPetWhereUniqueInput,
+    data: Prisma.UserPetUpdateInput
+) => {
+    try {
+        return await prismaClient.userPet.update({
+            where,
+            data
+        });
+    } catch (error) {
+        console.error('Error updating user pet:', error);
         throw error;
     }
 };
