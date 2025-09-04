@@ -37,8 +37,8 @@ export const getRandomUserPets = async (prismaClient: PrismaClient | Prisma.Tran
                         statistic: true,
                         rarity: true,
                         autoAttack: true,
-                        passiveSkill: true,
-                        activeSkill: true
+                        passiveSkill: { include: { effects: true } },
+                        activeSkill: { include: { effects: true } }
                     }
                 }
             },

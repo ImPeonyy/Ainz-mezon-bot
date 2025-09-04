@@ -1,8 +1,10 @@
 import { ChannelMessageContent, EmojiOnMessage, IEmbedProps } from 'mezon-sdk';
 
 import { ACTIONS } from '@/constants/Commands';
-import { Prisma, Pet } from '@prisma/client';
+import { Prisma, Pet, User } from '@prisma/client';
 import { getRarityColor, getUrlEmoji } from '@/utils';
+import { FAV_COLOR } from '@/constants/Constant';
+import { IBattle } from '@/constants/Type';
 
 export const textMessage = (message: string) => {
     const messagePayload: ChannelMessageContent = {
@@ -98,7 +100,7 @@ export const getDexMessage = (
         messageContent.push(
             { name: 'Rarity', value: statistic.rarity, inline: true },
             { name: 'Role', value: statistic.role, inline: true },
-            { name: 'Attack type', value: statistic.attack_type, inline: true },
+            { name: 'Attack type', value: statistic.scaling_type, inline: true },
             { name: 'HP', value: statistic.hp.toString(), inline: true },
             { name: 'AD', value: statistic.ad.toString(), inline: true },
             { name: 'AR', value: statistic.ar.toString(), inline: true },
@@ -117,4 +119,62 @@ export const getDexMessage = (
             text: `📙 Ainz Ooal Gown • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
         }
     });
+};
+
+export const getBattleMessage = (user: User, battle: IBattle, image: string, footerMsg: string) => {
+    const messagePayload: ChannelMessageContent = {
+        embed: [
+            {
+                color: FAV_COLOR,
+                title: `${user.username} is in a battle!`,
+                thumbnail: { url: user.avatar },
+                //     description: `Team A\n
+                // Lv. ${battle.teamA[1].info.level} - ${battle.teamA[1].info.nickname}\n
+                // Lv. ${battle.teamA[3].info.level} - ${battle.teamA[3].info.nickname}\n
+                // Lv. ${battle.teamA[5].info.level} - ${battle.teamA[5].info.nickname}\n\n
+                // Team B\n
+                // Lv. ${battle.teamB[2].info.level} - ${battle.teamB[2].info.nickname}\n
+                // Lv. ${battle.teamB[4].info.level} - ${battle.teamB[4].info.nickname}\n
+                // Lv. ${battle.teamB[6].info.level} - ${battle.teamB[6].info.nickname}`,
+                fields: [
+                    {
+                        name: 'Team A',
+                        value: `Lv. ${battle.teamA[1].info.level} - ${battle.teamA[1].info.nickname}`,
+                        inline: true
+                    },
+                    {
+                        name: '----------',
+                        value: `Lv. ${battle.teamA[3].info.level} - ${battle.teamA[3].info.nickname}`,
+                        inline: true
+                    },
+                    {
+                        name: '----------',
+                        value: `Lv. ${battle.teamA[5].info.level} - ${battle.teamA[5].info.nickname}`,
+                        inline: true
+                    },
+                    {
+                        name: 'Team B',
+                        value: `Lv. ${battle.teamB[2].info.level} - ${battle.teamB[2].info.nickname}`,
+                        inline: true
+                    },
+                    {
+                        name: '----------',
+                        value: `Lv. ${battle.teamB[4].info.level} - ${battle.teamB[4].info.nickname}`,
+                        inline: true
+                    },
+                    {
+                        name: '----------',
+                        value: `Lv. ${battle.teamB[6].info.level} - ${battle.teamB[6].info.nickname}`,
+                        inline: true
+                    }
+                ],
+                image: { url: image },
+                footer: {
+                    text: footerMsg
+                }
+            }
+        ]
+    };
+
+    return messagePayload;
 };

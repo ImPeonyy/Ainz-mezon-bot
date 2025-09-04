@@ -185,13 +185,16 @@ export const processTeam = (
     for (const [index, userPet] of team.entries()) {
         if (userPet.pet.autoAttack && userPet.pet.activeSkill) {
             processedTeam.push({
+                id: userPet.id,
                 position: index * 2 + teamOrder,
                 isAlive: true,
                 info: {
                     nickname: userPet.nickname || userPet.pet.name,
+                    mezon_emoji_id: userPet.pet.mezon_emoji_id,
                     avatar: userPet.pet.avatar || '',
                     rarity: userPet.pet.rarity.type as ERarity,
                     level: userPet.level,
+                    exp: userPet.exp,
                     autoAttack: {
                         damage: userPet.pet.autoAttack.damage,
                         scalingType: userPet.pet.autoAttack.scaling_type,

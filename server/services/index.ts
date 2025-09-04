@@ -6,7 +6,7 @@ import {
 } from '@/services/userDailyActivity.service';
 import { createUserPet, createUserPets } from '@/services/userPet.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
-import { getPetDetail, getPets } from '@/services/pet.service';
+import { getPetDetail, getPets, updateUserPet } from '@/services/pet.service';
 import { getRarities } from '@/services/rarity.service';
 import { uploadImageToCloudinary, deleteImagesFromCloudinary } from '@/services/cloudinary.service';
 export {
@@ -24,5 +24,6 @@ export {
     createUserPet,
     createUserPets,
     uploadImageToCloudinary,
-    deleteImagesFromCloudinary
+    deleteImagesFromCloudinary,
+    updateUserPet
 };
