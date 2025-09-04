@@ -1,9 +1,9 @@
-const dotenv = require('dotenv');
-const { MezonClient } = require('mezon-sdk');
-const express = require('express');
-const cors = require('cors');
+import dotenv from 'dotenv';
+import { MezonClient } from 'mezon-sdk';
+import express from 'express';
+import cors from 'cors';
 
-import { extractFirstTokenWithAsterisk, getRarityColor, parseActionCommand } from '@/utils';
+import { extractFirstTokenWithAsterisk, parseActionCommand } from '@/utils';
 
 import { getActionController } from '@/controllers';
 
@@ -66,4 +66,4 @@ main()
         console.error('Error starting bot:', error);
     });
 
-module.exports = app;
+export default app;
