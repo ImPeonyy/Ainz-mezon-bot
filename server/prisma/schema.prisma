@@ -78,9 +78,8 @@ enum EStat {
 // ========================= TABLES =========================
 
 model User {
-  id              String                 @id @default(uuid())
+  id              String                 @id
   username        String                 @unique
-  mezon_id        String                 @unique
   z_coin          Int                    @default(0)
   exp             Int                    @default(0)
   level           Int                    @default(1)
@@ -259,7 +258,7 @@ model UserPet {
 
 model Team {
   id              Int                    @id @default(autoincrement())
-  user_id         String
+  user_id         String                 @unique
   name            String                 @unique
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
