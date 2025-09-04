@@ -260,8 +260,7 @@ model UserPet {
 model Team {
   id              Int                    @id @default(autoincrement())
   user_id         String
-  name            String
-  order           Int
+  name            String                 @unique
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
