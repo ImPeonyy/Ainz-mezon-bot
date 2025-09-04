@@ -6,7 +6,7 @@ export const getUser = async (mezon_id: string) => {
     try {
         return await prisma.user.findUnique({
             where: {
-                mezon_id: mezon_id
+                id: mezon_id
             }
         });
     } catch (error) {
