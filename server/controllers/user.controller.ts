@@ -1,7 +1,8 @@
-import { createUser, getUser, updateUser } from '@/services';
-import { embedMessage, textMessage } from '@/utils';
+import { createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
+import { createProfileCard, textMessage } from '@/utils';
 
 import { prisma } from '@/lib/db';
+import { CLOUDINARY_PROFILE_FOLDER } from '@/constants/Constant';
 
 export const getUserController = async (mezon_id: string) => {
     try {
@@ -15,20 +16,18 @@ export const getUserController = async (mezon_id: string) => {
             return textMessage('User not found');
         }
 
-        return embedMessage({
-            color: '#f3aab5',
-            title: 'User Information',
-            fields: [
-                { name: 'Username', value: user?.username || '', inline: true },
-                { name: 'Mezon ID', value: user?.id || '', inline: true },
-                {
-                    name: 'Z-Coin',
-                    value: user?.z_coin?.toString() || '',
-                    inline: true
-                }
-            ],
-            image: { url: user?.avatar || '' }
+        const imageBuffer = await createProfileCard({
+            username: user?.username || '',
+            level: user?.level || 0,
+            z_coin: user?.z_coin || 0,
+            currentXP: user?.exp || 0,
+            nextLevelXP: user?.exp || 0,
+            avatar: user?.avatar || ''
         });
+
+        const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
+
+        return image.secure_url;
     } catch (error) {
         console.log('Error getting user:', error);
         return textMessage('Internal server error');
@@ -49,20 +48,18 @@ export const createUserController = async (username: string, mezon_id: string, a
 
         const user = await createUser(prisma, { username, id: mezon_id, avatar });
 
-        return embedMessage({
-            color: '#f3aab5',
-            title: 'Create User Success!',
-            fields: [
-                { name: 'Username', value: user?.username || '', inline: true },
-                { name: 'Mezon ID', value: user?.id || '', inline: true },
-                {
-                    name: 'Z-Coin',
-                    value: user?.z_coin?.toString() || '',
-                    inline: true
-                }
-            ],
-            image: { url: user?.avatar || '' }
+        const imageBuffer = await createProfileCard({
+            username: user?.username || '',
+            level: user?.level || 0,
+            z_coin: user?.z_coin || 0,
+            currentXP: user?.exp || 0,
+            nextLevelXP: user?.exp || 0,
+            avatar: user?.avatar || ''
         });
+
+        const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
+
+        return image.secure_url;
     } catch (error) {
         console.log('Error creating user:', error);
         return textMessage('Internal server error');
@@ -86,23 +83,21 @@ export const updateUserController = async (username: string, mezon_id: string, a
             {
                 id: existingUser.id
             },
-            { username, id: mezon_id, avatar }
+            { username, avatar }
         );
 
-        return embedMessage({
-            color: '#f3aab5',
-            title: 'Update User Success!',
-            fields: [
-                { name: 'Username', value: user?.username || '', inline: true },
-                { name: 'Mezon ID', value: user?.id || '', inline: true },
-                {
-                    name: 'Z-Coin',
-                    value: user?.z_coin?.toString() || '',
-                    inline: true
-                }
-            ],
-            image: { url: user?.avatar || '' }
+        const imageBuffer = await createProfileCard({
+            username: user?.username || '',
+            level: user?.level || 0,
+            z_coin: user?.z_coin || 0,
+            currentXP: user?.exp || 0,
+            nextLevelXP: user?.exp || 0,
+            avatar: user?.avatar || ''
         });
+
+        const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
+
+        return image.secure_url;
     } catch (error) {
         console.log('Error updating user:', error);
         return textMessage('Internal server error');

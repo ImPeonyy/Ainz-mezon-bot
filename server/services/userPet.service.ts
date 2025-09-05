@@ -46,8 +46,7 @@ export const getRandomUserPets = async (prismaClient: PrismaClient | Prisma.Tran
                 teamMembers: {
                     some: {
                         team: {
-                            user_id: user_id,
-                            order: 1
+                            user_id: user_id
                         }
                     }
                 }

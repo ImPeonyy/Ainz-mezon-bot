@@ -2,7 +2,7 @@ import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas';
 import { IBPet } from '@/constants/Type';
 import path from 'path';
 import fs from 'fs';
-import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH } from '@/constants/Constant';
+import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH, PROFILE_CARD_BG } from '@/constants/Constant';
 
 const drawTeamPets = async (
     ctx: CanvasRenderingContext2D,
@@ -192,6 +192,143 @@ export async function createBattleImage(teamA: IBPet[], teamB: IBPet[]) {
         return imageBuffer;
     } catch (error) {
         console.error('❌ Error when rendering battle canvas:', error);
+        throw error;
+    }
+}
+
+// Interface cho profile data
+interface ProfileData {
+    username: string;
+    level: number;
+    z_coin: number;
+    currentXP: number;
+    nextLevelXP: number;
+    avatar: string;
+}
+
+// Hàm vẽ profile card giống như hình ảnh
+const renderProfileCanvas = async (profileData: ProfileData): Promise<Buffer> => {
+    const width = 1200;
+    const height = 360;
+
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Load và vẽ background image
+    const backgroundImage = await loadImage(PROFILE_CARD_BG);
+
+    // Vẽ background image để fill toàn bộ canvas
+    ctx.drawImage(backgroundImage, 0, 0, width, height);
+
+    // Thêm overlay tối để text dễ đọc hơn
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.fillRect(0, 0, width, height);
+
+    // Vẽ avatar từ ảnh
+    const avatarSize = 240; // Tăng từ 180 lên 240
+    const avatarX = 60; // Dịch sang trái từ 150 về 80
+    const avatarY = height / 2 - avatarSize / 2;
+
+    // Load và vẽ avatar image
+    const avatarImage = await loadImage(profileData.avatar!);
+
+    // Vẽ avatar với border tròn
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(avatarImage, avatarX, avatarY, avatarSize, avatarSize);
+    ctx.restore();
+
+    // Border cho avatar
+    ctx.strokeStyle = '#F3AAB5';
+    ctx.lineWidth = 8; // Tăng từ 5 lên 8
+    ctx.beginPath();
+    ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Vẽ thông tin text
+    const textX = avatarX + avatarSize + 50; // Tăng khoảng cách từ avatar
+    const textY = 120; // Dịch xuống một chút từ 100 lên 120
+
+    // Username
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 56px Arial'; // Tăng từ 42px lên 56px
+    ctx.textAlign = 'left';
+    ctx.fillText(profileData.username, textX, textY);
+
+    // Level và Z-Coin
+    ctx.font = 'bold 40px Arial'; // Tăng từ 32px lên 40px
+    ctx.fillText(`LV. ${profileData.level}`, textX, textY + 70);
+
+    ctx.font = '32px Arial'; // Tăng từ 24px lên 32px
+    ctx.fillText(`Z-Coin: ${profileData.z_coin}`, textX + 120, textY + 70);
+
+    // XP
+    ctx.font = '32px Arial'; // Tăng từ 24px lên 32px
+    ctx.fillText(
+        `XP: ${profileData.currentXP.toLocaleString()} / ${profileData.nextLevelXP.toLocaleString()}`,
+        textX + 380,
+        textY + 70
+    );
+
+    // Vẽ progress bar
+    const barX = textX;
+    const barY = textY + 120; // Dịch xuống dưới thêm để cân bằng với text đã lên trên
+    const barWidth = 600; // Tăng từ 500 lên 600
+    const barHeight = 40; // Tăng từ 30 lên 40
+
+    // Background của progress bar
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(barX, barY, barWidth, barHeight);
+
+    // Border của progress bar
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4; // Tăng từ 3 lên 4
+    ctx.strokeRect(barX, barY, barWidth, barHeight);
+
+    // Fill của progress bar
+    const progressPercent = profileData.currentXP / profileData.nextLevelXP;
+    const fillWidth = barWidth * progressPercent;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(barX, barY, fillWidth, barHeight);
+
+    return canvas.toBuffer('image/jpeg');
+};
+
+export async function createProfileCard(profileData?: ProfileData) {
+    try {
+        // Data hardcode nếu không có input
+        const defaultProfileData: ProfileData = {
+            username: 'Im Peonyy~',
+            level: 1,
+            z_coin: 100,
+            currentXP: 3241,
+            nextLevelXP: 5196,
+            avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756608539/spider-gwen_ui0d6g.jpg' // Avatar mặc định
+        };
+
+        const data = profileData || defaultProfileData;
+        const imageBuffer = await renderProfileCanvas(data);
+
+        // const tempDir = path.join(process.cwd(), 'tempimage');
+        // if (!fs.existsSync(tempDir)) {
+        //     fs.mkdirSync(tempDir, { recursive: true });
+        // }
+
+        // const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        // const filename = `battle-result-${timestamp}.png`;
+        // const filepath = path.join(tempDir, filename);
+
+        // fs.writeFileSync(filepath, imageBuffer);
+
+        // console.log(`✅ Battle image has been saved at: ${filepath}`);
+
+        return imageBuffer;
+    } catch (error) {
+        console.error('❌ Error when rendering profile canvas:', error);
         throw error;
     }
 }
