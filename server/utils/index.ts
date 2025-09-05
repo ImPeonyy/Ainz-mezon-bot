@@ -34,7 +34,7 @@ import {
     processTeam,
     processTurn
 } from './battle.util';
-import { createBattleImage } from './battleCanvas.util';
+import { createBattleImage, createProfileCard } from './canvas.util';
 export {
     getActorName,
     getTargetFromMention,
@@ -70,5 +70,6 @@ export {
     expToPetLevel,
     petLevelUp,
     getBattleMessage,
-    createBattleImage
+    createBattleImage,
+    createProfileCard
 };

@@ -33,23 +33,40 @@ async function main() {
                 return;
             }
 
-            const trigger = extractFirstTokenWithAsterisk(event?.content?.t)?.toLowerCase();
-            if (trigger === '*ainz' || trigger === '*a') {
-                const channelFetch = await client.channels.fetch(event.channel_id);
-                const messageFetch = await channelFetch.messages.fetch(event.message_id);
+            if (event.channel_id === process.env.CHANNEL_ID) {
+                const trigger = extractFirstTokenWithAsterisk(event?.content?.t)?.toLowerCase();
+                if (trigger === '*ainz' || trigger === '*a') {
+                    const channelFetch = await client.channels.fetch(event.channel_id);
+                    const messageFetch = await channelFetch.messages.fetch(event.message_id);
 
-                const { action, targetRaw } = parseActionCommand(event?.content?.t);
+                    const { action, targetRaw } = parseActionCommand(event?.content?.t);
 
-                const messagePayload = await getActionController(
-                    event,
-                    action || 'invalid command',
-                    channelFetch,
-                    messageFetch,
-                    targetRaw
-                );
+                    const messagePayload = await getActionController(
+                        event,
+                        action || 'invalid command',
+                        channelFetch,
+                        messageFetch,
+                        targetRaw
+                    );
 
-                if (messagePayload) {
-                    await messageFetch.reply(messagePayload);
+                    if (typeof messagePayload === 'string') {
+                        await messageFetch.reply(
+                            {},
+                            [],
+                            [
+                                {
+                                    filename: 'attachment.png',
+                                    filetype: 'image/png',
+                                    url: messagePayload
+                                }
+                            ],
+                            true
+                        );
+                    }
+
+                    if (typeof messagePayload === 'object') {
+                        await messageFetch.reply(messagePayload);
+                    }
                 }
             }
         } catch (error) {
