@@ -18,6 +18,16 @@ export const parseActionCommand = (content: string): ParsedAction => {
     return { trigger, action, targetRaw };
 };
 
+export const parseActionCommandTeam = (content: string): ParsedAction => {
+    if (!content) return { action: null, targetRaw: null };
+
+    const match = content.trim().match(/^(\S+)(?:\s+(.*))?$/);
+    if (!match) return { action: null, targetRaw: null };
+
+    const [, action, targetRaw = null] = match;
+    return { action, targetRaw };
+};
+
 export const getActorName = (display_name: string, clan_nick: string) => {
     if (clan_nick !== '') {
         return clan_nick;

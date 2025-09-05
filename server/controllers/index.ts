@@ -3,6 +3,7 @@ import { dexController, huntPetController } from './pet.controller';
 import { getActionController, getActionGifController, getMemeController } from './misc.controller';
 import { battleController } from './batlle.controller';
 import { dailyController } from './userDailyActivity.controller';
+import { getTeamController, createTeamController, updateTeamController, deleteTeamController, addPetToTeamController, swapPetInTeamController } from './team.controller';
 
 export {
     getActionController,
@@ -14,5 +15,11 @@ export {
     getActionGifController,
     dexController,
     dailyController,
-    battleController
+    battleController,
+    getTeamController,
+    createTeamController,
+    updateTeamController,
+    deleteTeamController,
+    addPetToTeamController,
+    swapPetInTeamController
 };

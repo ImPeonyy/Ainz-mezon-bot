@@ -65,6 +65,25 @@ export const bagMessage = (pets: Pet[]) => {
     return messagePayload;
 };
 
+export const teamInfoMessage = (pets: Prisma.TeamMemberGetPayload<{ include: { userPet: { include: { pet: true } } } }>[]) => {
+    let messagePayload: ChannelMessageContent = {
+        t: 'Your team contains the following pets:\n',
+        ej: []
+    };
+
+    pets.forEach((pet) => {
+        messagePayload.t += `Position ${pet.position}: `;
+        messagePayload.ej?.push({
+            emojiid: pet.userPet.pet.mezon_emoji_id,
+            s: messagePayload.t?.length || 0,
+            e: messagePayload.t?.length || 0 + 1
+        });
+        messagePayload.t += `${pet.userPet.pet.name} - Lv. ${pet.userPet.level} \n`;
+    });
+    
+    return messagePayload;``
+};
+
 export const getActionMessage = (action: string, actor: string, target?: string) => {
     if (!ACTIONS[action]) {
         return {

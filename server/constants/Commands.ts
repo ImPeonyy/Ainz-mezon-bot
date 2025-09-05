@@ -9,7 +9,8 @@ export const COMMANDS = {
     dex: 'dex',
     daily: 'daily',
     battle: 'battle',
-    help: 'help'
+    help: 'help',
+    team: 'team'
 };
 
 export const ACTIONS = {
