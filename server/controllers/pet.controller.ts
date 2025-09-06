@@ -16,7 +16,6 @@ import { prisma } from '@/lib/db';
 
 export const huntPetController = async (mezon_id: string) => {
     try {
-        console.log('Hunting pet...');
         const user = await getUser(mezon_id);
 
         if (!user) {
@@ -38,7 +37,6 @@ export const huntPetController = async (mezon_id: string) => {
 
         if (!todayActivity) {
             try {
-                console.log('user_id', user.id);
                 await prisma.$transaction(async (tx) => {
                     await createUserDailyActivity(tx, {
                         user: {
@@ -71,10 +69,9 @@ export const huntPetController = async (mezon_id: string) => {
             }
         } else {
             const huntPriority = huntCheck(user, todayActivity);
-            console.log('Hunt priority:', huntPriority);
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[4]) {
                 return textMessage(
-                    'Bạn đã dùng lượt hunt miễn phí của ngày hôm nay và bạn không đủ Z Coin để hunt! Hãy thử lại vào ngày mai!'
+                    '🚫 You’ve already used today’s free hunt, and you don’t have enough Z Coins to hunt!\n⏳ Come back and try again tomorrow!'
                 );
             }
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[2] && todayActivity) {
