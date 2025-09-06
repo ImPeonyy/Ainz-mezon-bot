@@ -48,7 +48,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Elephant',
         mezon_emoji_id: '7364683133987522279',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Btank%5D_elephant-ekjvfQrZCB9CmTGiVy8LhjgGtY4yoX.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827935/Ainz%20Mezon%20Bot/Pets/gkmbbizwcczvxdimhgz7.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -56,7 +56,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Rhinoceros',
         mezon_emoji_id: '7364683316891742229',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Btank%5D_rhinoceros-fVog9TqFDWknzbtXJuUS0IUDSV8v5R.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827935/Ainz%20Mezon%20Bot/Pets/cpjb4fksqmvqbkhnznku.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -64,7 +64,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Raccoon',
         mezon_emoji_id: '7364683587207230928',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bmage%5D_raccoon-0DbFgJVECKHRKLyTtNbS75THV24hT8.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827926/Ainz%20Mezon%20Bot/Pets/oxinith0o58u5kd9ruow.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -72,7 +72,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Frog',
         mezon_emoji_id: '7364683675713254522',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/frog_394697-KvQQZh7ULL5eRg4xeDHnqF1LGqG57I.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827926/Ainz%20Mezon%20Bot/Pets/wnp03lpuklwwwzwuffvi.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -80,7 +80,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Koala',
         mezon_emoji_id: '7364683826746947317',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bsupport%5D_koala-ehe1NSOP6MfDZ8wEN9nMm7mGW56oF6.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827931/Ainz%20Mezon%20Bot/Pets/g99bfplykb9lsadkijsv.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -88,7 +88,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Rabbit',
         mezon_emoji_id: '7364683964909625004',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bsupport%5D_rabbit-F783KAVJpkQWf93h5nWLH9nZPflNAK.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827931/Ainz%20Mezon%20Bot/Pets/slibtdzufud1al9qgmwh.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -96,7 +96,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Chameleon',
         mezon_emoji_id: '7364684113642914837',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bassassin%5D_chameleon-z8303rGekumDw0vrqshetKuEhSfDMF.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827921/Ainz%20Mezon%20Bot/Pets/bbiioutt4lo5gto4injs.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -104,7 +104,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Ferret',
         mezon_emoji_id: '7364684218516359305',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bassassin%5D_ferret2-U8ZnftkD0BETti9fVwaOwgJZlYPvAH.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827921/Ainz%20Mezon%20Bot/Pets/fqvboj4kqt24ir42kgie.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -112,7 +112,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Boar',
         mezon_emoji_id: '7364684386591267766',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bwarrior%5D_boar-XU9Nf6IqJvbEHb5pG0FCXaSZsNm04h.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827941/Ainz%20Mezon%20Bot/Pets/mncxhrct4dlsjxgbh9qo.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -120,7 +120,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Ram Sheep',
         mezon_emoji_id: '7364684441621524749',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bwarrior%5D_ramsheep-vZuUkjctw8vkjezu9SGLCrHqsqvidz.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827941/Ainz%20Mezon%20Bot/Pets/zlna2xraavsmv6ox3hw0.png',
         description: 'Coming soon',
         statistic_id: 1,
         rarity_id: 1
@@ -130,7 +130,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Panda',
         mezon_emoji_id: '7364686710908002637',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Btank%5D_panda-XqftpC4OeuB7iBGNGTBEt0t5uhJ53d.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827906/Ainz%20Mezon%20Bot/Pets/pgb49furblgshmcswcap.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -138,7 +138,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Pig',
         mezon_emoji_id: '7364686809690789368',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Btank%5D_pig-FEW3ACVikLRDpiesHHdA1er1oHnDze.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827906/Ainz%20Mezon%20Bot/Pets/qcedyvuw8i9ko2a70pml.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -146,7 +146,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Salamander',
         mezon_emoji_id: '7364686968840447654',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bmage%5D_salamander-RD16XiTdpvJ9bsefBvxa3dQODHlSzC.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827896/Ainz%20Mezon%20Bot/Pets/jxf7gobshyldkcsn1rhc.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -154,7 +154,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Fox',
         mezon_emoji_id: '7364686917436380728',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bmage%5D_fox-OzMjCqokE40mQTCFEv5KAQHHFhILjU.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827896/Ainz%20Mezon%20Bot/Pets/newq5gsfxrfrqy2u45ha.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -162,7 +162,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Butterfly',
         mezon_emoji_id: '7364687323743528711',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bsupport%5D_butterfly-yzsUsYyjzLe9X4HLDtPx5TXA81PqLV.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827901/Ainz%20Mezon%20Bot/Pets/bxxkro3upoggqy2ktkn0.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -170,7 +170,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Dolphin',
         mezon_emoji_id: '7364687366039926281',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bsupport%5D_dolphin-N8gLgyNLccjFXVR79tCCphq5BtyvWJ.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827901/Ainz%20Mezon%20Bot/Pets/khbd8aojsjt8wwd0v5no.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -178,7 +178,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Scorpion',
         mezon_emoji_id: '7364687596644916336',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bassassin%5D_scorpion-cmIXzXx9Ky5mVeARNw1poFwgYCehfZ.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827890/Ainz%20Mezon%20Bot/Pets/gprbwapoyvqldwd1ypdg.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -186,7 +186,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Eagle',
         mezon_emoji_id: '7364688014495286891',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bassassin%5D_eagle%20%281%29-viKiQn0QRplkskmqKLK8oSP0xZnrlo.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827890/Ainz%20Mezon%20Bot/Pets/bc6glhlojmlmnujpiujh.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -194,7 +194,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Dino',
         mezon_emoji_id: '7364691858330166336',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bwarrior%5D_dino-2GECc6dKom1UFPY0lLUAXI4MJJScct.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827912/Ainz%20Mezon%20Bot/Pets/altxfmfguunfu88avdas.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -202,7 +202,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lion',
         mezon_emoji_id: '7364691886664733553',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bwarrior%5D_lion-pw0zjegKyywLQnOS5XXl4embOtjP1n.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827912/Ainz%20Mezon%20Bot/Pets/asr9upifnatb8sx2svi9.png',
         description: 'Coming soon',
         statistic_id: 2,
         rarity_id: 2
@@ -211,7 +211,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Dread Porcupine',
         mezon_emoji_id: '7366467188352194458',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Brare%5D_Dread%20Porcupine-h703mWSPMkJPEtKdRA4KV5RdQAR7cl.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827970/Ainz%20Mezon%20Bot/Pets/u595qyhc4niy900qpkbw.png',
         description: 'Coming soon',
         statistic_id: 3,
         rarity_id: 3
@@ -219,7 +219,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Owl',
         mezon_emoji_id: '7366467290973474859',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bsupport%5D_owl-bXG8pOGXdARWtlN9cYRoaK9WrjGKlE.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827970/Ainz%20Mezon%20Bot/Pets/lwctbjwtjgfj477zht7m.png',
         description: 'Coming soon',
         statistic_id: 3,
         rarity_id: 3
@@ -227,7 +227,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Bee',
         mezon_emoji_id: '7366467319866577408',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/bee-ffJ7DZfpzQ9iDBltbaNLnRQaUmkwIG.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827970/Ainz%20Mezon%20Bot/Pets/g3a4rceruskotsik7dwd.png',
         description: 'Coming soon',
         statistic_id: 3,
         rarity_id: 3
@@ -235,7 +235,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Penguin',
         mezon_emoji_id: '7366467369762305576',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/penguin-xbi5FbQyB5WSQQ8F2l563gzf58PllT.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827970/Ainz%20Mezon%20Bot/Pets/xzeg3siwjnpageeav1xm.png',
         description: 'Coming soon',
         statistic_id: 3,
         rarity_id: 3
@@ -243,7 +243,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Seahorse',
         mezon_emoji_id: '7366467424187239598',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/seahorse-SVFiEhIlQhaoZllZxtEEq5ntU4L4GO.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827970/Ainz%20Mezon%20Bot/Pets/p1unqplolkdsercglrff.png',
         description: 'Coming soon',
         statistic_id: 3,
         rarity_id: 3
@@ -253,7 +253,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Basilisk',
         mezon_emoji_id: '7359855035740708032',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bepic%5D_basilisk%20-imxfTtYjVt9bnhsQWBsLlbJUzXxhXS.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827870/Ainz%20Mezon%20Bot/Pets/grfcy7kso7d17idx1ybh.png',
         description: 'Coming soon',
         statistic_id: 4,
         rarity_id: 4
@@ -261,7 +261,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Cerberus',
         mezon_emoji_id: '7359855111719414313',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bepic%5D_cerberus-rvUab4f1uCikfqe72wu1z5C6Ii6mRm.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827870/Ainz%20Mezon%20Bot/Pets/bxhborgwskrb7dfacddp.png',
         description: 'Coming soon',
         statistic_id: 4,
         rarity_id: 4
@@ -269,7 +269,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Dragon',
         mezon_emoji_id: '7359855161466150856',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bepic%5D_dragon-6o6INJPBo4J3Ql3RFQyqpam3ZywcbS.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827870/Ainz%20Mezon%20Bot/Pets/tflm50pmwnt4087bt1lj.png',
         description: 'Coming soon',
         statistic_id: 4,
         rarity_id: 4
@@ -277,7 +277,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Griffin',
         mezon_emoji_id: '7359855223036807590',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bepic%5D_griffin-raauOPaKgYz3KZfsHIsIC8o3EYvxpe.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827870/Ainz%20Mezon%20Bot/Pets/m4ozd33rol95nlyr7wls.png',
         description: 'Coming soon',
         statistic_id: 4,
         rarity_id: 4
@@ -285,7 +285,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Hydra',
         mezon_emoji_id: '7359855260169629201',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bepic%5D_hydra-c43hB9Sx17lEnHwL1hWGUpeM9Bw277.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827870/Ainz%20Mezon%20Bot/Pets/ff9agkms2gloj9osp2nd.png',
         description: 'Coming soon',
         statistic_id: 4,
         rarity_id: 4
@@ -293,7 +293,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Phoenix',
         mezon_emoji_id: '7359855392921938838',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bepic%5D_phoenix-wRhG0BoW6UE4tW41xJ6fwuW2Cq0Dxo.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827870/Ainz%20Mezon%20Bot/Pets/a6kntmkaxfbtcw83wocp.png',
         description: 'Coming soon',
         statistic_id: 4,
         rarity_id: 4
@@ -301,7 +301,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Unicorn',
         mezon_emoji_id: '7359855432450657385',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Bepic%5D_unicorn-KRwfznsfxxI6Khkyy7eraVygVvibpR.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827870/Ainz%20Mezon%20Bot/Pets/iuhrpkvfzeorlpbyy9fs.png',
         description: 'Coming soon',
         statistic_id: 4,
         rarity_id: 4
@@ -309,7 +309,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Manticore',
         mezon_emoji_id: '7359858743165326878',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/_epic__manticore-removebg-preview%20%281%29-Sry14b1xK8j0nw2yuszgwQECxjA5DS.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827870/Ainz%20Mezon%20Bot/Pets/kr0atlzgskorwduag9f4.png',
         description: 'Coming soon',
         statistic_id: 4,
         rarity_id: 4
@@ -319,7 +319,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Rat',
         mezon_emoji_id: '7359938752431810782',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/ti-DpJBKvTtoTIt3DM7QXxQnKfRvpWD09.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/vw8w3ew8fb5icbd0r1zf.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -327,7 +327,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Ox',
         mezon_emoji_id: '7359938804694634440',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/suu-m4i98wCrEa5Relik1CY8Mur9tBA73c.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/sundtdt4xs1ly765rfir.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -335,7 +335,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Tiger',
         mezon_emoji_id: '7359938837038813309',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/dan-Zq4uMMA6c2Y0rAGWCbA6ffjsdyQobq.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827816/Ainz%20Mezon%20Bot/Pets/z5d7afzcdeow4odzg6yx.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -343,7 +343,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Cat',
         mezon_emoji_id: '7359938879013831780',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/mao-5aUd3VwVG5jOy9RF4jaHzQENsCTFb9.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/v5gkfxpnusuamab2fw4i.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -351,7 +351,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Dragon',
         mezon_emoji_id: '7359938940833032841',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/thin-zcu9GCzgNzSXcOUp9FSdMViXqlTGBV.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/egkso9p0sfkrn0bx0nig.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -367,7 +367,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Horse',
         mezon_emoji_id: '7359939033460169061',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/ngo-t5CpoZCcmuF0P3BBp5u808noob5unW.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827816/Ainz%20Mezon%20Bot/Pets/uw3hegw6jrnfr1t3afuq.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -375,7 +375,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Goat',
         mezon_emoji_id: '7359939079661840579',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/mui-1AWMzXclOzg15SGccs6Uf5T50VL6Ia.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/zy6kqqvnqnxzfjhn4kgx.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -383,7 +383,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Monkey',
         mezon_emoji_id: '7359939117018127739',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/than-zeldBp2hyKhcRImm65S5PSZHbDzqE8.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/kbv2zxrjzhugxgh80ay1.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -391,7 +391,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Rooster',
         mezon_emoji_id: '7359939230398954679',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/dau-FL4brruJexuYKM1cN4le1laQPZNpim.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/p3odifezq0xgw57tra8q.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -399,7 +399,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Dog',
         mezon_emoji_id: '7359939274893697177',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/tuat-vyl2rNo2wz1GBmX2bdWF0cMwtqucAV.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/nwos3eomfeqppq9thyek.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -407,7 +407,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Lunar Pig',
         mezon_emoji_id: '7359939317916230055',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/hoi-Z4DXCW1YVtut4RraDUYTxhSVHrMliL.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827817/Ainz%20Mezon%20Bot/Pets/ctyhe7n8nsnm7zjcibdf.png',
         description: 'Coming soon',
         statistic_id: 5,
         rarity_id: 5
@@ -417,7 +417,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Aries',
         mezon_emoji_id: '7359862840344976491',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/aries-GsKgMfIJmRJHcOYd327AAEH9i3CtHs.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/yuxhfkt3v9ieclgrhcsv.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -425,7 +425,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Taurus',
         mezon_emoji_id: '7359863322598722629',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/taurus-arDqNAk5KZzBwnvN306GPlLetP8QZv.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/xpuapsnxn0vp65g26ltt.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -433,7 +433,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Gemini',
         mezon_emoji_id: '7359863048722082271',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/gemini-VeczBh96rTZzBBEMLF1QvxUBOYoriA.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/hm0pbtylod40f2nuf4on.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -441,7 +441,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Cancer',
         mezon_emoji_id: '7359862939396115055',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/cancer-WfHuAIk0T06ApUAR65kVbkO7mE5UVE.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/vdzg7ho2esjmhhl7dgiy.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -449,7 +449,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Leo',
         mezon_emoji_id: '7359863083358580971',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/leo-lCwWgLAme2m2aJkUDoI0MveK9T2QPJ.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/iwpmvsql9oilhfaqxcwk.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -457,7 +457,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Virgo',
         mezon_emoji_id: '7359863373819759972',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/virgo-1n3qmVSWnRbRA8NOmci9ik2vnlCp9A.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/gwuxp0l4i3qx1kxbiton.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -465,7 +465,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Libra',
         mezon_emoji_id: '7359863123741186292',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/libra-MJ4qe59FQkQiPZj63zPHGttGA5ZjpI.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/kwhpz6kv6dggq4p1fxah.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -473,7 +473,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Scorpius',
         mezon_emoji_id: '7359863273097857497',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/scorpio-AxwzW4i5CbPjagnHTPZkMNQUGbMnAO.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/gbj6kst2qx50lsntvpof.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -481,7 +481,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Sagittarius',
         mezon_emoji_id: '7359863229022549423',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/sagittarius-IXZ3ORK3HpaFpA8rWcAFUMLgVzoE1m.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/hgrfbas05mkupxpgd2yi.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -489,7 +489,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Capricorn',
         mezon_emoji_id: '7359862990820691942',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/capricorn-yWXcNKV0kfLqFZhtxZkmEocQ0lE98z.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/rf6xoybfhouqkx5xuqdz.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -497,7 +497,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Aquarius',
         mezon_emoji_id: '7359862895473998969',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/aquarius-MvI2sOdv0hBk99vdtvqtxwedyIW3F0.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/gvieua5wj8ll8bwgeue4.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -505,7 +505,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Pisces',
         mezon_emoji_id: '7359863177060978875',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/pisces-MEmM0hKzI4MG1t5MUucACgsIceQ8DL.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756828341/Ainz%20Mezon%20Bot/Pets/xclh17ggaqddmwriaxfj.png',
         description: 'Coming soon',
         statistic_id: 6,
         rarity_id: 6
@@ -515,7 +515,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Azure Dragon',
         mezon_emoji_id: '7359865845194434505',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Blimited%5D_Azure%20Dragon-isZ2o2mqnTyybaZZK9GuD4UeN0Lzn8.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827957/Ainz%20Mezon%20Bot/Pets/vqmz8d85uzsvjvp5u1ra.png',
         description: 'Coming soon',
         statistic_id: 7,
         rarity_id: 7
@@ -523,7 +523,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'White Tiger',
         mezon_emoji_id: '7359877318742843139',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/white_tiger-BfDX5sSwq98az5A404rX6aeba2hyCB.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827957/Ainz%20Mezon%20Bot/Pets/rb712h7jnaoup7le8t1p.png',
         description: 'Coming soon',
         statistic_id: 7,
         rarity_id: 7
@@ -531,7 +531,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Vermilion Bird',
         mezon_emoji_id: '7359866087154359745',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Blimited%5D_Vermilion%20Bird-sYTVXTXsSWWI2VKlcKM3xIQJYj0vH1.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827957/Ainz%20Mezon%20Bot/Pets/bf0jakfyu1dh4dqle3c8.png',
         description: 'Coming soon',
         statistic_id: 7,
         rarity_id: 7
@@ -539,7 +539,7 @@ export const petSeedData: PetSeed[] = [
     {
         name: 'Black Tortoise Snake',
         mezon_emoji_id: '7359866010433602674',
-        avatar: 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/%5Blimited%5D_Black%20Tortoise%20%26%20Snake-QzeeX7vi1DcR1uK0lguOBQHIN8mCcl.png',
+        avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756827957/Ainz%20Mezon%20Bot/Pets/vs8dlg6rasrptbh1koaz.png',
         description: 'Coming soon',
         statistic_id: 7,
         rarity_id: 7

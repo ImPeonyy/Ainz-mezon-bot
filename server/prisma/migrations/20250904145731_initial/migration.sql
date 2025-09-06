@@ -26,7 +26,6 @@ CREATE TYPE "public"."EStat" AS ENUM ('Hp', 'Mana', 'Atk', 'Def');
 CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
-    "mezon_id" TEXT NOT NULL,
     "z_coin" INTEGER NOT NULL DEFAULT 0,
     "exp" INTEGER NOT NULL DEFAULT 0,
     "level" INTEGER NOT NULL DEFAULT 1,
@@ -207,7 +206,6 @@ CREATE TABLE "public"."Team" (
     "id" SERIAL NOT NULL,
     "user_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "order" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -244,9 +242,6 @@ CREATE TABLE "public"."Battle" (
 CREATE UNIQUE INDEX "User_username_key" ON "public"."User"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_mezon_id_key" ON "public"."User"("mezon_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Rarity_name_key" ON "public"."Rarity"("name");
 
 -- CreateIndex
@@ -266,6 +261,12 @@ CREATE UNIQUE INDEX "Pet_name_key" ON "public"."Pet"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Pet_mezon_emoji_id_key" ON "public"."Pet"("mezon_emoji_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Team_user_id_key" ON "public"."Team"("user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Team_name_key" ON "public"."Team"("name");
 
 -- AddForeignKey
 ALTER TABLE "public"."UserDailyActivities" ADD CONSTRAINT "UserDailyActivities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
