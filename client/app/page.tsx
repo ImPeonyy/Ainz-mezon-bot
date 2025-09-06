@@ -1,320 +1,235 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import React from "react";
 
-type QueueItem = {
-    id: string;
-    file: File;
-    status: "queued" | "uploading" | "uploaded" | "error";
-    url?: string;
-    error?: string;
-};
+// === Icons ===
+function CalendarIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" {...props}>
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="16"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M16 3v4M8 3v4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
-type CloudinaryItem = {
-    url: string;
-    pathname: string;
-    size: number;
-    uploadedAt?: string;
-    contentType?: string;
-};
+function PetIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" {...props}>
+      <path
+        d="M5 15c0-2.5 3-6 7-6s7 3.5 7 6v2H5v-2z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9 8c0-1.7 1.3-3 3-3s3 1.3 3 3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="9.5" cy="14" r="0.6" fill="currentColor" />
+      <circle cx="14.5" cy="14" r="0.6" fill="currentColor" />
+    </svg>
+  );
+}
 
-export default function Home() {
-    const inputRef = useRef<HTMLInputElement | null>(null);
-    const [queue, setQueue] = useState<QueueItem[]>([]);
-    const [blobs, setBlobs] = useState<CloudinaryItem[]>([]);
-    const [isListing, setIsListing] = useState(false);
-    const [isUploading, setIsUploading] = useState(false);
-
-    const openFilePicker = () => {
-        inputRef.current?.click();
-    };
-
-    const clearQueue = () => {
-        setQueue([]);
-    };
-
-    const clearList = () => {
-        setBlobs([]);
-    };
-
-    const onFilesSelected = async (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        const files = event.target.files ? Array.from(event.target.files) : [];
-        if (files.length === 0) return;
-
-        const items: QueueItem[] = files.map((file) => ({
-            id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()
-                .toString(36)
-                .slice(2)}`,
-            file,
-            status: "queued",
-        }));
-        setQueue((prev) => [...items, ...prev]);
-
-        // Bắt đầu upload ngay sau khi chọn
-        await uploadFiles(items.map((i) => i.file));
-
-        // Clear input value để chọn lại cùng file lần sau nếu cần
-        if (inputRef.current) inputRef.current.value = "";
-    };
-
-    const uploadFiles = async (files: File[]) => {
-        if (files.length === 0) return;
-        setIsUploading(true);
-        // Đánh dấu uploading
-        setQueue((prev) =>
-            prev.map((q) =>
-                files.some(
-                    (f) => f.name === q.file.name && f.size === q.file.size
-                )
-                    ? { ...q, status: "uploading" }
-                    : q
-            )
-        );
-
-        const form = new FormData();
-        files.forEach((f) => form.append("files", f));
-
-        try {
-            const res = await fetch("/api/cloudinary/upload", {
-                method: "POST",
-                body: form,
-            });
-            const data: {
-                results?: Array<{
-                    name: string;
-                    status: string;
-                    url?: string;
-                    error?: string;
-                }>;
-            } = await res.json();
-
-            const results = data.results ?? [];
-
-            setQueue((prev) =>
-                prev.map((q) => {
-                    const matched = results.find((r) => r.name === q.file.name);
-                    if (!matched) return q;
-                    if (matched.status === "uploaded") {
-                        return { ...q, status: "uploaded", url: matched.url };
-                    }
-                    return {
-                        ...q,
-                        status: "error",
-                        error: matched.error ?? "Upload failed",
-                    };
-                })
-            );
-
-            // Refresh list sau upload
-            await fetchList();
-        } catch (e: unknown) {
-            setQueue((prev) =>
-                prev.map((q) =>
-                    files.some(
-                        (f) => f.name === q.file.name && f.size === q.file.size
-                    )
-                        ? {
-                              ...q,
-                              status: "error",
-                              error: (e as Error)?.message ?? "Upload error",
-                          }
-                        : q
-                )
-            );
-        } finally {
-            setIsUploading(false);
-        }
-    };
-
-    const fetchList = async () => {
-        setIsListing(true);
-        try {
-            const res = await fetch("/api/cloudinary/list");
-            const data: { blobs?: CloudinaryItem[] } = await res.json();
-            console.log(data);
-            setBlobs(data.blobs ?? []);
-        } catch {
-            // noop
-        } finally {
-            setIsListing(false);
-        }
-    };
-
-    useEffect(() => {
-        // load list lần đầu
-        fetchList();
-    }, []);
-
-    return (
-        <div className=" flex items-start justify-between min-h-screen p-8 pb-20 gap-16 sm:p-20">
-            <div className="flex-1 max-w-xl w-full flex flex-col gap-[16px] items-stretch">
-                <div className="flex gap-4 items-center">
-                    <button
-                        onClick={openFilePicker}
-                        className="cursor-pointer rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-                    >
-                        <Image
-                            className="dark:invert"
-                            src="/vercel.svg"
-                            alt="Vercel logomark"
-                            width={20}
-                            height={20}
-                        />
-                        Upload pets
-                    </button>
-                    <button
-                        onClick={fetchList}
-                        disabled={isListing}
-                        className="cursor-pointer rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-                    >
-                        {isListing ? "Loading..." : "Get all pets"}
-                    </button>
-                    <input
-                        ref={inputRef}
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={onFilesSelected}
-                        className="hidden"
-                    />
-                </div>
-
-                <div className="border rounded-md p-3 max-h-80 overflow-y-auto">
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="font-medium">queue</div>
-                        <button
-                            onClick={clearQueue}
-                            disabled={queue.length === 0 || isUploading}
-                            className="cursor-pointer text-xs rounded-md border border-solid border-black/[.08] dark:border-white/[.145] px-2 py-1 hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] disabled:opacity-50"
-                        >
-                            Clear
-                        </button>
-                    </div>
-                    {queue.length === 0 ? (
-                        <div className="text-sm text-neutral-500">
-                            Chưa có file nào trong hàng đợi.
-                        </div>
-                    ) : (
-                        <ul className="space-y-2">
-                            {queue.map((item) => (
-                                <li
-                                    key={item.id}
-                                    className="flex items-center justify-between gap-3 text-sm"
-                                >
-                                    <div className="truncate">
-                                        {item.file.name}{" "}
-                                        <span className="text-neutral-500">
-                                            (
-                                            {(item.file.size / 1024).toFixed(1)}{" "}
-                                            KB)
-                                        </span>
-                                    </div>
-                                    <div className="shrink-0">
-                                        {item.status === "queued" && (
-                                            <span className="text-yellow-600">
-                                                Queued
-                                            </span>
-                                        )}
-                                        {item.status === "uploading" && (
-                                            <span className="text-blue-600">
-                                                Uploading...
-                                            </span>
-                                        )}
-                                        {item.status === "uploaded" && (
-                                            <a
-                                                href={item.url}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="text-green-600 underline"
-                                            >
-                                                Uploaded
-                                            </a>
-                                        )}
-                                        {item.status === "error" && (
-                                            <span className="text-red-600">
-                                                Error
-                                            </span>
-                                        )}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                    {queue.some((q) => q.status === "queued") && (
-                        <div className="mt-3">
-                            <button
-                                onClick={() =>
-                                    uploadFiles(
-                                        queue
-                                            .filter(
-                                                (q) => q.status === "queued"
-                                            )
-                                            .map((q) => q.file)
-                                    )
-                                }
-                                disabled={isUploading}
-                                className="rounded-md border border-solid border-black/[.08] dark:border-white/[.145] transition-colors px-3 py-2 text-sm hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a]"
-                            >
-                                {isUploading ? "Uploading..." : "Upload queued"}
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <div className="flex-1 max-w-[720px] w-full">
-                <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium">list</div>
-                    <button
-                        onClick={clearList}
-                        disabled={blobs.length === 0 || isListing}
-                        className="cursor-pointer text-xs rounded-md border border-solid border-black/[.08] dark:border-white/[.145] px-2 py-1 hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] disabled:opacity-50"
-                    >
-                        Clear
-                    </button>
-                </div>
-                <div className="h-screen overflow-y-auto border rounded-md p-3">
-                    {blobs.length === 0 ? (
-                        <div className="text-sm text-neutral-500">
-                            Chưa có blob nào.
-                        </div>
-                    ) : (
-                        <ul className="space-y-4">
-                            {blobs.map((b) => (
-                                <li
-                                    key={b.pathname}
-                                    className="flex items-center gap-3"
-                                >
-                                    <div className="w-20 h-20 rounded overflow-hidden border bg-white flex items-center justify-center">
-                                        {/* Dùng img để tránh cần cấu hình domain cho next/image */}
-                                        <img
-                                            src={b.url}
-                                            alt={b.pathname}
-                                            className="object-cover w-full h-full"
-                                        />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <a
-                                            href={b.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="truncate block underline text-blue-600"
-                                        >
-                                            {b.url}
-                                        </a>
-                                        <div className="text-xs text-neutral-500 truncate">
-                                            {b.pathname}
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            </div>
+// === Card component Daily & Pet Hunt ===
+function DailyPetCards() {
+  return (
+    <div className="w-full max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {/* Daily Card */}
+      <a
+        href="/daily"
+        className="group relative flex flex-col items-center gap-4 p-6 rounded-2xl 
+                   bg-gradient-to-b from-pink-50 via-pink-100 to-white 
+                   shadow border border-pink-200/60 
+                   transition-transform duration-300 hover:scale-105 active:scale-95"
+      >
+        <div className="rounded-full p-3 bg-white/70 border animate-bounce">
+          <CalendarIcon className="text-pink-600" />
         </div>
-    );
+        <h3 className="text-lg font-semibold text-pink-700">Daily</h3>
+        <p className="text-sm text-slate-500">
+          Complete daily quests to earn cute rewards.
+        </p>
+        <div className="absolute -top-3 -right-3 text-pink-300 text-2xl animate-pulse">
+          ✨
+        </div>
+      </a>
+
+      {/* Pet Hunt Card */}
+      <a
+        href="/pet-hunt"
+        className="group relative flex flex-col items-center gap-4 p-6 rounded-2xl 
+                   bg-gradient-to-b from-emerald-50 via-emerald-100 to-white 
+                   shadow border border-emerald-200/60 
+                   transition-transform duration-300 hover:scale-105 active:scale-95"
+      >
+        <div className="rounded-full p-3 bg-white/70 border animate-pulse">
+          <PetIcon className="text-emerald-600" />
+        </div>
+        <h3 className="text-lg font-semibold text-emerald-700">Pet Hunt</h3>
+        <p className="text-sm text-slate-500">
+          Catch, collect, and nurture your pets.
+        </p>
+        <div className="absolute -bottom-3 -left-3 text-emerald-300 text-2xl animate-bounce">
+          🐾
+        </div>
+      </a>
+    </div>
+  );
+}
+
+// === Landing Page ===
+export default function Home() {
+  return (
+    <main className="flex flex-col min-h-screen">
+      {/* Hero Section */}
+      <section className="flex flex-col items-center justify-center text-center py-20 bg-gradient-to-b from-blue-50 to-white">
+        <h1 className="text-5xl font-extrabold mb-6 animate-pulse">
+          🚀 Welcome to Tutorials
+        </h1>
+        <p className="text-lg text-gray-600 mb-8 max-w-xl">
+          A fun playground: do your dailies, hunt pets, battle, actions, and
+          laugh with memes.
+        </p>
+        <a
+          href="#daily"
+          className="rounded-xl bg-blue-600 px-6 py-3 text-white 
+                     hover:bg-blue-700 hover:scale-105 
+                     transition-transform duration-300"
+        >
+          Get Started
+        </a>
+      </section>
+
+      {/* Daily & Pet Hunt */}
+      <section id="daily" className="py-20 bg-white text-center">
+        <h2 className="text-3xl font-bold mb-10">🔥 Daily & Pet Hunt</h2>
+        <DailyPetCards />
+      </section>
+
+      {/* Battle Showcase */}
+      <section id="battle" className="py-20 bg-slate-50 text-center">
+        <h2 className="text-3xl font-bold mb-6">⚔️ Battle</h2>
+        <p className="text-gray-600 mb-10">
+          Join intense battles and test your skills with friends.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          <div className="flex justify-center">
+            <img
+              src="/images/meme2.gif"
+              alt="Battle"
+              className="rounded-xl shadow-md object-cover hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div className="flex flex-col justify-center text-left p-6">
+            <h3 className="text-2xl font-semibold mb-4">
+              Dynamic Battleground
+            </h3>
+            <p className="text-gray-600 mb-6">
+              From 1v1 duels to massive arenas — prove your strategy and
+              strength.
+            </p>
+            <a
+              href="/battle"
+              className="inline-block px-5 py-3 bg-red-600 text-white rounded-md 
+                         hover:bg-red-700 hover:scale-105 
+                         transition-transform duration-300"
+            >
+              Join Battle
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Action Showcase */}
+      <section id="action" className="py-20 bg-white text-center">
+        <h2 className="text-3xl font-bold mb-6">⚡ Actions</h2>
+        <p className="text-gray-600 mb-10">
+          Interact with friends using fun actions.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          <div className="flex flex-col justify-center text-left p-6 order-2 md:order-1">
+            <h3 className="text-2xl font-semibold mb-4">Express Yourself</h3>
+            <p className="text-gray-600 mb-6">
+              Hug 🤗, pat 🫶, slap 👋, or cheer 🎉 — have fun with endless
+              reactions.
+            </p>
+            <a
+              href="/actions"
+              className="inline-block px-5 py-3 bg-green-600 text-white rounded-md 
+                         hover:bg-green-700 hover:scale-105 
+                         transition-transform duration-300"
+            >
+              Explore Actions
+            </a>
+          </div>
+          <div className="flex justify-center order-1 md:order-2">
+            <img
+              src="/images/meme2.gif"
+              alt="Action"
+              className="rounded-xl shadow-md object-cover hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Meme Section */}
+      <section id="meme" className="py-20 bg-slate-50 text-center">
+        <h2 className="text-3xl font-bold mb-6">😂 Memes & Fun</h2>
+        <p className="text-gray-600 mb-10">
+          Relax and laugh with community-created memes.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          <div className="flex justify-center">
+            <img
+              src="/images/meme2.gif"
+              alt="Funny Meme"
+              className="rounded-xl shadow-md max-w-full h-auto hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div className="flex flex-col justify-center text-left p-6">
+            <h3 className="text-2xl font-semibold mb-4">Share the Fun</h3>
+            <p className="text-gray-600 mb-6">
+              Create and share your memes 🚀. The community loves creativity!
+            </p>
+            <button
+              className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl 
+                         hover:bg-purple-700 hover:scale-105 
+                         transition-transform duration-300"
+            >
+              Make Your Meme
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-10 border-t bg-slate-50 text-center text-sm text-slate-600">
+        © {new Date().getFullYear()} MyBrand — Built with ❤️
+      </footer>
+    </main>
+  );
 }
