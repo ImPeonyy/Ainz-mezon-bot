@@ -1,10 +1,5 @@
-import {
-    createUserDailyActivity,
-    getTodayUserDailyActivity,
-    getUser,
-    updateUser
-} from '@/services';
-import { getDailyReward, getMidnightRemainingTime, textMessage } from '@/utils';
+import { createUserDailyActivity, getTodayUserDailyActivity, getUser, updateUser } from '@/services';
+import { getDailyReward, getMidnightRemainingTime, textMessage, userLevelUp } from '@/utils';
 
 import { prisma } from '@/lib/db';
 
@@ -27,6 +22,7 @@ export const dailyController = async (mezon_id: string) => {
         const dailyReward = getDailyReward();
 
         try {
+            const isLevelUp = userLevelUp(user.exp + dailyReward.exp, user.level);
             await prisma.$transaction(async (tx) => {
                 await createUserDailyActivity(tx, {
                     user: {
@@ -45,7 +41,8 @@ export const dailyController = async (mezon_id: string) => {
                     },
                     {
                         z_coin: { increment: dailyReward.zCoin },
-                        exp: { increment: dailyReward.exp }
+                        exp: { increment: dailyReward.exp },
+                        level: { increment: isLevelUp ? 1 : 0 }
                     }
                 );
             });
@@ -54,14 +51,10 @@ export const dailyController = async (mezon_id: string) => {
             );
         } catch (err) {
             console.error('Transaction failed, rollback executed', err);
-            return textMessage(
-                '❌ Error occurred while processing the daily reward.'
-            );
+            return textMessage('❌ Error occurred while processing the daily reward.');
         }
     } catch (error) {
         console.error(error);
-        return textMessage(
-            '❌ Server error occurred while processing the daily reward.'
-        );
+        return textMessage('❌ Server error occurred while processing the daily reward.');
     }
 };

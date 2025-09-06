@@ -1,8 +1,19 @@
-import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas';
+import { CanvasRenderingContext2D, registerFont, createCanvas, loadImage } from 'canvas';
 import { IBPet } from '@/constants/Type';
 import path from 'path';
 import fs from 'fs';
 import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH, PROFILE_CARD_BG } from '@/constants/Constant';
+
+registerFont(path.join(process.cwd(), 'assets/fonts/OpenSans-Regular.ttf'), {
+    family: 'OpenSans',
+    style: 'normal'
+});
+
+registerFont(path.join(process.cwd(), 'assets/fonts/OpenSans-Bold.ttf'), {
+    family: 'OpenSans',
+    weight: 'bold',
+    style: 'bold'
+});
 
 const drawTeamPets = async (
     ctx: CanvasRenderingContext2D,
@@ -85,7 +96,7 @@ const drawTeamPets = async (
         const manaPercent = Math.max(0, currentMana / maxMana);
 
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 13px Arial';
+        ctx.font = 'bold 13px OpenSans';
         if (isRightTeam) {
             ctx.textAlign = 'left';
             ctx.fillText(pet.info.nickname ?? '', nameX, hpY - 10);
@@ -105,7 +116,7 @@ const drawTeamPets = async (
         }
 
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 12px Arial';
+        ctx.font = 'bold 12px OpenSans';
         if (isRightTeam) {
             ctx.textAlign = 'left';
             ctx.fillText(`${currentHp}/${maxHp}`, barsX + 5, hpY + 12);
@@ -143,7 +154,7 @@ const drawTeamPets = async (
         ];
         const statsLength = stats.length;
 
-        ctx.font = '11px Arial';
+        ctx.font = '11px OpenSans';
         for (let j = 0; j < statsLength; j++) {
             const statX = statsStartX + j * 50;
             const stat = stats[j];
@@ -254,19 +265,19 @@ const renderProfileCanvas = async (profileData: ProfileData): Promise<Buffer> =>
 
     // Username
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 56px Arial'; // Tăng từ 42px lên 56px
+    ctx.font = 'bold 56px OpenSans'; // Tăng từ 42px lên 56px
     ctx.textAlign = 'left';
     ctx.fillText(profileData.username, textX, textY);
 
     // Level và Z-Coin
-    ctx.font = 'bold 40px Arial'; // Tăng từ 32px lên 40px
+    ctx.font = 'bold 40px OpenSans'; // Tăng từ 32px lên 40px
     ctx.fillText(`LV. ${profileData.level}`, textX, textY + 70);
 
-    ctx.font = '32px Arial'; // Tăng từ 24px lên 32px
+    ctx.font = '32px OpenSans'; // Tăng từ 24px lên 32px
     ctx.fillText(`Z-Coin: ${profileData.z_coin}`, textX + 120, textY + 70);
 
     // XP
-    ctx.font = '32px Arial'; // Tăng từ 24px lên 32px
+    ctx.font = '32px OpenSans'; // Tăng từ 24px lên 32px
     ctx.fillText(
         `XP: ${profileData.currentXP.toLocaleString()} / ${profileData.nextLevelXP.toLocaleString()}`,
         textX + 380,

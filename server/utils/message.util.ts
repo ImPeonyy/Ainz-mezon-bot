@@ -31,7 +31,7 @@ export const emojiMessage = (emoji: EmojiOnMessage[]) => {
 
 export const emojisMessage = (emojis: EmojiOnMessage[]) => {
     let messagePayload: ChannelMessageContent = {
-        t: 'Your result:\n',
+        t: '🎯 Luck has smiled upon you! 5 pets have been captured:\n',
         ej: []
     };
 
@@ -41,7 +41,7 @@ export const emojisMessage = (emojis: EmojiOnMessage[]) => {
             s: messagePayload.t?.length || 0,
             e: messagePayload.t?.length || 0 + 1
         });
-        messagePayload.t += ``;
+        messagePayload.t += `   `;
     });
 
     return messagePayload;
@@ -49,7 +49,7 @@ export const emojisMessage = (emojis: EmojiOnMessage[]) => {
 
 export const bagMessage = (pets: Pet[]) => {
     let messagePayload: ChannelMessageContent = {
-        t: 'Your bag contains the following pets:\n',
+        t: '🎒 Current pets in your collection:\n',
         ej: []
     };
 
