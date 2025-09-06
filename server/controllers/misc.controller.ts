@@ -10,9 +10,10 @@ import {
 } from '@/controllers';
 import { embedMessage, getActorName, getTargetFromMention, textMessage, getHelpMessage } from '@/utils';
 import { getActionGif, getMeme } from '@/services';
-
+import { parseActionCommandTeam } from '@/utils/misc.util';
 import { EActionType } from '@/constants/Enum';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
+import { addPetToTeamController, createTeamController, deleteTeamController, getTeamController, swapPetInTeamController, updateTeamController } from './team.controller';
 
 export const getActionController = async (
     event: any,
@@ -79,6 +80,36 @@ export const getActionController = async (
             if (action === COMMANDS.help) {
                 const helpPayload = await getHelpController();
                 return helpPayload;
+            }
+
+            if (action === COMMANDS.team) {
+                const parseActionCommandTeamPayload = parseActionCommandTeam(mentionTarget || '');
+                const { action, targetRaw } = parseActionCommandTeamPayload;
+
+                switch (action) {
+                    case 'info':
+                        const getTeamPayload = await getTeamController(sender_id);
+                        return getTeamPayload;
+                    case 'create':
+                        const createTeamPayload = await createTeamController(targetRaw || '', sender_id);
+                        return createTeamPayload;
+                    case 'update':
+                        const updateTeamPayload = await updateTeamController(targetRaw || '', sender_id);
+                        return updateTeamPayload;
+                    case 'delete':
+                        const deleteTeamPayload = await deleteTeamController(sender_id);
+                        return deleteTeamPayload;
+                    case 'add':
+                        const [petId, pos] = targetRaw?.split(' ') || [];
+                        const addPetToTeamPayload = await addPetToTeamController(Number(petId), Number(pos), sender_id);
+                        return addPetToTeamPayload;
+                    case 'swap':
+                        const [pos1, pos2] = targetRaw?.split(' ') || [];
+                        const swapPetInTeamPayload = await swapPetInTeamController(Number(pos1), Number(pos2), sender_id);
+                        return swapPetInTeamPayload;
+                    default:
+                        return textMessage('Invalid command');
+                }
             }
         }
 

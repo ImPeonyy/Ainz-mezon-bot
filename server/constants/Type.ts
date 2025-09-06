@@ -20,7 +20,7 @@ export interface IActionGif {
 }
 
 export type ParsedAction = {
-    trigger: string | null;
+    trigger?: string | null;
     action: string | null;
     targetRaw: string | null;
 };
