@@ -70,21 +70,6 @@ export const deleteTeam = async (userId: string) => {
     }
 };
 
-export const getPetFromTeam = async (teamId: number, pos?: number, petId?: number) => {
-    try {
-        return prisma.teamMember.findFirst({
-            where: {
-                team_id: teamId,
-                position: pos,
-                user_pet_id: petId
-            }
-        });
-    } catch (error) {
-        console.error('Error getting pet from team:', error);
-        throw error;
-    }
-}
-
 export const addPetToTeam = async (teamId: number, petId: number, pos: number) => {
     try {
         return prisma.teamMember.create({

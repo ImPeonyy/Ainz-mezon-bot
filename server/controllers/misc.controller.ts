@@ -100,8 +100,8 @@ export const getActionController = async (
                         const deleteTeamPayload = await deleteTeamController(sender_id);
                         return deleteTeamPayload;
                     case 'add':
-                        const [petId, pos] = targetRaw?.split(' ') || [];
-                        const addPetToTeamPayload = await addPetToTeamController(Number(petId), Number(pos), sender_id);
+                        const [name, pos] = targetRaw?.split(' ') || [];
+                        const addPetToTeamPayload = await addPetToTeamController(name, Number(pos), sender_id);
                         return addPetToTeamPayload;
                     case 'swap':
                         const [pos1, pos2] = targetRaw?.split(' ') || [];
