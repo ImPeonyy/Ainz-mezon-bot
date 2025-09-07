@@ -12,6 +12,7 @@ datasource db {
 enum EScalingType {
   Physical
   Magical
+  Hybrid
 }
 
 enum EPetRole {
@@ -82,7 +83,7 @@ model User {
   username        String                 @unique
   z_coin          Int                    @default(0)
   exp             Int                    @default(0)
-  level           Int                    @default(1)
+  level           Int                    @default(0)
   avatar          String                 @default("https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/spider-gwen-DLOjzOblyRzNGEngmQMOdf9VCWni6V.jpeg")
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
@@ -239,7 +240,7 @@ model UserPet {
   user_id         String
   pet_id          Int
   nickname        String?
-  level           Int                    @default(1)
+  level           Int                    @default(0)
   exp             Int                    @default(0)
   additional_hp   Int                    @default(0)
   additional_mana Int                    @default(0)
@@ -247,6 +248,7 @@ model UserPet {
   additional_ap   Int                    @default(0)
   additional_ar   Int                    @default(0)
   additional_mr   Int                    @default(0)
+  count           Int                    @default(1)
   lock            Boolean                @default(false)
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
@@ -254,6 +256,8 @@ model UserPet {
   user            User                   @relation(fields: [user_id], references: [id])
   pet             Pet                    @relation(fields: [pet_id], references: [id])
   teamMembers     TeamMember[]
+
+  @@unique([user_id, pet_id])
 }
 
 model Team {

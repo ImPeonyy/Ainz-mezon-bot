@@ -1,8 +1,8 @@
+import { createProfileCard, expToUserLevel, textMessage } from '@/utils';
 import { createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
-import { createProfileCard, textMessage } from '@/utils';
 
-import { prisma } from '@/lib/db';
 import { CLOUDINARY_PROFILE_FOLDER } from '@/constants/Constant';
+import { prisma } from '@/lib/db';
 
 export const getUserController = async (mezon_id: string) => {
     try {
@@ -21,7 +21,7 @@ export const getUserController = async (mezon_id: string) => {
             level: user?.level || 0,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: user?.exp || 0,
+            nextLevelXP:  expToUserLevel(user.level + 1)|| 0,
             avatar: user?.avatar || ''
         });
 
@@ -53,7 +53,7 @@ export const createUserController = async (username: string, mezon_id: string, a
             level: user?.level || 0,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: user?.exp || 0,
+            nextLevelXP: expToUserLevel(user.level + 1) || 0,
             avatar: user?.avatar || ''
         });
 
@@ -91,7 +91,7 @@ export const updateUserController = async (username: string, mezon_id: string, a
             level: user?.level || 0,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: user?.exp || 0,
+            nextLevelXP: expToUserLevel(user.level + 1) || 0,
             avatar: user?.avatar || ''
         });
 

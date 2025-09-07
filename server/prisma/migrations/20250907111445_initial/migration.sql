@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "public"."EScalingType" AS ENUM ('Physical', 'Magical');
+CREATE TYPE "public"."EScalingType" AS ENUM ('Physical', 'Magical', 'Hybrid');
 
 -- CreateEnum
 CREATE TYPE "public"."EPetRole" AS ENUM ('Tank', 'Mage', 'Support', 'Assassin', 'Warrior');
@@ -28,7 +28,7 @@ CREATE TABLE "public"."User" (
     "username" TEXT NOT NULL,
     "z_coin" INTEGER NOT NULL DEFAULT 0,
     "exp" INTEGER NOT NULL DEFAULT 0,
-    "level" INTEGER NOT NULL DEFAULT 1,
+    "level" INTEGER NOT NULL DEFAULT 0,
     "avatar" TEXT NOT NULL DEFAULT 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/spider-gwen-DLOjzOblyRzNGEngmQMOdf9VCWni6V.jpeg',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -186,7 +186,7 @@ CREATE TABLE "public"."UserPet" (
     "user_id" TEXT NOT NULL,
     "pet_id" INTEGER NOT NULL,
     "nickname" TEXT,
-    "level" INTEGER NOT NULL DEFAULT 1,
+    "level" INTEGER NOT NULL DEFAULT 0,
     "exp" INTEGER NOT NULL DEFAULT 0,
     "additional_hp" INTEGER NOT NULL DEFAULT 0,
     "additional_mana" INTEGER NOT NULL DEFAULT 0,
@@ -194,6 +194,7 @@ CREATE TABLE "public"."UserPet" (
     "additional_ap" INTEGER NOT NULL DEFAULT 0,
     "additional_ar" INTEGER NOT NULL DEFAULT 0,
     "additional_mr" INTEGER NOT NULL DEFAULT 0,
+    "count" INTEGER NOT NULL DEFAULT 1,
     "lock" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -261,6 +262,9 @@ CREATE UNIQUE INDEX "Pet_name_key" ON "public"."Pet"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Pet_mezon_emoji_id_key" ON "public"."Pet"("mezon_emoji_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserPet_user_id_pet_id_key" ON "public"."UserPet"("user_id", "pet_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Team_user_id_key" ON "public"."Team"("user_id");

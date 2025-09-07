@@ -1,16 +1,17 @@
 import { LIMIT_PET_PER_HUNT, USE_DAILY_ACTIVITY } from '@/constants/Constant';
 import {
     createUserDailyActivity,
-    createUserPets,
     getPetDetail,
     getPets,
     getRarities,
     getTodayUserDailyActivity,
     getUser,
     updateUser,
-    updateUserDailyActivity
+    updateUserDailyActivity,
+    upsertUserPetCount
 } from '@/services';
-import { emojisMessage, huntCheck, huntPet, textMessage, getDexMessage } from '@/utils';
+import { emojisMessage, getDexMessage, huntCheck, huntPet, textMessage } from '@/utils';
+
 import { Pet } from '@prisma/client';
 import { prisma } from '@/lib/db';
 
@@ -48,14 +49,9 @@ export const huntPetController = async (mezon_id: string) => {
                         hunt: 1
                     });
 
-                    await createUserPets(
-                        tx,
-                        yourPets.map((pet) => ({
-                            user_id: user.id,
-                            pet_id: pet.id,
-                            nickname: pet.name
-                        }))
-                    );
+                    for (const pet of yourPets) {
+                        await upsertUserPetCount(tx, user.id, pet.id);
+                    }
                 });
 
                 return emojisMessage(
@@ -88,14 +84,9 @@ export const huntPetController = async (mezon_id: string) => {
                             }
                         );
 
-                        await createUserPets(
-                            tx,
-                            yourPets.map((pet) => ({
-                                user_id: user.id,
-                                pet_id: pet.id,
-                                nickname: pet.name
-                            }))
-                        );
+                        for (const pet of yourPets) {
+                            await upsertUserPetCount(tx, user.id, pet.id);
+                        }
                     });
 
                     return emojisMessage(
@@ -123,14 +114,9 @@ export const huntPetController = async (mezon_id: string) => {
                             }
                         );
 
-                        await createUserPets(
-                            tx,
-                            yourPets.map((pet) => ({
-                                user_id: user.id,
-                                pet_id: pet.id,
-                                nickname: pet.name
-                            }))
-                        );
+                        for (const pet of yourPets) {
+                            await upsertUserPetCount(tx, user.id, pet.id);
+                        }
                     });
 
                     return emojisMessage(

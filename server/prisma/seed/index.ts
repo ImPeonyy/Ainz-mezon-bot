@@ -15,7 +15,7 @@ async function main() {
     // await seedRarities();
     // await seedPets();
     // await seedAutoAttack();
-    // await seedActiveSkill();
+    await seedActiveSkill();
 }
 
 main()
