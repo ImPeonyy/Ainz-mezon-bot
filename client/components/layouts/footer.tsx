@@ -1,4 +1,4 @@
-import { NAV_LINKS } from "@/constants/constants";
+import { CLAN_INVITE_LINK, NAV_LINKS } from "@/constants/constants";
 
 export function Footer() {
   return (
@@ -15,7 +15,7 @@ export function Footer() {
 
         {/* Quick Links */}
         <div>
-          <h5 className="font-medium">Features</h5>
+          <h5 className="font-semibold">Features</h5>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <a href="/daily" className="hover:underline">
@@ -37,18 +37,23 @@ export function Footer() {
                 😂 Meme generator
               </a>
             </li>
+            <li>
+              <a href="/memes" className="hover:underline">
+                🤪 Action message
+              </a>
+            </li>
           </ul>
         </div>
 
         {/* Contact */}
         <div>
-          <h5 className="font-medium">Contact & Support</h5>
+          <h5 className="font-semibold">Contact & Support</h5>
           <p className="text-sm mt-3">
             support@ainzbot.com
             <br />
             Join our{" "}
             <a
-              href="https://mezon.ai/"
+              href={CLAN_INVITE_LINK}
               className="text-blue-600 hover:underline"
               target="_blank"
               rel="noopener noreferrer"
@@ -62,9 +67,9 @@ export function Footer() {
       <div className="border-t pt-4">
         <div className="max-w-6xl mx-auto px-4 py-3 text-sm text-slate-600 flex flex-col md:flex-row justify-between items-center">
           <span>
-            © {new Date().getFullYear()} AINZ Bot. All rights reserved.
+            © {new Date().getFullYear()} Ainz Bot. All rights reserved.
           </span>
-          <span className="mt-2 md:mt-0">Made with ❤️ for the community</span>
+          <span className="mt-2 md:mt-0"> MORE TOKEN FOR MORE FEATURES ✨</span>
         </div>
       </div>
     </footer>

@@ -107,8 +107,8 @@ export default function Home() {
     <main className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center py-20 bg-gradient-to-b from-blue-50 to-white">
-        <h1 className="text-5xl font-extrabold mb-6 animate-pulse">
-          🚀 Welcome to Tutorials
+        <h1 className="text-5xl font-extrabold mb-6 text-purple-700 text-center">
+          🚀 Welcome to Ainz Bot
         </h1>
         <p className="text-lg text-gray-600 mb-8 max-w-xl">
           A fun playground: do your dailies, hunt pets, battle, actions, and
@@ -174,7 +174,7 @@ export default function Home() {
           <div className="flex flex-col justify-center text-left p-6 order-2 md:order-1">
             <h3 className="text-2xl font-semibold mb-4">Express Yourself</h3>
             <p className="text-gray-600 mb-6">
-              Hug 🤗, pat 🫶, slap 👋, or cheer 🎉 — have fun with endless
+              hug 🤗, blush 🫶, slap 👋, or sleep 😴... — have fun with endless
               reactions.
             </p>
             <a
@@ -199,9 +199,7 @@ export default function Home() {
       {/* Meme Section */}
       <section id="meme" className="py-20 bg-slate-50 text-center">
         <h2 className="text-3xl font-bold mb-6">😂 Memes & Fun</h2>
-        <p className="text-gray-600 mb-10">
-          Relax and laugh with community-created memes.
-        </p>
+        <p className="text-gray-600 mb-10">Relax and laugh with community.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           <div className="flex justify-center">
             <img
@@ -213,23 +211,18 @@ export default function Home() {
           <div className="flex flex-col justify-center text-left p-6">
             <h3 className="text-2xl font-semibold mb-4">Share the Fun</h3>
             <p className="text-gray-600 mb-6">
-              Create and share your memes 🚀. The community loves creativity!
+              Take your memes and laugh with your friends!
             </p>
             <button
               className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl 
                          hover:bg-purple-700 hover:scale-105 
                          transition-transform duration-300"
             >
-              Make Your Meme
+              Let try it!
             </button>
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-10 border-t bg-slate-50 text-center text-sm text-slate-600">
-        © {new Date().getFullYear()} MyBrand — Built with ❤️
-      </footer>
     </main>
   );
 }

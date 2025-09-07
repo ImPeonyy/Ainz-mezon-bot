@@ -12,7 +12,7 @@ export default function Tutorials() {
         transition={{ duration: 0.7 }}
         className="text-5xl font-extrabold mb-6 text-purple-700 text-center"
       >
-        🚀 AINZ Bot – Tutorials
+        🚀 Ainz Bot – Tutorials
       </motion.h1>
 
       {/* Intro */}
@@ -22,8 +22,8 @@ export default function Tutorials() {
         transition={{ delay: 0.2, duration: 0.8 }}
         className="text-lg text-gray-700 mb-12 max-w-3xl text-center leading-relaxed"
       >
-        Welcome to the <span className="font-semibold">AINZ Bot guide</span>.
-        Here you’ll learn the basics of <strong>TRIGGER</strong>,{" "}
+        Welcome to the <span className="font-semibold">Ainz Bot guide</span>.
+        Here you’ll learn the basics of <strong>Trigger</strong>,{" "}
         <strong>User</strong>, <strong>Pets</strong>, and the{" "}
         <strong>Main Flow</strong> for beginners.
       </motion.p>
@@ -36,9 +36,9 @@ export default function Tutorials() {
           transition={{ delay: 0.3, duration: 0.7 }}
           className="p-6 rounded-2xl border bg-white shadow-md hover:shadow-lg transition flex flex-col"
         >
-          <h3 className="text-2xl font-semibold mb-4">⚡ TRIGGER</h3>
+          <h3 className="text-2xl font-semibold mb-4">⚡ Trigger</h3>
           <p className="text-gray-600 mb-3">
-            All commands in AINZ Bot start with:
+            All commands in Ainz Bot start with:
           </p>
           <code className="block bg-slate-100 px-3 py-2 rounded mb-3 text-sm font-mono">
             *ainz [action] [target(optional)]
@@ -65,13 +65,13 @@ export default function Tutorials() {
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
                 init
               </code>{" "}
-              – Set up your AINZ Bot account.
+              – Set up your Ainz Bot account.
             </li>
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
                 info
               </code>{" "}
-              – View your profile and stats.
+              – View your profile.
             </li>
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
@@ -96,6 +96,34 @@ export default function Tutorials() {
           className="p-6 rounded-2xl border bg-white shadow-md hover:shadow-lg transition lg:col-span-2"
         >
           <h3 className="text-2xl font-semibold mb-4">🐾 Pets</h3>
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                hunt
+              </code>{" "}
+              – Go out and catch pets 🦊🐱🐶.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                dex
+              </code>{" "}
+              – View your pet collection 📖.
+            </li>
+          </ul>
+          <p className="mt-4 text-gray-600">
+            Pets can be collected, trained, and used in <strong>battles</strong>{" "}
+            ⚔️ with your friends.
+          </p>
+        </motion.div>
+
+        {/* Team */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.7 }}
+          className="p-6 rounded-2xl border bg-white shadow-md hover:shadow-lg transition lg:col-span-2"
+        >
+          <h3 className="text-2xl font-semibold mb-4">Teams</h3>
           <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
@@ -166,7 +194,7 @@ export default function Tutorials() {
             ))}
           </div>
           <p className="mt-8 text-gray-600">
-            👉 Follow this flow to get started quickly and enjoy AINZ Bot to the
+            👉 Follow this flow to get started quickly and enjoy Ainz Bot to the
             fullest!
           </p>
         </motion.div>
