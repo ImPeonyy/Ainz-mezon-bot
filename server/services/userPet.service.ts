@@ -28,6 +28,37 @@ export const createUserPets = async (
     }
 };
 
+export const upsertUserPetCount = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    user_id: string,
+    pet_id: number
+) => {
+    try {
+        // Sử dụng upsert để kiểm tra và cập nhật count
+        return await prismaClient.userPet.upsert({
+            where: {
+                user_id_pet_id: {
+                    user_id: user_id,
+                    pet_id: pet_id
+                }
+            },
+            update: {
+                count: {
+                    increment: 1
+                }
+            },
+            create: {
+                user_id: user_id,
+                pet_id: pet_id,
+                count: 1
+            }
+        });
+    } catch (error) {
+        console.error('Error upserting user pet:', error);
+        throw error;
+    }
+};
+
 export const getRandomUserPets = async (prismaClient: PrismaClient | Prisma.TransactionClient, user_id: string) => {
     try {
         const userPets = await prismaClient.userPet.findMany({
