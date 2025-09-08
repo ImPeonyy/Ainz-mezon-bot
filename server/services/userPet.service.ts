@@ -1,5 +1,19 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
+export const getUserPets = async (prismaClient: PrismaClient | Prisma.TransactionClient, user_id: string) => {
+    try {
+        return await prismaClient.userPet.findMany({
+            where: { user_id: user_id },
+            include: {
+                pet: true
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user pets:', error);
+        throw error;
+    }
+};
+
 export const createUserPet = async (
     prismaClient: PrismaClient | Prisma.TransactionClient,
     data: Prisma.UserPetCreateInput

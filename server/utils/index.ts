@@ -1,5 +1,5 @@
 import {
-    bagMessage,
+    getBagMessage,
     embedMessage,
     emojiMessage,
     emojisMessage,
@@ -48,7 +48,7 @@ export {
     extractFirstTokenWithAsterisk,
     parseActionCommand,
     getActionMessage,
-    bagMessage,
+    getBagMessage,
     embedMessage,
     emojiMessage,
     getDexMessage,

@@ -1,29 +1,31 @@
 import { ACTIONS, COMMANDS } from '@/constants/Commands';
+import { addPetToTeamController, createTeamController, deleteTeamController, getTeamController, swapPetInTeamController, updateTeamController } from './team.controller';
 import {
+    battleController,
     createUserController,
+    dailyController,
     dexController,
     getUserController,
     huntPetController,
-    updateUserController,
-    dailyController,
-    battleController
+    updateUserController
 } from '@/controllers';
-import { embedMessage, getActorName, getTargetFromMention, textMessage, getHelpMessage } from '@/utils';
-import { getActionGif, getMeme } from '@/services';
-import { parseActionCommandTeam } from '@/utils/misc.util';
+import { embedMessage, getActorName, getBagMessage, getHelpMessage, getTargetFromMention, textMessage } from '@/utils';
+import { getActionGif, getMeme, getPets, getUserPets } from '@/services';
+
 import { EActionType } from '@/constants/Enum';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { addPetToTeamController, createTeamController, deleteTeamController, getTeamController, swapPetInTeamController, updateTeamController } from './team.controller';
+import { parseActionCommandTeam } from '@/utils/misc.util';
+import { prisma } from '@/lib/db';
 
 export const getActionController = async (
     event: any,
     action: string,
     channel: any,
     message: Message,
-    mentionTarget?: string | null
+    targetRaw?: string | null
 ) => {
     try {
-        const { sender_id, display_name, avatar, clan_nick, references } = event;
+        const { sender_id, display_name, avatar, clan_nick, references, mentions } = event;
 
         if (Object.keys(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (action === COMMANDS.init) {
@@ -48,13 +50,21 @@ export const getActionController = async (
 
             if (Object.keys(ACTIONS).includes(action)) {
                 const actor = getActorName(display_name, clan_nick);
-                let target = references?.[0]?.message_sender_display_name;
-                if (mentionTarget) {
-                    target = getTargetFromMention(mentionTarget);
+                let target;
+                if (targetRaw) {
+                    target = getTargetFromMention(targetRaw);
                 }
-
+                target = references?.[0]?.message_sender_display_name;
+                if (targetRaw && mentions.length > 0) {
+                    target = getTargetFromMention(targetRaw);
+                }
                 const actionGifPayload = await getActionGifController(actor, action, target);
                 return actionGifPayload;
+            }
+
+            if (action === COMMANDS.bag) {
+                const bagPayload = await getBagController(sender_id);
+                return bagPayload;
             }
 
             if (action === COMMANDS.hunt) {
@@ -63,7 +73,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.dex) {
-                const petDetailPayload = await dexController(mentionTarget || '');
+                const petDetailPayload = await dexController(targetRaw || '');
                 return petDetailPayload;
             }
 
@@ -83,32 +93,32 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.team) {
-                const parseActionCommandTeamPayload = parseActionCommandTeam(mentionTarget || '');
-                const { action, targetRaw } = parseActionCommandTeamPayload;
+                const parseActionCommandTeamPayload = parseActionCommandTeam(targetRaw || '');
+                const { action, targetRaw: targetRawTeam } = parseActionCommandTeamPayload;
 
                 switch (action) {
                     case 'info':
                         const getTeamPayload = await getTeamController(sender_id);
                         return getTeamPayload;
                     case 'create':
-                        const createTeamPayload = await createTeamController(targetRaw || '', sender_id);
+                        const createTeamPayload = await createTeamController(targetRawTeam || '', sender_id);
                         return createTeamPayload;
                     case 'update':
-                        const updateTeamPayload = await updateTeamController(targetRaw || '', sender_id);
+                        const updateTeamPayload = await updateTeamController(targetRawTeam || '', sender_id);
                         return updateTeamPayload;
                     case 'delete':
                         const deleteTeamPayload = await deleteTeamController(sender_id);
                         return deleteTeamPayload;
                     case 'add':
-                        const [petId, pos] = targetRaw?.split(' ') || [];
+                        const [petId, pos] = targetRawTeam?.split(' ') || [];
                         const addPetToTeamPayload = await addPetToTeamController(Number(petId), Number(pos), sender_id);
                         return addPetToTeamPayload;
                     case 'swap':
-                        const [pos1, pos2] = targetRaw?.split(' ') || [];
+                        const [pos1, pos2] = targetRawTeam?.split(' ') || [];
                         const swapPetInTeamPayload = await swapPetInTeamController(Number(pos1), Number(pos2), sender_id);
                         return swapPetInTeamPayload;
                     default:
-                        return textMessage('Invalid command');
+                        return textMessage('Invalid Team command');
                 }
             }
         }
@@ -221,6 +231,18 @@ export const getHelpController = () => {
         return helpMessage;
     } catch (error) {
         console.error('Error getting help message:', error);
+        return textMessage('Internal server error');
+    }
+};
+
+export const getBagController = async (sender_id: string) => {
+    try {
+        const pets = await getPets();
+        const bag = await getUserPets(prisma, sender_id);
+        const bagMessage = getBagMessage(pets, bag);
+        return bagMessage;
+    } catch (error) {
+        console.error('Error getting bag:', error);
         return textMessage('Internal server error');
     }
 };
