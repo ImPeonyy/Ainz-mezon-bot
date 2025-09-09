@@ -29,7 +29,7 @@ export const emojiMessage = (emoji: EmojiOnMessage[]) => {
     return messagePayload;
 };
 
-export const emojisMessage = (emojis: EmojiOnMessage[]) => {
+export const getHuntMessage = (emojis: EmojiOnMessage[]) => {
     let messagePayload: ChannelMessageContent = {
         t: '🎯 Luck has smiled upon you! 5 pets have been captured:\n',
         ej: []

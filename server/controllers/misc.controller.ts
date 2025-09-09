@@ -29,17 +29,17 @@ export const getActionController = async (
 
         if (Object.keys(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (action === COMMANDS.init) {
-                const createUserPayload = await createUserController(display_name, sender_id, avatar);
+                const createUserPayload = await createUserController(display_name, sender_id, avatar, message, channel);
                 return createUserPayload;
             }
 
             if (action === COMMANDS.info) {
-                const getUserPayload = await getUserController(sender_id);
+                const getUserPayload = await getUserController(sender_id, message, channel);
                 return getUserPayload;
             }
 
             if (action === COMMANDS.update) {
-                const updateUserPayload = await updateUserController(display_name, sender_id, avatar);
+                const updateUserPayload = await updateUserController(display_name, sender_id, avatar, message, channel);
                 return updateUserPayload;
             }
 
@@ -63,12 +63,12 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.bag) {
-                const bagPayload = await getBagController(sender_id);
+                const bagPayload = await getBagController(sender_id, message, channel);
                 return bagPayload;
             }
 
             if (action === COMMANDS.hunt) {
-                const huntPetPayload = await huntPetController(sender_id);
+                const huntPetPayload = await huntPetController(sender_id, message, channel);
                 return huntPetPayload;
             }
 
@@ -78,7 +78,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.daily) {
-                const dailyPayload = await dailyController(sender_id);
+                const dailyPayload = await dailyController(sender_id, message, channel);
                 return dailyPayload;
             }
 
@@ -118,15 +118,15 @@ export const getActionController = async (
                         const swapPetInTeamPayload = await swapPetInTeamController(Number(pos1), Number(pos2), sender_id);
                         return swapPetInTeamPayload;
                     default:
-                        return textMessage('Invalid Team command');
+                        return textMessage('❌ Invalid Team command');
                 }
             }
         }
 
-        return textMessage('Invalid command');
+        return textMessage('❌ Invalid command');
     } catch (error) {
         console.error('Error in getActionController:', error);
-        return textMessage('Internal server error');
+        return textMessage('❌ Internal server error');
     }
 };
 
@@ -160,14 +160,14 @@ export const getMemeController = async () => {
         });
     } catch (error) {
         console.log('Error getting meme:', error);
-        return textMessage('Internal server error');
+        return textMessage('❌ Internal server error');
     }
 };
 
 export const getActionGifController = async (actor: string, actionType: string, target?: string) => {
     try {
         if (!actionType || !Object.keys(ACTIONS).includes(actionType)) {
-            return textMessage('Invalid action type');
+            return textMessage('❌ Invalid action type');
         }
 
         const action = ACTIONS[actionType];
@@ -221,7 +221,7 @@ export const getActionGifController = async (actor: string, actionType: string, 
         });
     } catch (error) {
         console.error('Error getting action gif:', error);
-        return textMessage('Internal server error');
+        return textMessage('❌ Internal server error');
     }
 };
 
@@ -231,18 +231,26 @@ export const getHelpController = () => {
         return helpMessage;
     } catch (error) {
         console.error('Error getting help message:', error);
-        return textMessage('Internal server error');
+        return textMessage('❌ Internal server error');
     }
 };
 
-export const getBagController = async (sender_id: string) => {
+export const getBagController = async (sender_id: string, message: Message, channel: any) => {
+    let messageFetch: any;
     try {
+        const messageReply = await message.reply(textMessage('Looking inside your bag for your pets... please wait!'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
         const pets = await getPets();
         const bag = await getUserPets(prisma, sender_id);
         const bagMessage = getBagMessage(pets, bag);
-        return bagMessage;
+        await messageFetch.update(bagMessage);
     } catch (error) {
         console.error('Error getting bag:', error);
-        return textMessage('Internal server error');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
     }
 };
