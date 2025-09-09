@@ -1,5 +1,5 @@
 import { getUserPetByPetName } from "@/services/pet.service";
-import { addPetToTeam, createTeam, deleteTeam, getTeam, updatePos, updateTeam } from "@/services/team.service";
+import { addPetToTeam, createTeam, deleteTeam, getTeam, updatePet, updatePos, updateTeam } from "@/services/team.service";
 import { textMessage } from "@/utils";
 import { teamInfoMessage } from "@/utils/message.util";
 import { isValidPosition } from "@/utils/team.util";
@@ -63,10 +63,14 @@ export const deleteTeamController = async (userId: string) => {
     }
 }
 
-export const addPetToTeamController = async (petName: string, pos: number, userId: string) => {
+export const addPetToTeamController = async (pos: number, petName: string, userId: string) => {
     try {
-        if (!petName || !pos) {
-            return textMessage(`Please provide a pet name and position!`);
+        if (!petName) {
+            return textMessage(`Please provide a pet name!`);
+        }
+
+        if (!pos) {
+            return textMessage(`Please provide a position!`);
         }
 
         if (!isValidPosition(pos)) {
@@ -78,21 +82,23 @@ export const addPetToTeamController = async (petName: string, pos: number, userI
             return textMessage(`You don't have a team. Please create one first!`);
         }
 
-        const capitalizedPetName = petName.charAt(0).toUpperCase() + petName.slice(1);
+        const capitalizedPetName = petName.toLowerCase().split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 
         const userPet = await getUserPetByPetName(userId, petName);
         if (!userPet) {
             return textMessage(`You don't own a pet "${capitalizedPetName}"!`);
         }
 
-        if (existingTeam.members.some(member => member.position === pos)) {
-            return textMessage(`Position ${pos} is already occupied. Please choose another position!`);
-        }
-        
         if (existingTeam.members.some(member => member.userPet.pet.name === petName)) {
             return textMessage(`Pet "${capitalizedPetName}" is already in your team. Please choose another pet!`);
         }
-        
+
+        if (existingTeam.members.some(member => member.position === pos)) {
+            await updatePet(userPet.id, pos, userId);
+        }
+         
         await addPetToTeam(existingTeam.id, userPet.id, pos);
         return textMessage(`Pet "${capitalizedPetName}" has been added to your team successfully!`);
     } catch (error) {

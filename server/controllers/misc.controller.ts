@@ -110,8 +110,10 @@ export const getActionController = async (
                         const deleteTeamPayload = await deleteTeamController(sender_id);
                         return deleteTeamPayload;
                     case 'add':
-                        const [name, pos] = targetRaw?.split(' ') || [];
-                        const addPetToTeamPayload = await addPetToTeamController(name, Number(pos), sender_id);
+                        const parts = targetRawTeam?.split(' ') || [];
+                        const pos = parts[0]; 
+                        const name = parts.slice(1).join(' ');
+                        const addPetToTeamPayload = await addPetToTeamController(Number(pos), name, sender_id);
                         return addPetToTeamPayload;
                     case 'swap':
                         const [pos1, pos2] = targetRawTeam?.split(' ') || [];
