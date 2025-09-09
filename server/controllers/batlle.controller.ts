@@ -15,14 +15,16 @@ import { CLOUDINARY_BATTLE_FOLDER } from '@/constants/Constant';
 import { uploadImageToCloudinary, deleteImagesFromCloudinary, getUser, updateUser, updateUserPet } from '@/services';
 
 export const battleController = async (channel: any, message: Message) => {
+    let messageFetch: any;
     try {
         const battleMessage = await message.reply(textMessage('Searching for opponent...'));
-        const messageFetch = await channel.messages.fetch(battleMessage.message_id);
+        messageFetch = await channel.messages.fetch(battleMessage.message_id);
 
         const currentUser = await getUser(message.sender_id);
 
         if (!currentUser) {
-            return textMessage('User not found');
+            await messageFetch.update(textMessage('User not found'));
+            return;
         }
 
         const teamA = await getRandomUserPets(prisma, currentUser?.id);
@@ -60,15 +62,11 @@ export const battleController = async (channel: any, message: Message) => {
                 await messageFetch.update(getBattleMessage(currentUser, battle, image.secure_url, `Battle start!`));
             }
             battle.turn++;
-            console.log('\n\n--------------------------');
-            console.log('🔄 Turn', battle.turn);
             if (battle.turn % 2 !== 0) {
                 processTurn(teamATurnQueue, battle.teamA, teamBTurnQueue, battle.teamB, [2, 4, 6]);
             } else {
                 processTurn(teamBTurnQueue, battle.teamB, teamATurnQueue, battle.teamA, [1, 3, 5]);
             }
-            console.log('teamATurnQueue', teamATurnQueue);
-            console.log('teamBTurnQueue', teamBTurnQueue);
             if (battle.turn % 6 === 0) {
                 const imageBuffer = await createBattleImage(
                     [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
@@ -173,6 +171,11 @@ export const battleController = async (channel: any, message: Message) => {
         }
     } catch (error) {
         console.log('Error in battleController:', error);
-        return textMessage('Internal server error');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
     }
 };

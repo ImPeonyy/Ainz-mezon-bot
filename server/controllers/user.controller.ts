@@ -3,17 +3,24 @@ import { createUser, getUser, updateUser, uploadImageToCloudinary } from '@/serv
 
 import { CLOUDINARY_PROFILE_FOLDER } from '@/constants/Constant';
 import { prisma } from '@/lib/db';
+import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 
-export const getUserController = async (mezon_id: string) => {
+export const getUserController = async (mezon_id: string, message: Message, channel: any) => {
+    let messageFetch: any;
     try {
+        const messageReply = await message.reply(textMessage('Retrieving user...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
+        
         if (!mezon_id) {
-            return textMessage('Error retrieving mezon id');
+            await messageFetch.update(textMessage('Error retrieving mezon id'));
+            return;
         }
 
         const user = await getUser(mezon_id);
 
         if (!user) {
-            return textMessage('User not found');
+            await messageFetch.update(textMessage('User not found'));
+            return;
         }
 
         const imageBuffer = await createProfileCard({
@@ -21,29 +28,50 @@ export const getUserController = async (mezon_id: string) => {
             level: user?.level || 0,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP:  expToUserLevel(user.level + 1)|| 0,
+            nextLevelXP: expToUserLevel(user.level + 1) || 0,
             avatar: user?.avatar || ''
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
-
-        return image.secure_url;
+       
+        await messageFetch.update(
+            {},
+            [],
+            [
+                {
+                    filename: 'attachment.png',
+                    filetype: 'image/png',
+                    url: image.secure_url
+                }
+            ]
+        );
     } catch (error) {
         console.log('Error getting user:', error);
-        return textMessage('Internal server error');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
     }
 };
 
-export const createUserController = async (username: string, mezon_id: string, avatar: string) => {
+export const createUserController = async (username: string, mezon_id: string, avatar: string, message: Message, channel: any) => {
+    let messageFetch: any;
     try {
+        const messageReply = await message.reply(textMessage('Initializing user...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
+        
         if (!username || !mezon_id) {
-            return textMessage('Error retrieving username or mezon id');
+            await messageFetch.update(textMessage('Error retrieving username or mezon id'));
+            return;
         }
 
         const existingUser = await getUser(mezon_id);
 
         if (existingUser) {
-            return textMessage('User already exists');
+            await messageFetch.update(textMessage('User already exists'));
+            return;
         }
 
         const user = await createUser(prisma, { username, id: mezon_id, avatar });
@@ -59,23 +87,44 @@ export const createUserController = async (username: string, mezon_id: string, a
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
 
-        return image.secure_url;
+        await messageFetch.update(
+            {},
+            [],
+            [
+                {
+                    filename: 'attachment.png',
+                    filetype: 'image/png',
+                    url: image.secure_url
+                }
+            ]
+        );
     } catch (error) {
         console.log('Error creating user:', error);
-        return textMessage('Internal server error');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
     }
 };
 
-export const updateUserController = async (username: string, mezon_id: string, avatar: string) => {
+export const updateUserController = async (username: string, mezon_id: string, avatar: string, message: Message, channel: any) => {
+   let messageFetch: any;
     try {
+        const messageReply = await message.reply(textMessage('Updating user...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
+
         if (!username || !mezon_id) {
-            return textMessage('Error retrieving username or mezon id');
+            await messageFetch.update(textMessage('Error retrieving username or mezon id'));
+            return;
         }
 
         const existingUser = await getUser(mezon_id);
 
         if (!existingUser) {
-            return textMessage('User not found');
+            await messageFetch.update(textMessage('User not found'));
+            return;
         }
 
         const user = await updateUser(
@@ -97,9 +146,24 @@ export const updateUserController = async (username: string, mezon_id: string, a
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
 
-        return image.secure_url;
+        await messageFetch.update(
+            {},
+            [],
+            [
+                {
+                    filename: 'attachment.png',
+                    filetype: 'image/png',
+                    url: image.secure_url
+                }
+            ]
+        );
     } catch (error) {
         console.log('Error updating user:', error);
-        return textMessage('Internal server error');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
     }
 };
