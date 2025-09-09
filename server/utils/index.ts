@@ -1,8 +1,8 @@
 import {
-    bagMessage,
+    getBagMessage,
     embedMessage,
     emojiMessage,
-    emojisMessage,
+    getHuntMessage,
     getActionMessage,
     getDexMessage,
     textMessage,
@@ -38,7 +38,7 @@ import { createBattleImage, createProfileCard } from './canvas.util';
 export {
     getActorName,
     getTargetFromMention,
-    emojisMessage,
+    getHuntMessage,
     textMessage,
     huntCheck,
     huntPet,
@@ -48,7 +48,7 @@ export {
     extractFirstTokenWithAsterisk,
     parseActionCommand,
     getActionMessage,
-    bagMessage,
+    getBagMessage,
     embedMessage,
     emojiMessage,
     getDexMessage,

@@ -4,7 +4,7 @@ import {
     getTodayUserDailyActivity,
     updateUserDailyActivity
 } from '@/services/userDailyActivity.service';
-import { createUserPet, createUserPets, upsertUserPetCount } from '@/services/userPet.service';
+import { createUserPet, createUserPets, getUserPets, upsertUserPetCount } from '@/services/userPet.service';
 import { deleteImagesFromCloudinary, uploadImageToCloudinary } from '@/services/cloudinary.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
 import { getPetDetail, getPets, updateUserPet } from '@/services/pet.service';
@@ -25,6 +25,7 @@ export {
     updateUserDailyActivity,
     createUserPet,
     createUserPets,
+    getUserPets,
     upsertUserPetCount,
     uploadImageToCloudinary,
     deleteImagesFromCloudinary,

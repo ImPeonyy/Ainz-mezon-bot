@@ -39,10 +39,13 @@ export const getActorName = (display_name: string, clan_nick: string) => {
 export const getTargetFromMention = (content: string | null) => {
     if (!content) return null;
 
-    const target = content.slice(1);
+    if (content.startsWith('@')) {
+        return content.slice(1);
+    }
 
-    return target;
+    return content;
 };
+
 
 export const getRarityColor = (rarity: string): string => {
     return ERarityColor[rarity.toUpperCase() as keyof typeof ERarityColor];

@@ -5,6 +5,7 @@ export const COMMANDS = {
     info: 'info',
     update: 'update',
     meme: 'meme',
+    bag: 'bag',
     hunt: 'hunt',
     dex: 'dex',
     daily: 'daily',

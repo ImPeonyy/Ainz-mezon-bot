@@ -3,7 +3,11 @@ import { Prisma, PrismaClient } from '@prisma/client';
 
 export const getPets = () => {
     try {
-        return prisma.pet.findMany();
+        return prisma.pet.findMany({
+            include: {
+                rarity: true
+            }
+        });
     } catch (error) {
         console.error('Error getting pets:', error);
         throw error;
