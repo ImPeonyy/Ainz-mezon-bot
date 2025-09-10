@@ -15,6 +15,8 @@ import { getHuntMessage, getDexMessage, huntCheck, huntPet, textMessage } from '
 import { Pet } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
+import { getUserPetDetail } from '@/services/pet.service';
+import { getMyDexMessage } from '@/utils/message.util';
 
 export const huntPetController = async (mezon_id: string, message: Message, channel: any) => {
     let messageFetch: any;
@@ -167,6 +169,20 @@ export const dexController = async (petName: string) => {
         return dexMessagePayload;
     } catch (error) {
         console.log('Error getting pet:', error);
+        return textMessage('❌ Internal server error');
+    }
+};
+
+export const myDexController = async (petName: string, userId: string) => {
+    try {
+        const userPet = await getUserPetDetail(petName, userId);
+        if (!userPet) {
+            return textMessage(`You don't own this pet!`);
+        }
+        const myDexMessagePayload = getMyDexMessage(userPet, userPet.user?.avatar);
+        return myDexMessagePayload;
+    } catch (error) {
+        console.log('Error getting user pet:', error);
         return textMessage('❌ Internal server error');
     }
 };

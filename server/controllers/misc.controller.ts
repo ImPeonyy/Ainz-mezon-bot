@@ -16,6 +16,7 @@ import { EActionType } from '@/constants/Enum';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { parseActionCommandTeam } from '@/utils/misc.util';
 import { prisma } from '@/lib/db';
+import { myDexController } from './pet.controller';
 
 export const getActionController = async (
     event: any,
@@ -74,6 +75,11 @@ export const getActionController = async (
 
             if (action === COMMANDS.dex) {
                 const petDetailPayload = await dexController(targetRaw || '');
+                return petDetailPayload;
+            }
+
+            if (action === COMMANDS.mydex) {
+                const petDetailPayload = await myDexController(targetRaw || '', sender_id);
                 return petDetailPayload;
             }
 

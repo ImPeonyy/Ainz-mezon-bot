@@ -2,7 +2,7 @@ import { ChannelMessageContent, EmojiOnMessage, IEmbedProps } from 'mezon-sdk';
 
 import { ACTIONS } from '@/constants/Commands';
 import { Prisma, Pet, User, ERarity } from '@prisma/client';
-import { getRarityColor, getUrlEmoji } from '@/utils';
+import { expToPetLevel, getRarityColor, getUrlEmoji } from '@/utils';
 import { FAV_COLOR } from '@/constants/Constant';
 import { IBattle } from '@/constants/Type';
 
@@ -169,13 +169,65 @@ export const getDexMessage = (
 
     return embedMessage({
         color: getRarityColor(statistic.rarity),
-        title: `${pet?.name} Information 🔍`,
+        title: `${pet.name} Information 🔍`,
         thumbnail: { url: getUrlEmoji(pet.mezon_emoji_id) },
         fields: messageContent,
+        image: {
+            url: getUrlEmoji(pet.mezon_emoji_id)
+        },
         footer: {
-            text: `📙 Ainz Ooal Gown • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
+            text: `📙 Ainz Mezon Bot • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
         }
     });
+};
+
+export const getMyDexMessage = (
+    userPet: Prisma.UserPetGetPayload<{ include: { pet: { include: { statistic: true; rarity: true; autoAttack: true; passiveSkill: true; activeSkill: true } } } }>,
+    userAvatar: string
+) => {
+    const statistic = userPet.pet.statistic;
+
+    const messageContent = [
+        {
+            name: 'Description',
+            value: userPet.pet?.description || 'No description',
+            inline: false
+        }
+    ];
+
+    if (statistic) {
+        messageContent.push(
+            { name: 'Nickname', value: userPet.nickname || userPet.pet.name, inline: true },
+            { name: 'Lv.', value: userPet.level.toString() || '0', inline: true },
+            { name: 'Exp', value: `${userPet.exp.toString() || '0'}/${expToPetLevel(userPet.level + 1 || 0)}`, inline: true },
+            { name: 'Rarity', value: statistic.rarity, inline: true },
+            { name: 'Role', value: statistic.role, inline: true },
+            { name: 'Attack type', value: statistic.scaling_type, inline: true },
+            { name: 'HP', value: (statistic.hp  + userPet.additional_hp).toString(), inline: true },
+            { name: 'AD', value: (statistic.ad  + userPet.additional_ad).toString(), inline: true },
+            { name: 'AR', value: (statistic.ar  + userPet.additional_ar).toString(), inline: true },
+            { name: 'Mana', value: (statistic.mana  + userPet.additional_mana).toString(), inline: true },
+            { name: 'AP', value: (statistic.ap  + userPet.additional_ap).toString(), inline: true },
+            { name: 'MR', value: (statistic.mr  + userPet.additional_mr).toString(), inline: true }
+        );
+    }
+
+    const embedConfig: IEmbedProps = {
+        color: getRarityColor(statistic.rarity),
+        title: `${userPet.pet.name} Information 🔍`,
+        thumbnail: {
+            url:  userAvatar
+        },
+        fields: messageContent,
+        image: {
+            url: getUrlEmoji(userPet.pet.mezon_emoji_id)
+        },
+        footer: {
+            text: `📙 Ainz Mezon Bot • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
+        }
+    };
+
+    return embedMessage(embedConfig);
 };
 
 export const getBattleMessage = (user: User, battle: IBattle, image: string, footerMsg: string) => {

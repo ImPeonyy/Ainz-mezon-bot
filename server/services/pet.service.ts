@@ -37,6 +37,37 @@ export const getPetDetail = async (petName: string) => {
     }
 };
 
+export const getUserPetDetail = async (petName: string, userId: string) => {
+    try {
+        return prisma.userPet.findFirst({
+            where: {
+                user_id: userId,
+                pet: {
+                    name: {
+                        equals: petName,
+                        mode: 'insensitive'
+                    }
+                }
+            },
+            include: {
+                user: true, 
+                pet: {
+                    include: {
+                        statistic: true,
+                        rarity: true,
+                        autoAttack: true,
+                        passiveSkill: true,
+                        activeSkill: true
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user pet:', error);
+        throw error;
+    }
+};
+
 export const updateUserPet = async (
     prismaClient: PrismaClient | Prisma.TransactionClient,
     where: Prisma.UserPetWhereUniqueInput,
