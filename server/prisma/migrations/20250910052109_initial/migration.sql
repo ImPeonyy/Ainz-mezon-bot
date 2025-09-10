@@ -207,6 +207,7 @@ CREATE TABLE "public"."Team" (
     "id" SERIAL NOT NULL,
     "user_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "combat_power" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -271,6 +272,12 @@ CREATE UNIQUE INDEX "Team_user_id_key" ON "public"."Team"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Team_name_key" ON "public"."Team"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TeamMember_user_pet_id_key" ON "public"."TeamMember"("user_pet_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TeamMember_team_id_position_key" ON "public"."TeamMember"("team_id", "position");
 
 -- AddForeignKey
 ALTER TABLE "public"."UserDailyActivities" ADD CONSTRAINT "UserDailyActivities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
