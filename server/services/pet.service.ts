@@ -1,6 +1,22 @@
 import { prisma } from '@/lib/db';
 import { Prisma, PrismaClient } from '@prisma/client';
 
+export const getPet = (petName: string) => {
+    try {
+        return prisma.pet.findFirst({
+            where: {
+                name: {
+                    equals: petName,
+                    mode: 'insensitive'
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting pets:', error);
+        throw error;
+    }
+};
+
 export const getPets = () => {
     try {
         return prisma.pet.findMany({

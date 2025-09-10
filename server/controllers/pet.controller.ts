@@ -8,6 +8,7 @@ import {
     getUser,
     updateUser,
     updateUserDailyActivity,
+    updateUserPet,
     upsertUserPetCount
 } from '@/services';
 import { getHuntMessage, getDexMessage, huntCheck, huntPet, textMessage } from '@/utils';
@@ -17,6 +18,7 @@ import { prisma } from '@/lib/db';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { getUserPetDetail } from '@/services/pet.service';
 import { getMyDexMessage } from '@/utils/message.util';
+import { getUserPetByName } from '@/services/userPet.service';
 
 export const huntPetController = async (mezon_id: string, message: Message, channel: any) => {
     let messageFetch: any;
@@ -184,5 +186,25 @@ export const myDexController = async (petName: string, userId: string) => {
     } catch (error) {
         console.log('Error getting user pet:', error);
         return textMessage('❌ Internal server error');
+    }
+};
+export const renamePetController = async (petName: string, nickname: string, userId: string, message: Message, channel: any) => {
+    let messageFetch: any;
+    try {
+        const messageReply = await message.reply(textMessage('🔄 Renaming your pet...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
+        const userPet = await getUserPetByName(prisma, userId, petName);
+        if (!userPet) {
+            await messageFetch.update(textMessage('You don\'t have this pet!'));
+            return;
+        }
+
+        const updatedPet = await updateUserPet(prisma, { id: userPet.id }, { nickname });
+
+        await messageFetch.update(textMessage(`Pet "${userPet.pet.name}" has been renamed to "${updatedPet.nickname}" successfully!`));
+    } catch (error) {
+        console.log('Error renaming pet:', error);
+        await messageFetch.update(textMessage('❌ Internal server error'));
+        return;
     }
 };
