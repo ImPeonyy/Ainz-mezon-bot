@@ -1,5 +1,5 @@
 import { getUserPetByPetName } from "@/services/pet.service";
-import { addPetToTeam, createTeam, deleteTeam, getTeam, updatePet, updatePos, updateTeam } from "@/services/team.service";
+import { addPetToTeam, createTeam, deleteTeam, getTeam, getTeamByName, updatePet, updatePos, updateTeam } from "@/services/team.service";
 import { textMessage } from "@/utils";
 import { teamInfoMessage } from "@/utils/message.util";
 import { isValidPosition } from "@/utils/team.util";
@@ -9,6 +9,9 @@ export const getTeamController = async (userId: string) => {
         const existingTeam = await getTeam(userId);
         if (!existingTeam) {
             return textMessage(`You don't have a team. Please create one first!`);
+        }
+        if (!existingTeam.members.length) {
+            return textMessage(`Your team "${existingTeam.name}" is empty. Please add some pets to your team!`);
         }
         return teamInfoMessage(existingTeam.members);
     } catch (error: any) {
@@ -25,6 +28,12 @@ export const createTeamController = async (teamName: string, userId: string) => 
         if (existingTeam) {
             return textMessage('You already have a team. Please delete it first!');
         }
+
+        const duplicateTeam = await getTeamByName(teamName);
+        if (duplicateTeam) {
+            return textMessage(`Team name "${teamName}" is already taken. Please choose a different name!`);
+        }
+
         const team = await createTeam(teamName, userId);
         return textMessage(`Your team "${team.name}" has been created successfully. Please add pets to start fighting!`);
     } catch (error: any) {

@@ -27,6 +27,19 @@ export const getTeam = async (userId: string) => {
     }
 };
 
+export const getTeamByName = async (name: string) => {
+    try {
+        return prisma.team.findFirst({
+            where: {
+                name: name
+            }
+        });
+    } catch (error) {
+        console.error('Error getting team by name:', error);
+        throw error;
+    }
+};
+
 export const createTeam = async (name: string, userId: string) => {
     try {
         return prisma.team.create({
