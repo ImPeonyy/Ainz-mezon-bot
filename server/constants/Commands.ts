@@ -11,7 +11,8 @@ export const COMMANDS = {
     daily: 'daily',
     battle: 'battle',
     help: 'help',
-    team: 'team'
+    team: 'team',
+    rename: 'rename'
 };
 
 export const ACTIONS = {

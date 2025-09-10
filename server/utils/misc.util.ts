@@ -28,6 +28,24 @@ export const parseActionCommandTeam = (content: string): ParsedAction => {
     return { action, targetRaw };
 };
 
+export const parseRenameCommand = (content: string) => {
+    if (!content) return { error: 'Please enter the pet name and nickname!' };
+
+    if (!content.includes('>') || content.trim().startsWith('>') || content.trim().endsWith('>'))
+        return { error: 'Must use ">" to separate pet name and nickname!' };
+
+    const parts = content.split('>').map((p) => p.trim());
+
+    if (parts.length !== 2) {
+        return { error: 'Wrong format! Eg. *ainz rename "pet name" > "nickname"' };
+    }
+
+    return {
+        petName: parts[0],
+        nickname: parts[1]
+    };
+};
+
 export const getActorName = (display_name: string, clan_nick: string) => {
     if (clan_nick !== '') {
         return clan_nick;
@@ -45,7 +63,6 @@ export const getTargetFromMention = (content: string | null) => {
 
     return content;
 };
-
 
 export const getRarityColor = (rarity: string): string => {
     return ERarityColor[rarity.toUpperCase() as keyof typeof ERarityColor];
