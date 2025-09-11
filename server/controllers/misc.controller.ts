@@ -82,12 +82,12 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.dex) {
-                const petDetailPayload = await dexController(targetRaw || '');
+                const petDetailPayload = await dexController(targetRaw || '', message, channel, sender_id,);
                 return petDetailPayload;
             }
 
             if (action === COMMANDS.mydex) {
-                const petDetailPayload = await myDexController(targetRaw || '', sender_id);
+                const petDetailPayload = await myDexController(targetRaw || '', sender_id, message, channel);
                 return petDetailPayload;
             }
 
@@ -144,6 +144,7 @@ export const getActionController = async (
 
             if (action === COMMANDS.rename) {
                 const renameCommand = parseRenameCommand(targetRaw || '');
+                console.log('renameCommand', renameCommand);
                 if (renameCommand.error) {
                     return textMessage(renameCommand.error);
                 }
