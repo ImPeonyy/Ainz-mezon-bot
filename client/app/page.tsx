@@ -208,7 +208,7 @@ export default function Home() {
               className="rounded-xl shadow-md max-w-full h-auto hover:scale-105 transition-transform duration-500"
             />
           </div>
-          <div className="flex flex-col justify-center text-left p-6">
+          <div className="flex flex-col justify-center text-left p-6"> 
             <h3 className="text-2xl font-semibold mb-4">Share the Fun</h3>
             <p className="text-gray-600 mb-6">
               Take your memes and laugh with your friends!
