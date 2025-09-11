@@ -70,19 +70,6 @@ export const updateTeam = async (name: string, userId: string) => {
     }
 };
 
-export const deleteTeam = async (userId: string) => {
-    try {
-        return prisma.team.delete({
-            where: {
-                user_id: userId
-            }
-        });
-    } catch (error) {
-        console.error('Error deleting team:', error);
-        throw error;
-    }
-};
-
 export const addPetToTeam = async (teamId: number, petId: number, pos: number) => {
     try {
         return prisma.teamMember.create({
@@ -114,19 +101,3 @@ export const updatePos = async (teamMemberId: number, pos: number) => {
     }
 }
 
-export const updatePet = async (petId: number, pos: number, userId: string) => {
-    try {
-        return prisma.teamMember.update({
-            where: {
-                user_id: userId
-            },
-            data: {
-                user_pet_id: petId,
-                position: pos
-            }
-        });
-    } catch (error) {
-        console.error('Error updating pet position:', error);
-        throw error;
-    }
-}
