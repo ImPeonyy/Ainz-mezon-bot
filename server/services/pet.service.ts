@@ -99,3 +99,22 @@ export const updateUserPet = async (
         throw error;
     }
 };
+
+export const getUserPetByPetName = async (userId: string, petName: string) => {
+    try {
+        return await prisma.userPet.findFirst({
+            where: {
+                user_id: userId,
+                pet: {
+                    name: {
+                        equals: petName,
+                        mode: 'insensitive'
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user pet by pet name:', error);
+        throw error;
+    }
+};

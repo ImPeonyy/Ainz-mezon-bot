@@ -27,6 +27,19 @@ export const getTeam = async (userId: string) => {
     }
 };
 
+export const getTeamByName = async (name: string) => {
+    try {
+        return prisma.team.findFirst({
+            where: {
+                name: name
+            }
+        });
+    } catch (error) {
+        console.error('Error getting team by name:', error);
+        throw error;
+    }
+};
+
 export const createTeam = async (name: string, userId: string) => {
     try {
         return prisma.team.create({
@@ -70,21 +83,6 @@ export const deleteTeam = async (userId: string) => {
     }
 };
 
-export const getPetFromTeam = async (teamId: number, pos?: number, petId?: number) => {
-    try {
-        return prisma.teamMember.findFirst({
-            where: {
-                team_id: teamId,
-                position: pos,
-                user_pet_id: petId
-            }
-        });
-    } catch (error) {
-        console.error('Error getting pet from team:', error);
-        throw error;
-    }
-}
-
 export const addPetToTeam = async (teamId: number, petId: number, pos: number) => {
     try {
         return prisma.teamMember.create({
@@ -107,6 +105,23 @@ export const updatePos = async (teamMemberId: number, pos: number) => {
                 id: teamMemberId
             },
             data: {
+                position: pos
+            }
+        });
+    } catch (error) {
+        console.error('Error updating pet position:', error);
+        throw error;
+    }
+}
+
+export const updatePet = async (petId: number, pos: number, userId: string) => {
+    try {
+        return prisma.teamMember.update({
+            where: {
+                user_id: userId
+            },
+            data: {
+                user_pet_id: petId,
                 position: pos
             }
         });
