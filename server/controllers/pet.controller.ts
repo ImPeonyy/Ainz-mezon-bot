@@ -161,31 +161,41 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
     }
 };
 
-export const dexController = async (petName: string) => {
+export const dexController = async (petName: string, message: Message, channel: any) => {
+    let messageFetch: any;
     try {
+        const messageReply = await message.reply(textMessage('🔍 Searching for pet...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
         const pet = await getPetDetail(petName);
         if (!pet) {
-            return textMessage('Pet not found!');
+            await messageFetch.update(textMessage('Pet not found!'));
+            return;
         }
         const dexMessagePayload = getDexMessage(pet);
-        return dexMessagePayload;
+        await messageFetch.update(dexMessagePayload);
     } catch (error) {
         console.log('Error getting pet:', error);
-        return textMessage('❌ Internal server error');
+        await messageFetch.update(textMessage('❌ Internal server error'));
+        return;
     }
 };
 
-export const myDexController = async (petName: string, userId: string) => {
+export const myDexController = async (petName: string, userId: string, message: Message, channel: any) => {
+    let messageFetch: any;
     try {
+        const messageReply = await message.reply(textMessage('🔍 Searching for pet...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
         const userPet = await getUserPetDetail(petName, userId);
         if (!userPet) {
-            return textMessage(`You don't own this pet!`);
+            await messageFetch.update(textMessage(`You don't own this pet!`));
+            return;
         }
         const myDexMessagePayload = getMyDexMessage(userPet, userPet.user?.avatar);
-        return myDexMessagePayload;
+        await messageFetch.update(myDexMessagePayload);
     } catch (error) {
         console.log('Error getting user pet:', error);
-        return textMessage('❌ Internal server error');
+        await messageFetch.update(textMessage('❌ Internal server error'));
+        return;
     }
 };
 export const renamePetController = async (petName: string, nickname: string, userId: string, message: Message, channel: any) => {
