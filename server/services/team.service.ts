@@ -114,19 +114,3 @@ export const updatePos = async (teamMemberId: number, pos: number) => {
     }
 }
 
-export const updatePet = async (petId: number, pos: number, userId: string) => {
-    try {
-        return prisma.teamMember.update({
-            where: {
-                user_id: userId
-            },
-            data: {
-                user_pet_id: petId,
-                position: pos
-            }
-        });
-    } catch (error) {
-        console.error('Error updating pet position:', error);
-        throw error;
-    }
-}

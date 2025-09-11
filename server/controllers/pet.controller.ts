@@ -161,7 +161,7 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
     }
 };
 
-export const dexController = async (petName: string, message: Message, channel: any) => {
+export const dexController = async (petName: string, message: Message, channel: any, sender_id: string) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('🔍 Searching for pet...'));

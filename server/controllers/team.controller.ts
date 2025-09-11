@@ -1,5 +1,5 @@
 import { getUserPetByPetName } from "@/services/pet.service";
-import { addPetToTeam, createTeam, deleteTeam, getTeam, getTeamByName, updatePet, updatePos, updateTeam } from "@/services/team.service";
+import { addPetToTeam, createTeam, deleteTeam, getTeam, getTeamByName, updatePos, updateTeam } from "@/services/team.service";
 import { textMessage } from "@/utils";
 import { teamInfoMessage } from "@/utils/message.util";
 import { isValidPosition } from "@/utils/team.util";
@@ -102,10 +102,6 @@ export const addPetToTeamController = async (pos: number, petName: string, userI
 
         if (existingTeam.members.some(member => member.userPet.pet.name === petName)) {
             return textMessage(`Pet "${capitalizedPetName}" is already in your team. Please choose another pet!`);
-        }
-
-        if (existingTeam.members.some(member => member.position === pos)) {
-            await updatePet(userPet.id, pos, userId);
         }
          
         await addPetToTeam(existingTeam.id, userPet.id, pos);
