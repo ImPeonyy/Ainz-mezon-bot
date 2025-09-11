@@ -269,6 +269,7 @@ model Team {
   id              Int                    @id @default(autoincrement())
   user_id         String                 @unique
   name            String                 @unique
+  combat_power    Int                    @default(0)
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
@@ -282,13 +283,15 @@ model Team {
 model TeamMember {
   id              Int                    @id @default(autoincrement())
   team_id         Int
-  user_pet_id     Int
+  user_pet_id     Int                    @unique
   position        Int
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())         @updatedAt         
 
   team            Team                   @relation(fields: [team_id], references: [id])
   userPet         UserPet                @relation(fields: [user_pet_id], references: [id])
+
+  @@unique([team_id, position])
 }
 
 model Battle {

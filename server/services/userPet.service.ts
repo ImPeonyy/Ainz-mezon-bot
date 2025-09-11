@@ -104,3 +104,49 @@ export const getRandomUserPets = async (prismaClient: PrismaClient | Prisma.Tran
         throw error;
     }
 };
+
+export const getUserPetByName = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    userId: string,
+    petName: string
+) => {
+    try {
+        return await prismaClient.userPet.findFirst({
+            where: {
+                user_id: userId,
+                pet: {
+                    name: {
+                        equals: petName,
+                        mode: 'insensitive'
+                    }
+                }
+            },
+            include: {
+                pet: {
+                    include: {
+                        rarity: true
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting userPet by name:', error);
+        throw error;
+    }
+};
+
+export const updateUserPet = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    where: Prisma.UserPetWhereUniqueInput,
+    data: Prisma.UserPetUpdateInput
+) => {
+    try {
+        return await prismaClient.userPet.update({
+            where,
+            data
+        });
+    } catch (error) {
+        console.error('Error updating userPet:', error);
+        throw error;
+    }
+};

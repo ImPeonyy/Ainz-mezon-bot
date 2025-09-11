@@ -1,5 +1,12 @@
 import { ACTIONS, COMMANDS } from '@/constants/Commands';
-import { addPetToTeamController, createTeamController, deleteTeamController, getTeamController, swapPetInTeamController, updateTeamController } from './team.controller';
+import {
+    addPetToTeamController,
+    createTeamController,
+    deleteTeamController,
+    getTeamController,
+    swapPetInTeamController,
+    updateTeamController
+} from './team.controller';
 import {
     battleController,
     createUserController,
@@ -14,8 +21,10 @@ import { getActionGif, getMeme, getPets, getUserPets } from '@/services';
 
 import { EActionType } from '@/constants/Enum';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { parseActionCommandTeam } from '@/utils/misc.util';
+import { parseActionCommandTeam, parseRenameCommand } from '@/utils/misc.util';
 import { prisma } from '@/lib/db';
+import { renamePetController } from './pet.controller';
+import { myDexController } from './pet.controller';
 
 export const getActionController = async (
     event: any,
@@ -77,6 +86,11 @@ export const getActionController = async (
                 return petDetailPayload;
             }
 
+            if (action === COMMANDS.mydex) {
+                const petDetailPayload = await myDexController(targetRaw || '', sender_id);
+                return petDetailPayload;
+            }
+
             if (action === COMMANDS.daily) {
                 const dailyPayload = await dailyController(sender_id, message, channel);
                 return dailyPayload;
@@ -117,11 +131,31 @@ export const getActionController = async (
                         return addPetToTeamPayload;
                     case 'swap':
                         const [pos1, pos2] = targetRawTeam?.split(' ') || [];
-                        const swapPetInTeamPayload = await swapPetInTeamController(Number(pos1), Number(pos2), sender_id);
+                        const swapPetInTeamPayload = await swapPetInTeamController(
+                            Number(pos1),
+                            Number(pos2),
+                            sender_id
+                        );
                         return swapPetInTeamPayload;
                     default:
                         return textMessage('❌ Invalid Team command');
                 }
+            }
+
+            if (action === COMMANDS.rename) {
+                const renameCommand = parseRenameCommand(targetRaw || '');
+                if (renameCommand.error) {
+                    return textMessage(renameCommand.error);
+                }
+                const { petName, nickname } = renameCommand;
+                if (!petName) {
+                    return textMessage('Please enter the pet name!');
+                }
+                if (!nickname) {
+                    return textMessage('Please enter the nickname!');
+                }
+
+                await renamePetController(petName, nickname, sender_id, message, channel);
             }
         }
 

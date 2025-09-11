@@ -8,10 +8,12 @@ export const COMMANDS = {
     bag: 'bag',
     hunt: 'hunt',
     dex: 'dex',
+    mydex: 'mydex',
     daily: 'daily',
     battle: 'battle',
     help: 'help',
-    team: 'team'
+    team: 'team',
+    rename: 'rename'
 };
 
 export const ACTIONS = {
