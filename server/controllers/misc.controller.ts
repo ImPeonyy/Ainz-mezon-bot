@@ -2,7 +2,6 @@ import { ACTIONS, COMMANDS } from '@/constants/Commands';
 import {
     addPetToTeamController,
     createTeamController,
-    deleteTeamController,
     getTeamController,
     swapPetInTeamController,
     updateTeamController
@@ -17,7 +16,7 @@ import {
     updateUserController
 } from '@/controllers';
 import { embedMessage, getActorName, getBagMessage, getHelpMessage, getTargetFromMention, textMessage } from '@/utils';
-import { getActionGif, getMeme, getPets, getUserPets } from '@/services';
+import { getActionGif, getMeme, getPets, getUser, getUserPets } from '@/services';
 
 import { EActionType } from '@/constants/Enum';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
@@ -41,19 +40,13 @@ export const getActionController = async (
         const { sender_id, display_name, avatar, clan_nick, references, mentions } = event;
 
         if (Object.keys(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
+            if (!display_name || !sender_id) {
+                return textMessage('Error retrieving username or mezon id');
+            }
+
             if (action === COMMANDS.init) {
                 const createUserPayload = await createUserController(display_name, sender_id, avatar, message, channel);
                 return createUserPayload;
-            }
-
-            if (action === COMMANDS.info) {
-                const getUserPayload = await getUserController(sender_id, message, channel);
-                return getUserPayload;
-            }
-
-            if (action === COMMANDS.update) {
-                const updateUserPayload = await updateUserController(display_name, sender_id, avatar, message, channel);
-                return updateUserPayload;
             }
 
             if (action === COMMANDS.meme) {
@@ -75,6 +68,38 @@ export const getActionController = async (
                 return actionGifPayload;
             }
 
+            if (action === COMMANDS.dex) {
+                const petDetailPayload = await dexController(targetRaw || '', message, channel, sender_id);
+                return petDetailPayload;
+            }
+
+            if (action === COMMANDS.help) {
+                const helpPayload = await getHelpController();
+                return helpPayload;
+            }
+
+            const existingUser = await getUser(sender_id);
+
+            if (!existingUser) {
+                return textMessage('User not found! Plz use "*ainz init" to initialize your user!');
+            }
+
+            if (action === COMMANDS.info) {
+                const getUserPayload = await getUserController(existingUser, message, channel);
+                return getUserPayload;
+            }
+
+            if (action === COMMANDS.update) {
+                const updateUserPayload = await updateUserController(
+                    display_name,
+                    existingUser,
+                    avatar,
+                    message,
+                    channel
+                );
+                return updateUserPayload;
+            }
+
             if (action === COMMANDS.bag) {
                 const bagPayload = await getBagController(sender_id, message, channel, targetRaw);
                 return bagPayload;
@@ -83,11 +108,6 @@ export const getActionController = async (
             if (action === COMMANDS.hunt) {
                 const huntPetPayload = await huntPetController(sender_id, message, channel);
                 return huntPetPayload;
-            }
-
-            if (action === COMMANDS.dex) {
-                const petDetailPayload = await dexController(targetRaw || '', message, channel, sender_id);
-                return petDetailPayload;
             }
 
             if (action === COMMANDS.mydex) {
@@ -105,11 +125,6 @@ export const getActionController = async (
                 return battlePayload;
             }
 
-            if (action === COMMANDS.help) {
-                const helpPayload = await getHelpController();
-                return helpPayload;
-            }
-
             if (action === COMMANDS.team) {
                 const parseActionCommandTeamPayload = parseActionCommandTeam(targetRaw || '');
                 const { action, targetRaw: targetRawTeam } = parseActionCommandTeamPayload;
@@ -124,9 +139,6 @@ export const getActionController = async (
                     case 'update':
                         const updateTeamPayload = await updateTeamController(targetRawTeam || '', sender_id);
                         return updateTeamPayload;
-                    case 'delete':
-                        const deleteTeamPayload = await deleteTeamController(sender_id);
-                        return deleteTeamPayload;
                     case 'add':
                         const parts = targetRawTeam?.split(' ') || [];
                         const pos = parts[0];
@@ -148,7 +160,6 @@ export const getActionController = async (
 
             if (action === COMMANDS.rename) {
                 const renameCommand = parseRenameCommand(targetRaw || '');
-                console.log('renameCommand', renameCommand);
                 if (renameCommand.error) {
                     return textMessage(renameCommand.error);
                 }

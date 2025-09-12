@@ -1,4 +1,4 @@
-import { createUserDailyActivity, getTodayUserDailyActivity, getUser, updateUser } from '@/services';
+import { createUserDailyActivity, getTodayUserDailyActivity, getUser, updateUser, updateUserDailyActivity } from '@/services';
 import { getDailyReward, getMidnightRemainingTime, textMessage, userLevelUp } from '@/utils';
 
 import { prisma } from '@/lib/db';
@@ -30,6 +30,35 @@ export const dailyController = async (mezon_id: string, message: Message, channe
 
         const dailyReward = getDailyReward();
         const isLevelUp = userLevelUp(user.exp + dailyReward.exp, user.level);
+
+        if (todayActivity && todayActivity.daily === 0) {
+            await prisma.$transaction(async (tx) => {
+                await updateUserDailyActivity(tx, {
+                    id: todayActivity.id
+                }, {
+                    daily: 1,
+                });
+    
+                await updateUser(
+                    tx,
+                    {
+                        id: user.id
+                    },
+                    {
+                        z_coin: { increment: dailyReward.zCoin },
+                        exp: { increment: dailyReward.exp },
+                        level: { increment: isLevelUp ? 1 : 0 }
+                    }
+                );
+            });
+            await messageFetch.update(
+                textMessage(
+                    `🎉 Daily reward claimed successfully! You have received +${dailyReward.zCoin} 💰 ZCoin and +${dailyReward.exp} ✨ EXP.`
+                )
+            );
+            return;
+        }
+
         await prisma.$transaction(async (tx) => {
             await createUserDailyActivity(tx, {
                 user: {
@@ -38,7 +67,6 @@ export const dailyController = async (mezon_id: string, message: Message, channe
                     }
                 },
                 daily: 1,
-                hunt: 0
             });
 
             await updateUser(

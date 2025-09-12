@@ -47,38 +47,44 @@ export const getHuntMessage = (emojis: EmojiOnMessage[]) => {
     return messagePayload;
 };
 
-export const getBagMessage = (pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[], bag: Prisma.UserPetGetPayload<{ include: { pet: true } }>[]) => {
+export const getBagMessage = (
+    pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[],
+    bag: Prisma.UserPetGetPayload<{ include: { pet: true } }>[]
+) => {
     let messagePayload: ChannelMessageContent = {
         t: '🎒 Current pets in your collection:\n',
         ej: []
     };
 
     const petCountMap = new Map<number, number>();
-    bag.forEach(userPet => {
+    bag.forEach((userPet) => {
         const petId = userPet.pet.id;
         const count = userPet.count ?? 0;
         petCountMap.set(petId, (petCountMap.get(petId) || 0) + count);
     });
 
-    const petsByRarity = pets.reduce((acc, pet) => {
-        const rarity = pet.rarity?.name || 'Common';
-        if (!acc[rarity]) {
-            acc[rarity] = [];
-        }
-        acc[rarity].push(pet);
-        return acc;
-    }, {} as Record<string, Prisma.PetGetPayload<{ include: { rarity: true } }>[]>);
+    const petsByRarity = pets.reduce(
+        (acc, pet) => {
+            const rarity = pet.rarity?.name || 'Common';
+            if (!acc[rarity]) {
+                acc[rarity] = [];
+            }
+            acc[rarity].push(pet);
+            return acc;
+        },
+        {} as Record<string, Prisma.PetGetPayload<{ include: { rarity: true } }>[]>
+    );
 
     const rarityOrder = Object.values(ERarity);
-    
-    rarityOrder.forEach(rarity => {
+
+    rarityOrder.forEach((rarity) => {
         if (petsByRarity[rarity] && petsByRarity[rarity].length > 0) {
             messagePayload.t += `**${rarity}:**\n`;
-            
+
             petsByRarity[rarity].forEach((pet, index) => {
                 const count = petCountMap.get(pet.id) || 0;
                 const countStr = String(count).padStart(2, '0');
-                
+
                 messagePayload.ej?.push({
                     emojiid: pet.mezon_emoji_id,
                     s: messagePayload.t?.length || 0,
@@ -86,7 +92,7 @@ export const getBagMessage = (pets: Prisma.PetGetPayload<{ include: { rarity: tr
                 });
                 messagePayload.t += ' ';
                 messagePayload.t += count === 0 ? '        ' : `(${countStr})`;
-                
+
                 if ((index + 1) % 5 === 0) {
                     messagePayload.t += '\n';
                 } else {
@@ -96,7 +102,6 @@ export const getBagMessage = (pets: Prisma.PetGetPayload<{ include: { rarity: tr
             if (petsByRarity[rarity].length % 5 !== 0) {
                 messagePayload.t += '\n';
             }
-            
         }
     });
 
@@ -106,70 +111,78 @@ export const getBagMessage = (pets: Prisma.PetGetPayload<{ include: { rarity: tr
 export const getBagMessageByRarity = (
     pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[],
     bag: Prisma.UserPetGetPayload<{ include: { pet: true } }>[]
-  ) => {
+) => {
     let messagePayload: ChannelMessageContent = {
-      t: '🎒 Current pets in your collection:',
-      ej: []
+        t: '🎒 Current pets in your collection:',
+        ej: []
     };
-  
-    const petCountMap = new Map<number, number>();
-    bag.forEach(userPet => {
-      const petId = userPet.pet.id;
-      const count = userPet.count ?? 0;
-      petCountMap.set(petId, (petCountMap.get(petId) || 0) + count);
-    });
-  
-    const petsByRarity = pets.reduce((acc, pet) => {
-      const rarity = pet.rarity?.name || 'Common';
-      if (!acc[rarity]) {
-        acc[rarity] = [];
-      }
-      acc[rarity].push(pet);
-      return acc;
-    }, {} as Record<string, Prisma.PetGetPayload<{ include: { rarity: true } }>[]>);
-  
-    const rarityOrder = Object.values(ERarity);
-  
-    rarityOrder.forEach(rarity => {
-      if (petsByRarity[rarity] && petsByRarity[rarity].length > 0) {
-        messagePayload.t += `\n**${rarity}:**\n`;
-  
-        petsByRarity[rarity].forEach(pet => {
-          const count = petCountMap.get(pet.id) || 0;
-          const countStr = count === 0 ? '       ' : `(${String(count).padStart(2, '0')})`;
-  
-          // gắn emoji mapping
-          messagePayload.ej?.push({
-            emojiid: pet.mezon_emoji_id,
-            s: messagePayload.t?.length || 0,
-            e: (messagePayload.t?.length || 0) + 1
-          });
-  
-          // format mới: emoji (00) - Name
-          messagePayload.t += ` ${countStr} - ${pet.name}\n`;
-        });
-      }
-    });
-  
-    return messagePayload;
-  };
 
-export const teamInfoMessage = (pets: Prisma.TeamMemberGetPayload<{ include: { userPet: { include: { pet: true } } } }>[]) => {
+    const petCountMap = new Map<number, number>();
+    bag.forEach((userPet) => {
+        const petId = userPet.pet.id;
+        const count = userPet.count ?? 0;
+        petCountMap.set(petId, (petCountMap.get(petId) || 0) + count);
+    });
+
+    const petsByRarity = pets.reduce(
+        (acc, pet) => {
+            const rarity = pet.rarity?.name || 'Common';
+            if (!acc[rarity]) {
+                acc[rarity] = [];
+            }
+            acc[rarity].push(pet);
+            return acc;
+        },
+        {} as Record<string, Prisma.PetGetPayload<{ include: { rarity: true } }>[]>
+    );
+
+    const rarityOrder = Object.values(ERarity);
+
+    rarityOrder.forEach((rarity) => {
+        if (petsByRarity[rarity] && petsByRarity[rarity].length > 0) {
+            messagePayload.t += `\n**${rarity}:**\n`;
+
+            petsByRarity[rarity].forEach((pet) => {
+                const count = petCountMap.get(pet.id) || 0;
+                const countStr = count === 0 ? '       ' : `(${String(count).padStart(2, '0')})`;
+
+                // gắn emoji mapping
+                messagePayload.ej?.push({
+                    emojiid: pet.mezon_emoji_id,
+                    s: messagePayload.t?.length || 0,
+                    e: (messagePayload.t?.length || 0) + 1
+                });
+
+                // format mới: emoji (00) - Name
+                messagePayload.t += ` ${countStr} - ${pet.name}\n`;
+            });
+        }
+    });
+
+    return messagePayload;
+};
+
+export const teamInfoMessage = (
+    pets: Prisma.TeamMemberGetPayload<{ include: { userPet: { include: { pet: true } } } }>[]
+) => {
     let messagePayload: ChannelMessageContent = {
         t: 'Your team contains the following pets:\n',
         ej: []
     };
 
+    const Position = ['1️⃣', '2️⃣', '3️⃣'];
+
     pets.forEach((pet) => {
-        messagePayload.t += `Position ${pet.position}: `;
+        messagePayload.t += `${Position[pet.position - 1]}: `;
+        messagePayload.t += `Lv. ${pet.userPet.level} - `;
         messagePayload.ej?.push({
             emojiid: pet.userPet.pet.mezon_emoji_id,
             s: messagePayload.t?.length || 0,
             e: messagePayload.t?.length || 0 + 1
         });
-        messagePayload.t += `${pet.userPet.pet.name} - Lv. ${pet.userPet.level} \n`;
+        messagePayload.t += ` ${pet.userPet.pet.name}\n`;
     });
-    
+
     return messagePayload;
 };
 
@@ -206,7 +219,7 @@ export const getDexMessage = (
 
     if (statistic) {
         messageContent.push(
-            { name: '⭐ Rarity', value: statistic.rarity, inline: true },
+            { name: '💎 Rarity', value: statistic.rarity, inline: true },
             { name: '🎭 Role', value: statistic.role, inline: true },
             { name: '⚔️ Attack type', value: statistic.scaling_type, inline: true },
             { name: '❤️', value: statistic.hp.toString(), inline: true },
@@ -233,7 +246,13 @@ export const getDexMessage = (
 };
 
 export const getMyDexMessage = (
-    userPet: Prisma.UserPetGetPayload<{ include: { pet: { include: { statistic: true; rarity: true; autoAttack: true; passiveSkill: true; activeSkill: true } } } }>,
+    userPet: Prisma.UserPetGetPayload<{
+        include: {
+            pet: {
+                include: { statistic: true; rarity: true; autoAttack: true; passiveSkill: true; activeSkill: true };
+            };
+        };
+    }>,
     userAvatar: string
 ) => {
     const statistic = userPet.pet.statistic;
@@ -250,16 +269,20 @@ export const getMyDexMessage = (
         messageContent.push(
             { name: '🏷️ Nickname', value: userPet.nickname || userPet.pet.name, inline: true },
             { name: '🎖️ Level', value: userPet.level.toString() || '0', inline: true },
-            { name: '✨ Exp', value: `${userPet.exp.toString() || '0'}/${expToPetLevel(userPet.level + 1 || 0)}`, inline: true },
-            { name: '⭐ Rarity', value: statistic.rarity, inline: true },
+            {
+                name: '✨ Exp',
+                value: `${userPet.exp.toString() || '0'}/${expToPetLevel(userPet.level + 1 || 0)}`,
+                inline: true
+            },
+            { name: '💎 Rarity', value: statistic.rarity, inline: true },
             { name: '🎭 Role', value: statistic.role, inline: true },
             { name: '⚔️ Attack type', value: statistic.scaling_type, inline: true },
-            { name: '❤️', value: (statistic.hp  + userPet.additional_hp).toString(), inline: true },
-            { name: '🗡️', value: (statistic.ad  + userPet.additional_ad).toString(), inline: true },
-            { name: '🛡️', value: (statistic.ar  + userPet.additional_ar).toString(), inline: true },
-            { name: '💧', value: (statistic.mana  + userPet.additional_mana).toString(), inline: true },
-            { name: '💫', value: (statistic.ap  + userPet.additional_ap).toString(), inline: true },
-            { name: '⛊', value: (statistic.mr  + userPet.additional_mr).toString(), inline: true }
+            { name: '❤️', value: (statistic.hp + userPet.additional_hp).toString(), inline: true },
+            { name: '🗡️', value: (statistic.ad + userPet.additional_ad).toString(), inline: true },
+            { name: '🛡️', value: (statistic.ar + userPet.additional_ar).toString(), inline: true },
+            { name: '💧', value: (statistic.mana + userPet.additional_mana).toString(), inline: true },
+            { name: '💫', value: (statistic.ap + userPet.additional_ap).toString(), inline: true },
+            { name: '⛊', value: (statistic.mr + userPet.additional_mr).toString(), inline: true }
         );
     }
 
@@ -267,7 +290,7 @@ export const getMyDexMessage = (
         color: getRarityColor(statistic.rarity),
         title: `${userPet.pet.name} Information 🔍`,
         thumbnail: {
-            url:  userAvatar
+            url: userAvatar
         },
         fields: messageContent,
         image: {
@@ -288,14 +311,6 @@ export const getBattleMessage = (user: User, battle: IBattle, image: string, foo
                 color: FAV_COLOR,
                 title: `${user.username} is in a battle!`,
                 thumbnail: { url: user.avatar },
-                //     description: `Team A\n
-                // Lv. ${battle.teamA[1].info.level} - ${battle.teamA[1].info.nickname}\n
-                // Lv. ${battle.teamA[3].info.level} - ${battle.teamA[3].info.nickname}\n
-                // Lv. ${battle.teamA[5].info.level} - ${battle.teamA[5].info.nickname}\n\n
-                // Team B\n
-                // Lv. ${battle.teamB[2].info.level} - ${battle.teamB[2].info.nickname}\n
-                // Lv. ${battle.teamB[4].info.level} - ${battle.teamB[4].info.nickname}\n
-                // Lv. ${battle.teamB[6].info.level} - ${battle.teamB[6].info.nickname}`,
                 fields: [
                     {
                         name: 'Team A',

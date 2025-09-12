@@ -4,32 +4,22 @@ import { createUser, getUser, updateUser, uploadImageToCloudinary } from '@/serv
 import { CLOUDINARY_PROFILE_FOLDER } from '@/constants/Constant';
 import { prisma } from '@/lib/db';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
+import { User } from '@prisma/client';
 
-export const getUserController = async (mezon_id: string, message: Message, channel: any) => {
+export const getUserController = async (existingUser: User, message: Message, channel: any) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Retrieving user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
-        
-        if (!mezon_id) {
-            await messageFetch.update(textMessage('Error retrieving mezon id'));
-            return;
-        }
-
-        const user = await getUser(mezon_id);
-
-        if (!user) {
-            await messageFetch.update(textMessage('User not found'));
-            return;
-        }
+    
 
         const imageBuffer = await createProfileCard({
-            username: user?.username || '',
-            level: user?.level || 0,
-            z_coin: user?.z_coin || 0,
-            currentXP: user?.exp || 0,
-            nextLevelXP: expToUserLevel(user.level + 1) || 0,
-            avatar: user?.avatar || ''
+            username: existingUser?.username || '',
+            level: existingUser?.level || 0,
+            z_coin: existingUser?.z_coin || 0,
+            currentXP: existingUser?.exp || 0,
+            nextLevelXP: expToUserLevel(existingUser.level + 1) || 0,
+            avatar: existingUser?.avatar || ''
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
@@ -62,10 +52,6 @@ export const createUserController = async (username: string, mezon_id: string, a
         const messageReply = await message.reply(textMessage('Initializing user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
         
-        if (!username || !mezon_id) {
-            await messageFetch.update(textMessage('Error retrieving username or mezon id'));
-            return;
-        }
 
         const existingUser = await getUser(mezon_id);
 
@@ -109,28 +95,16 @@ export const createUserController = async (username: string, mezon_id: string, a
     }
 };
 
-export const updateUserController = async (username: string, mezon_id: string, avatar: string, message: Message, channel: any) => {
+export const updateUserController = async (username: string, existingUser: User, avatar: string, message: Message, channel: any) => {
    let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Updating user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
-        if (!username || !mezon_id) {
-            await messageFetch.update(textMessage('Error retrieving username or mezon id'));
-            return;
-        }
-
-        const existingUser = await getUser(mezon_id);
-
-        if (!existingUser) {
-            await messageFetch.update(textMessage('User not found'));
-            return;
-        }
-
         const user = await updateUser(
             prisma,
             {
-                id: existingUser.id
+                id: existingUser?.id
             },
             { username, avatar }
         );

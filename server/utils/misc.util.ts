@@ -81,7 +81,7 @@ export const userLevelUp = (currentExp: number, currentLevel: number) => {
 };
 
 export const expToPetLevel = (level: number) => {
-    return 100 * level ** 1.5;
+    return Math.round(100 * level ** 1.5);
 };
 
 export const petLevelUp = (currentExp: number, currentLevel: number) => {
