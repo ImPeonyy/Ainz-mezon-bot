@@ -101,3 +101,85 @@ export const updatePos = async (teamMemberId: number, pos: number) => {
     }
 }
 
+export const getTeamForBattle = async (userId: string) => {
+    try {
+        return prisma.team.findFirst({
+            where: {
+                user_id: userId
+            },
+            include: {
+                members: {
+                    include: {
+                        userPet: {
+                            include: {
+                                pet: {
+                                    include: {
+                                        statistic: true,
+                                        rarity: true,
+                                        autoAttack: true,
+                                        passiveSkill: { include: { effects: true } },
+                                        activeSkill: { include: { effects: true } }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    orderBy: {
+                        position: 'asc'
+                    },
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting team:', error);
+        throw error;
+    }
+};
+
+export const getRandomTeamForBattle = async (currentUserId: string) => {
+    try {
+        const teams = await prisma.team.findMany({
+            where: {
+                user_id: {
+                    not: currentUserId,
+                },
+            },
+            include: {
+                members: {
+                    include: {
+                        userPet: {
+                            include: {
+                                pet: {
+                                    include: {
+                                        statistic: true,
+                                        rarity: true,
+                                        autoAttack: true,
+                                        passiveSkill: { include: { effects: true } },
+                                        activeSkill: { include: { effects: true } }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    orderBy: {
+                        position: 'asc'
+                    },
+                }
+            }
+        });
+
+        const validTeams = teams.filter(team => team.members.length === 3);
+
+        if (validTeams.length === 0) {
+            return null; 
+        }
+
+        const randomIndex = Math.floor(Math.random() * validTeams.length);
+        return validTeams[randomIndex];
+    } catch (error) {
+        console.error('Error getting team:', error);
+        throw error;
+    }
+};
+
+

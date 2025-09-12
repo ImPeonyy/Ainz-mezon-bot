@@ -13,25 +13,66 @@ import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { IBattle, IBPet } from '@/constants/Type';
 import { CLOUDINARY_BATTLE_FOLDER } from '@/constants/Constant';
 import { uploadImageToCloudinary, deleteImagesFromCloudinary, getUser, updateUser, updateUserPet } from '@/services';
+import { User } from '@prisma/client';
+import { getRandomTeamForBattle, getTeamForBattle } from '@/services/team.service';
 
-export const battleController = async (channel: any, message: Message) => {
+export const battleController = async (currentUser: User, targetId: string, channel: any, message: Message) => {
     let messageFetch: any;
     try {
-        const battleMessage = await message.reply(textMessage('Searching for opponent...'));
+        const battleMessage = await message.reply(textMessage('🛠️ Setup for battle...'));
         messageFetch = await channel.messages.fetch(battleMessage.message_id);
 
-        const currentUser = await getUser(message.sender_id);
+        const currentUserTeam = await getTeamForBattle(currentUser.id);
 
-        if (!currentUser) {
-            await messageFetch.update(textMessage('User not found'));
+        if (!currentUserTeam) {
+            await messageFetch.update(
+                textMessage(
+                    '🚨 You don\'t have a team. \n→ Please create one first!\nUsage: *ainz team create "team name"'
+                )
+            );
             return;
         }
 
-        const teamA = await getRandomUserPets(prisma, currentUser?.id);
-        const teamB = await getRandomUserPets(prisma, currentUser?.id);
+        if (currentUserTeam.members.length !== 3) {
+            await messageFetch.update(
+                textMessage(
+                    '🚨 Your team is not ready!\n→ Add 3 pets to your team first!\nUsage: *ainz team add 1 "pet name"'
+                )
+            );
+            return;
+        }
 
-        const processedTeamA: IBPet[] = processTeam(teamA, 1);
-        const processedTeamB: IBPet[] = processTeam(teamB, 2);
+        await messageFetch.update(textMessage('🔍 Searching for a opponent...'));
+
+        let targetTeam;
+
+        if (targetId) {
+            const user = await getUser(targetId);
+            if (!user) {
+                await messageFetch.update(textMessage('🚨 Target Opponent not found!\n→ Please try again later!'));
+                return;
+            }
+            targetTeam = await getTeamForBattle(targetId);
+            console.log(targetTeam);
+            if (!targetTeam) {
+                await messageFetch.update(textMessage('🚨 Target Opponent team not found!\n→ Please try again later!'));
+                return;
+            }
+            if (targetTeam.members.length !== 3) {
+                await messageFetch.update(textMessage('🙀 Oops! Your rival\'s team isn\'t ready yet.\nPlease search for another opponent!'));
+                return;
+            }
+        } else {
+            targetTeam = await getRandomTeamForBattle(currentUser.id);
+
+            if (!targetTeam) {
+                await messageFetch.update(textMessage('🚨 Random Opponent team not found!\n→ Please try again later!'));
+                return;
+            }
+        }
+
+        const processedTeamA: IBPet[] = processTeam(currentUserTeam.members, 1);
+        const processedTeamB: IBPet[] = processTeam(targetTeam.members, 2);
 
         let teamATurnQueue: number[] = [1, 3, 5];
         let teamBTurnQueue: number[] = [2, 4, 6];
@@ -39,6 +80,8 @@ export const battleController = async (channel: any, message: Message) => {
 
         const battle: IBattle = {
             turn: 0,
+            teamAName: currentUserTeam.name,
+            teamBName: targetTeam.name,
             teamA: {
                 1: processedTeamA[0],
                 3: processedTeamA[1],

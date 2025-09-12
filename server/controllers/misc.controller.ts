@@ -81,7 +81,7 @@ export const getActionController = async (
             const existingUser = await getUser(sender_id);
 
             if (!existingUser) {
-                return textMessage('User not found! Plz use "*ainz init" to initialize your user!');
+                return textMessage('🚨 User not found!\n→ Plz initialize your user first!\nUsage: *ainz init');
             }
 
             if (action === COMMANDS.info) {
@@ -121,7 +121,8 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.battle) {
-                const battlePayload = await battleController(channel, message);
+                const targetId = mentions[0]?.user_id || references[0]?.message_sender_id;
+                const battlePayload = await battleController(existingUser, targetId, channel, message);
                 return battlePayload;
             }
 

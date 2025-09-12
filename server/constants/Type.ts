@@ -78,6 +78,8 @@ export interface IBPet {
 
 export interface IBattle {
     turn: number;
+    teamAName: string;
+    teamBName: string;
     teamA: {
         1: IBPet;
         3: IBPet;
