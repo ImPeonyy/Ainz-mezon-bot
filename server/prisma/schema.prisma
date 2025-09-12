@@ -37,8 +37,8 @@ enum EElemental {
 }
 
 enum ERarity {
-  Uncommon
   Common
+  Uncommon
   Rare
   Epic
   Legendary

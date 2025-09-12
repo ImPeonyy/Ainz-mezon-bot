@@ -25,6 +25,10 @@ import { parseActionCommandTeam, parseRenameCommand } from '@/utils/misc.util';
 import { prisma } from '@/lib/db';
 import { renamePetController } from './pet.controller';
 import { myDexController } from './pet.controller';
+import { ERarity } from '@prisma/client';
+import { getPetsByRarity } from '@/services/pet.service';
+import { getUserPetsByRarity } from '@/services/userPet.service';
+import { getBagMessageByRarity } from '@/utils/message.util';
 
 export const getActionController = async (
     event: any,
@@ -72,7 +76,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.bag) {
-                const bagPayload = await getBagController(sender_id, message, channel);
+                const bagPayload = await getBagController(sender_id, message, channel, targetRaw);
                 return bagPayload;
             }
 
@@ -82,7 +86,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.dex) {
-                const petDetailPayload = await dexController(targetRaw || '', message, channel, sender_id,);
+                const petDetailPayload = await dexController(targetRaw || '', message, channel, sender_id);
                 return petDetailPayload;
             }
 
@@ -125,7 +129,7 @@ export const getActionController = async (
                         return deleteTeamPayload;
                     case 'add':
                         const parts = targetRawTeam?.split(' ') || [];
-                        const pos = parts[0]; 
+                        const pos = parts[0];
                         const name = parts.slice(1).join(' ');
                         const addPetToTeamPayload = await addPetToTeamController(Number(pos), name, sender_id);
                         return addPetToTeamPayload;
@@ -272,11 +276,30 @@ export const getHelpController = () => {
     }
 };
 
-export const getBagController = async (sender_id: string, message: Message, channel: any) => {
+export const getBagController = async (
+    sender_id: string,
+    message: Message,
+    channel: any,
+    targetRaw?: string | null
+) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Looking inside your bag for your pets... please wait!'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
+
+        if (targetRaw) {
+            if (Object.values(ERarity).some((v) => v.toLowerCase() === (targetRaw as string).toLowerCase())) {
+                const pets = await getPetsByRarity(targetRaw as ERarity);
+                const bag = await getUserPetsByRarity(prisma, sender_id, targetRaw as ERarity);
+                const bagMessage = getBagMessageByRarity(pets, bag);
+                await messageFetch.update(bagMessage);
+                return;
+            } else {
+                messageFetch.update(textMessage('Invalid rarity'));
+                return;
+            }
+        }
+
         const pets = await getPets();
         const bag = await getUserPets(prisma, sender_id);
         const bagMessage = getBagMessage(pets, bag);
