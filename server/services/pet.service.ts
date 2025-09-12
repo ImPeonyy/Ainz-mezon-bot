@@ -30,6 +30,27 @@ export const getPets = () => {
     }
 };
 
+export const getPetsByRarity = (rarity: string) => {
+    try {
+        return prisma.pet.findMany({
+            include: {
+                rarity: true
+            },
+            where: {
+                rarity: {
+                    name: {
+                        equals: rarity,
+                        mode: 'insensitive'
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting pets by rarity:', error);
+        throw error;
+    }
+};
+
 export const getPetDetail = async (petName: string) => {
     try {
         return prisma.pet.findFirst({

@@ -85,7 +85,7 @@ export const getBagMessage = (pets: Prisma.PetGetPayload<{ include: { rarity: tr
                     e: (messagePayload.t?.length || 0) + 1
                 });
                 messagePayload.t += ' ';
-                messagePayload.t += `(${countStr})`;
+                messagePayload.t += count === 0 ? '        ' : `(${countStr})`;
                 
                 if ((index + 1) % 5 === 0) {
                     messagePayload.t += '\n';
@@ -102,6 +102,57 @@ export const getBagMessage = (pets: Prisma.PetGetPayload<{ include: { rarity: tr
 
     return messagePayload;
 };
+
+export const getBagMessageByRarity = (
+    pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[],
+    bag: Prisma.UserPetGetPayload<{ include: { pet: true } }>[]
+  ) => {
+    let messagePayload: ChannelMessageContent = {
+      t: '🎒 Current pets in your collection:',
+      ej: []
+    };
+  
+    const petCountMap = new Map<number, number>();
+    bag.forEach(userPet => {
+      const petId = userPet.pet.id;
+      const count = userPet.count ?? 0;
+      petCountMap.set(petId, (petCountMap.get(petId) || 0) + count);
+    });
+  
+    const petsByRarity = pets.reduce((acc, pet) => {
+      const rarity = pet.rarity?.name || 'Common';
+      if (!acc[rarity]) {
+        acc[rarity] = [];
+      }
+      acc[rarity].push(pet);
+      return acc;
+    }, {} as Record<string, Prisma.PetGetPayload<{ include: { rarity: true } }>[]>);
+  
+    const rarityOrder = Object.values(ERarity);
+  
+    rarityOrder.forEach(rarity => {
+      if (petsByRarity[rarity] && petsByRarity[rarity].length > 0) {
+        messagePayload.t += `\n**${rarity}:**\n`;
+  
+        petsByRarity[rarity].forEach(pet => {
+          const count = petCountMap.get(pet.id) || 0;
+          const countStr = count === 0 ? '       ' : `(${String(count).padStart(2, '0')})`;
+  
+          // gắn emoji mapping
+          messagePayload.ej?.push({
+            emojiid: pet.mezon_emoji_id,
+            s: messagePayload.t?.length || 0,
+            e: (messagePayload.t?.length || 0) + 1
+          });
+  
+          // format mới: emoji (00) - Name
+          messagePayload.t += ` ${countStr} - ${pet.name}\n`;
+        });
+      }
+    });
+  
+    return messagePayload;
+  };
 
 export const teamInfoMessage = (pets: Prisma.TeamMemberGetPayload<{ include: { userPet: { include: { pet: true } } } }>[]) => {
     let messagePayload: ChannelMessageContent = {
