@@ -70,19 +70,6 @@ export const updateTeam = async (name: string, userId: string) => {
     }
 };
 
-export const deleteTeam = async (userId: string) => {
-    try {
-        return prisma.team.delete({
-            where: {
-                user_id: userId
-            }
-        });
-    } catch (error) {
-        console.error('Error deleting team:', error);
-        throw error;
-    }
-};
-
 export const addPetToTeam = async (teamId: number, petId: number, pos: number) => {
     try {
         return prisma.teamMember.create({
