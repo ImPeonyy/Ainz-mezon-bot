@@ -1,5 +1,37 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
+export const getUserPets = async (prismaClient: PrismaClient | Prisma.TransactionClient, user_id: string) => {
+    try {
+        return await prismaClient.userPet.findMany({
+            where: { user_id: user_id },
+            include: {
+                pet: true
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user pets:', error);
+        throw error;
+    }
+};
+
+export const getUserPetsByRarity = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    user_id: string,
+    rarity: string
+) => {
+    try {
+        return await prismaClient.userPet.findMany({
+            where: { user_id: user_id, pet: { rarity: { name: { equals: rarity, mode: 'insensitive' } } } },
+            include: {
+                pet: true
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user pets:', error);
+        throw error;
+    }
+};
+
 export const createUserPet = async (
     prismaClient: PrismaClient | Prisma.TransactionClient,
     data: Prisma.UserPetCreateInput
@@ -24,6 +56,37 @@ export const createUserPets = async (
         });
     } catch (error) {
         console.error('Error creating user pets:', error);
+        throw error;
+    }
+};
+
+export const upsertUserPetCount = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    user_id: string,
+    pet_id: number
+) => {
+    try {
+        // Sử dụng upsert để kiểm tra và cập nhật count
+        return await prismaClient.userPet.upsert({
+            where: {
+                user_id_pet_id: {
+                    user_id: user_id,
+                    pet_id: pet_id
+                }
+            },
+            update: {
+                count: {
+                    increment: 1
+                }
+            },
+            create: {
+                user_id: user_id,
+                pet_id: pet_id,
+                count: 1
+            }
+        });
+    } catch (error) {
+        console.error('Error upserting user pet:', error);
         throw error;
     }
 };
@@ -56,6 +119,52 @@ export const getRandomUserPets = async (prismaClient: PrismaClient | Prisma.Tran
         return userPets;
     } catch (error) {
         console.error('Error getting random user pets:', error);
+        throw error;
+    }
+};
+
+export const getUserPetByName = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    userId: string,
+    petName: string
+) => {
+    try {
+        return await prismaClient.userPet.findFirst({
+            where: {
+                user_id: userId,
+                pet: {
+                    name: {
+                        equals: petName,
+                        mode: 'insensitive'
+                    }
+                }
+            },
+            include: {
+                pet: {
+                    include: {
+                        rarity: true
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting userPet by name:', error);
+        throw error;
+    }
+};
+
+export const updateUserPet = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    where: Prisma.UserPetWhereUniqueInput,
+    data: Prisma.UserPetUpdateInput
+) => {
+    try {
+        return await prismaClient.userPet.update({
+            where,
+            data
+        });
+    } catch (error) {
+        console.error('Error updating userPet:', error);
         throw error;
     }
 };

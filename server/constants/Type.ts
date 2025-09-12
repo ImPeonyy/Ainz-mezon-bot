@@ -20,7 +20,7 @@ export interface IActionGif {
 }
 
 export type ParsedAction = {
-    trigger: string | null;
+    trigger?: string | null;
     action: string | null;
     targetRaw: string | null;
 };
@@ -78,6 +78,8 @@ export interface IBPet {
 
 export interface IBattle {
     turn: number;
+    teamAName: string;
+    teamBName: string;
     teamA: {
         1: IBPet;
         3: IBPet;

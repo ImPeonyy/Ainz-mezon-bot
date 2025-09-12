@@ -18,6 +18,34 @@ export const parseActionCommand = (content: string): ParsedAction => {
     return { trigger, action, targetRaw };
 };
 
+export const parseActionCommandTeam = (content: string): ParsedAction => {
+    if (!content) return { action: null, targetRaw: null };
+
+    const match = content.trim().match(/^(\S+)(?:\s+(.*))?$/);
+    if (!match) return { action: null, targetRaw: null };
+
+    const [, action, targetRaw = null] = match;
+    return { action, targetRaw };
+};
+
+export const parseRenameCommand = (content: string) => {
+    if (!content) return { error: 'Please enter the pet name and nickname!' };
+
+    if (!content.includes('>') || content.trim().startsWith('>') || content.trim().endsWith('>'))
+        return { error: 'Must use ">" to separate pet name and nickname!' };
+
+    const parts = content.split('>').map((p) => p.trim());
+
+    if (parts.length !== 2) {
+        return { error: 'Wrong format! Eg. *ainz rename "pet name" > "nickname"' };
+    }
+
+    return {
+        petName: parts[0],
+        nickname: parts[1]
+    };
+};
+
 export const getActorName = (display_name: string, clan_nick: string) => {
     if (clan_nick !== '') {
         return clan_nick;
@@ -29,9 +57,11 @@ export const getActorName = (display_name: string, clan_nick: string) => {
 export const getTargetFromMention = (content: string | null) => {
     if (!content) return null;
 
-    const target = content.slice(1);
+    if (content.startsWith('@')) {
+        return content.slice(1);
+    }
 
-    return target;
+    return content;
 };
 
 export const getRarityColor = (rarity: string): string => {
@@ -51,7 +81,7 @@ export const userLevelUp = (currentExp: number, currentLevel: number) => {
 };
 
 export const expToPetLevel = (level: number) => {
-    return 100 * level ** 1.5;
+    return Math.round(100 * level ** 1.5);
 };
 
 export const petLevelUp = (currentExp: number, currentLevel: number) => {

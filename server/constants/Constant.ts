@@ -39,3 +39,4 @@ export const CLOUDINARY_PROFILE_FOLDER = 'Profile';
 export const BATTLE_CARD_HEIGHT = 460;
 export const BATTLE_CARD_WIDTH = 800;
 export const PROFILE_CARD_BG = 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1757043360/UserProfileBG_b2kkx7.jpg';
+export const AINZ_THUMBNAIL = 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1757658432/Overlord-dance_nlr2dt.gif';

@@ -7,11 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../assets/images/Ainz Mezon Bot ERD.svg"
+}
+
 // ========================= ENUMS =========================
 
 enum EScalingType {
   Physical
   Magical
+  Hybrid
 }
 
 enum EPetRole {
@@ -31,8 +37,8 @@ enum EElemental {
 }
 
 enum ERarity {
-  Uncommon
   Common
+  Uncommon
   Rare
   Epic
   Legendary
@@ -82,7 +88,7 @@ model User {
   username        String                 @unique
   z_coin          Int                    @default(0)
   exp             Int                    @default(0)
-  level           Int                    @default(1)
+  level           Int                    @default(0)
   avatar          String                 @default("https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/spider-gwen-DLOjzOblyRzNGEngmQMOdf9VCWni6V.jpeg")
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
@@ -239,7 +245,7 @@ model UserPet {
   user_id         String
   pet_id          Int
   nickname        String?
-  level           Int                    @default(1)
+  level           Int                    @default(0)
   exp             Int                    @default(0)
   additional_hp   Int                    @default(0)
   additional_mana Int                    @default(0)
@@ -247,6 +253,7 @@ model UserPet {
   additional_ap   Int                    @default(0)
   additional_ar   Int                    @default(0)
   additional_mr   Int                    @default(0)
+  count           Int                    @default(1)
   lock            Boolean                @default(false)
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
@@ -254,12 +261,15 @@ model UserPet {
   user            User                   @relation(fields: [user_id], references: [id])
   pet             Pet                    @relation(fields: [pet_id], references: [id])
   teamMembers     TeamMember[]
+
+  @@unique([user_id, pet_id])
 }
 
 model Team {
   id              Int                    @id @default(autoincrement())
   user_id         String                 @unique
   name            String                 @unique
+  combat_power    Int                    @default(0)
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
@@ -273,13 +283,15 @@ model Team {
 model TeamMember {
   id              Int                    @id @default(autoincrement())
   team_id         Int
-  user_pet_id     Int
+  user_pet_id     Int                    @unique
   position        Int
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())         @updatedAt         
 
   team            Team                   @relation(fields: [team_id], references: [id])
   userPet         UserPet                @relation(fields: [user_pet_id], references: [id])
+
+  @@unique([team_id, position])
 }
 
 model Battle {

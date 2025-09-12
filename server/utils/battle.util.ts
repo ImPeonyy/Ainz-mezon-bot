@@ -165,49 +165,53 @@ export const getCurrentManaAfterReceive = (currentMana: number, receivedMana: nu
 };
 
 export const processTeam = (
-    team: Prisma.UserPetGetPayload<{
+    team: Prisma.TeamMemberGetPayload<{
         include: {
-            pet: {
+            userPet: {
                 include: {
-                    statistic: true;
-                    rarity: true;
-                    autoAttack: true;
-                    passiveSkill: { include: { effects: true } };
-                    activeSkill: { include: { effects: true } };
-                };
-            };
+                    pet: {
+                        include: {
+                            statistic: true;
+                            rarity: true;
+                            autoAttack: true;
+                            passiveSkill: { include: { effects: true } };
+                            activeSkill: { include: { effects: true } };
+                        };
+                    };
+                }
+            }
         };
     }>[],
     teamOrder: 1 | 2
 ) => {
     const processedTeam: IBPet[] = [];
 
-    for (const [index, userPet] of team.entries()) {
-        if (userPet.pet.autoAttack && userPet.pet.activeSkill) {
+    for (const [index, member] of team.entries()) {
+        if (member.userPet.pet.autoAttack && member.userPet.pet.activeSkill) {
             processedTeam.push({
-                id: userPet.id,
+                id: member.userPet.id,
                 position: index * 2 + teamOrder,
                 isAlive: true,
                 info: {
-                    nickname: userPet.nickname || userPet.pet.name,
-                    mezon_emoji_id: userPet.pet.mezon_emoji_id,
-                    avatar: userPet.pet.avatar || '',
-                    rarity: userPet.pet.rarity.type as ERarity,
-                    level: userPet.level,
-                    exp: userPet.exp,
+                    nickname: member.userPet.nickname || member.userPet.pet.name,
+                    mezon_emoji_id: member.userPet.pet.mezon_emoji_id,
+                    avatar: member.userPet.pet.avatar || '',
+                    rarity: member.userPet.pet.rarity.type as ERarity,
+                    level: member.userPet.level,
+                    exp: member.userPet.exp,
                     autoAttack: {
-                        damage: userPet.pet.autoAttack.damage,
-                        scalingType: userPet.pet.autoAttack.scaling_type,
-                        attackPosition: userPet.pet.autoAttack.attack_position
+                        damage: member.userPet.pet.autoAttack.damage,
+                        scalingType: member.userPet.pet.autoAttack.scaling_type,
+                        attackPosition: member.userPet.pet.autoAttack.attack_position
                     },
-                    passiveSkill: userPet.pet.passiveSkill || {},
+                    passiveSkill: member.userPet.pet.passiveSkill || {},
                     activeSkill: {
-                        damage: userPet.pet.activeSkill.damage || 0,
-                        manaCost: userPet.pet.activeSkill.mana_cost,
-                        scalingType: userPet.pet.activeSkill.scaling_type,
-                        attackPosition: userPet.pet.activeSkill.attack_position,
-                        effects: userPet.pet.activeSkill.effects
-                            ? userPet.pet.activeSkill.effects.map((effect) => ({
+                        damage: member.userPet.pet.activeSkill.damage || 0,
+                        manaCost: member.userPet.pet.activeSkill.mana_cost,
+                        scalingType: member.userPet.pet.activeSkill.scaling_type,
+                        attackPosition: member.userPet.pet.activeSkill.attack_position,
+                        effects: member.userPet.pet.activeSkill.effects
+                            ? member.userPet.pet.activeSkill.effects.map((effect) => ({
                                   effectTarget: effect.effect_target,
                                   effectTargetPosition: effect.effect_target_position,
                                   effectType: effect.effect,
@@ -221,20 +225,20 @@ export const processTeam = (
                 },
                 stats: {
                     originalStats: {
-                        hp: userPet.pet.statistic.hp + userPet.additional_hp,
-                        mana: userPet.pet.statistic.mana + userPet.additional_mana,
-                        ad: userPet.pet.statistic.ad + userPet.additional_ad,
-                        ap: userPet.pet.statistic.ap + userPet.additional_ap,
-                        ar: userPet.pet.statistic.ar + userPet.additional_ar,
-                        mr: userPet.pet.statistic.mr + userPet.additional_mr
+                        hp: member.userPet.pet.statistic.hp + member.userPet.additional_hp,
+                        mana: member.userPet.pet.statistic.mana + member.userPet.additional_mana,
+                        ad: member.userPet.pet.statistic.ad + member.userPet.additional_ad,
+                        ap: member.userPet.pet.statistic.ap + member.userPet.additional_ap,
+                        ar: member.userPet.pet.statistic.ar + member.userPet.additional_ar,
+                        mr: member.userPet.pet.statistic.mr + member.userPet.additional_mr
                     },
                     currentStats: {
-                        hp: userPet.pet.statistic.hp + userPet.additional_hp,
-                        mana: userPet.pet.statistic.mana + userPet.additional_mana,
-                        ad: userPet.pet.statistic.ad + userPet.additional_ad,
-                        ap: userPet.pet.statistic.ap + userPet.additional_ap,
-                        ar: userPet.pet.statistic.ar + userPet.additional_ar,
-                        mr: userPet.pet.statistic.mr + userPet.additional_mr
+                        hp: member.userPet.pet.statistic.hp + member.userPet.additional_hp,
+                        mana: member.userPet.pet.statistic.mana + member.userPet.additional_mana,
+                        ad: member.userPet.pet.statistic.ad + member.userPet.additional_ad,
+                        ap: member.userPet.pet.statistic.ap + member.userPet.additional_ap,
+                        ar: member.userPet.pet.statistic.ar + member.userPet.additional_ar,
+                        mr: member.userPet.pet.statistic.mr + member.userPet.additional_mr
                     }
                 },
                 effects: []

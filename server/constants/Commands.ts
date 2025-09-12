@@ -5,11 +5,15 @@ export const COMMANDS = {
     info: 'info',
     update: 'update',
     meme: 'meme',
+    bag: 'bag',
     hunt: 'hunt',
     dex: 'dex',
+    mydex: 'mydex',
     daily: 'daily',
     battle: 'battle',
-    help: 'help'
+    help: 'help',
+    team: 'team',
+    rename: 'rename'
 };
 
 export const ACTIONS = {

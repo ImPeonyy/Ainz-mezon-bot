@@ -1,39 +1,44 @@
-import { createUserDailyActivity, getTodayUserDailyActivity, getUser, updateUser } from '@/services';
+import { createUserDailyActivity, getTodayUserDailyActivity, getUser, updateUser, updateUserDailyActivity } from '@/services';
 import { getDailyReward, getMidnightRemainingTime, textMessage, userLevelUp } from '@/utils';
 
 import { prisma } from '@/lib/db';
+import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 
-export const dailyController = async (mezon_id: string) => {
+export const dailyController = async (mezon_id: string, message: Message, channel: any) => {
+    let messageFetch: any;
     try {
+        const messageReply = await message.reply(textMessage('Claiming daily reward...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
+
         const user = await getUser(mezon_id);
 
         if (!user) {
-            return textMessage('User not found');
+            await messageFetch.update(textMessage('User not found'));
+            return;
         }
         const todayActivity = await getTodayUserDailyActivity(user.id);
 
         if (todayActivity && todayActivity.daily === 1) {
             const { hours, minutes } = getMidnightRemainingTime();
-            return textMessage(
-                `⏳ You have already received your daily reward today. Please come back in ${hours} hours and ${minutes} minutes.`
+            await messageFetch.update(
+                textMessage(
+                    `⏳ You have already received your daily reward today. Please come back in ${hours} hours and ${minutes} minutes.`
+                )
             );
+            return;
         }
 
         const dailyReward = getDailyReward();
+        const isLevelUp = userLevelUp(user.exp + dailyReward.exp, user.level);
 
-        try {
-            const isLevelUp = userLevelUp(user.exp + dailyReward.exp, user.level);
+        if (todayActivity && todayActivity.daily === 0) {
             await prisma.$transaction(async (tx) => {
-                await createUserDailyActivity(tx, {
-                    user: {
-                        connect: {
-                            id: user.id
-                        }
-                    },
+                await updateUserDailyActivity(tx, {
+                    id: todayActivity.id
+                }, {
                     daily: 1,
-                    hunt: 0
                 });
-
+    
                 await updateUser(
                     tx,
                     {
@@ -46,15 +51,49 @@ export const dailyController = async (mezon_id: string) => {
                     }
                 );
             });
-            return textMessage(
-                `🎉 Daily reward claimed successfully! You have received +${dailyReward.zCoin} 💰 ZCoin and +${dailyReward.exp} ⭐ EXP.`
+            await messageFetch.update(
+                textMessage(
+                    `🎉 Daily reward claimed successfully! You have received +${dailyReward.zCoin} 💰 ZCoin and +${dailyReward.exp} ✨ EXP.`
+                )
             );
-        } catch (err) {
-            console.error('Transaction failed, rollback executed', err);
-            return textMessage('❌ Error occurred while processing the daily reward.');
+            return;
         }
+
+        await prisma.$transaction(async (tx) => {
+            await createUserDailyActivity(tx, {
+                user: {
+                    connect: {
+                        id: user.id
+                    }
+                },
+                daily: 1,
+            });
+
+            await updateUser(
+                tx,
+                {
+                    id: user.id
+                },
+                {
+                    z_coin: { increment: dailyReward.zCoin },
+                    exp: { increment: dailyReward.exp },
+                    level: { increment: isLevelUp ? 1 : 0 }
+                }
+            );
+        });
+        await messageFetch.update(
+            textMessage(
+                `🎉 Daily reward claimed successfully! You have received +${dailyReward.zCoin} 💰 ZCoin and +${dailyReward.exp} ⭐ EXP.`
+            )
+        );
+        return;
     } catch (error) {
         console.error(error);
-        return textMessage('❌ Server error occurred while processing the daily reward.');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error.'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error.'));
+        }
+        return;
     }
 };

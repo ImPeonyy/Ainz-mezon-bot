@@ -1,49 +1,63 @@
+import { createProfileCard, expToUserLevel, textMessage } from '@/utils';
 import { createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
-import { createProfileCard, textMessage } from '@/utils';
 
-import { prisma } from '@/lib/db';
 import { CLOUDINARY_PROFILE_FOLDER } from '@/constants/Constant';
+import { prisma } from '@/lib/db';
+import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
+import { User } from '@prisma/client';
 
-export const getUserController = async (mezon_id: string) => {
+export const getUserController = async (existingUser: User, message: Message, channel: any) => {
+    let messageFetch: any;
     try {
-        if (!mezon_id) {
-            return textMessage('Error retrieving mezon id');
-        }
-
-        const user = await getUser(mezon_id);
-
-        if (!user) {
-            return textMessage('User not found');
-        }
+        const messageReply = await message.reply(textMessage('Retrieving user...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
+    
 
         const imageBuffer = await createProfileCard({
-            username: user?.username || '',
-            level: user?.level || 0,
-            z_coin: user?.z_coin || 0,
-            currentXP: user?.exp || 0,
-            nextLevelXP: user?.exp || 0,
-            avatar: user?.avatar || ''
+            username: existingUser?.username || '',
+            level: existingUser?.level || 0,
+            z_coin: existingUser?.z_coin || 0,
+            currentXP: existingUser?.exp || 0,
+            nextLevelXP: expToUserLevel(existingUser.level + 1) || 0,
+            avatar: existingUser?.avatar || ''
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
-
-        return image.secure_url;
+       
+        await messageFetch.update(
+            {},
+            [],
+            [
+                {
+                    filename: 'attachment.png',
+                    filetype: 'image/png',
+                    url: image.secure_url
+                }
+            ]
+        );
     } catch (error) {
         console.log('Error getting user:', error);
-        return textMessage('Internal server error');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
     }
 };
 
-export const createUserController = async (username: string, mezon_id: string, avatar: string) => {
+export const createUserController = async (username: string, mezon_id: string, avatar: string, message: Message, channel: any) => {
+    let messageFetch: any;
     try {
-        if (!username || !mezon_id) {
-            return textMessage('Error retrieving username or mezon id');
-        }
+        const messageReply = await message.reply(textMessage('Initializing user...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
+        
 
         const existingUser = await getUser(mezon_id);
 
         if (existingUser) {
-            return textMessage('User already exists');
+            await messageFetch.update(textMessage('User already exists'));
+            return;
         }
 
         const user = await createUser(prisma, { username, id: mezon_id, avatar });
@@ -53,35 +67,44 @@ export const createUserController = async (username: string, mezon_id: string, a
             level: user?.level || 0,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: user?.exp || 0,
+            nextLevelXP: expToUserLevel(user.level + 1) || 0,
             avatar: user?.avatar || ''
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
 
-        return image.secure_url;
+        await messageFetch.update(
+            {},
+            [],
+            [
+                {
+                    filename: 'attachment.png',
+                    filetype: 'image/png',
+                    url: image.secure_url
+                }
+            ]
+        );
     } catch (error) {
         console.log('Error creating user:', error);
-        return textMessage('Internal server error');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
     }
 };
 
-export const updateUserController = async (username: string, mezon_id: string, avatar: string) => {
+export const updateUserController = async (username: string, existingUser: User, avatar: string, message: Message, channel: any) => {
+   let messageFetch: any;
     try {
-        if (!username || !mezon_id) {
-            return textMessage('Error retrieving username or mezon id');
-        }
-
-        const existingUser = await getUser(mezon_id);
-
-        if (!existingUser) {
-            return textMessage('User not found');
-        }
+        const messageReply = await message.reply(textMessage('Updating user...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
 
         const user = await updateUser(
             prisma,
             {
-                id: existingUser.id
+                id: existingUser?.id
             },
             { username, avatar }
         );
@@ -91,15 +114,30 @@ export const updateUserController = async (username: string, mezon_id: string, a
             level: user?.level || 0,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: user?.exp || 0,
+            nextLevelXP: expToUserLevel(user.level + 1) || 0,
             avatar: user?.avatar || ''
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
 
-        return image.secure_url;
+        await messageFetch.update(
+            {},
+            [],
+            [
+                {
+                    filename: 'attachment.png',
+                    filetype: 'image/png',
+                    url: image.secure_url
+                }
+            ]
+        );
     } catch (error) {
         console.log('Error updating user:', error);
-        return textMessage('Internal server error');
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
     }
 };
