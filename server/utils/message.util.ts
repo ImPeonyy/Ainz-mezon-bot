@@ -79,7 +79,7 @@ export const getBagMessage = (
 
     rarityOrder.forEach((rarity) => {
         if (petsByRarity[rarity] && petsByRarity[rarity].length > 0) {
-            messagePayload.t += `**${rarity}:**\n`;
+            messagePayload.t += `\n                              **${rarity.toUpperCase()}**\n`;
 
             petsByRarity[rarity].forEach((pet, index) => {
                 const count = petCountMap.get(pet.id) || 0;
@@ -140,11 +140,11 @@ export const getBagMessageByRarity = (
 
     rarityOrder.forEach((rarity) => {
         if (petsByRarity[rarity] && petsByRarity[rarity].length > 0) {
-            messagePayload.t += `\n**${rarity}:**\n`;
+            messagePayload.t += `\n            **${rarity.toUpperCase()}**\n`;
 
             petsByRarity[rarity].forEach((pet) => {
                 const count = petCountMap.get(pet.id) || 0;
-                const countStr = count === 0 ? '       ' : `(${String(count).padStart(2, '0')})`;
+                const countStr = count === 0 ? '' : `    |    (${String(count).padStart(2, '0')})`;
 
                 // gắn emoji mapping
                 messagePayload.ej?.push({
@@ -154,7 +154,7 @@ export const getBagMessageByRarity = (
                 });
 
                 // format mới: emoji (00) - Name
-                messagePayload.t += ` ${countStr} - ${pet.name}\n`;
+                messagePayload.t += ` - ${pet.name} ${countStr}\n`;
             });
         }
     });
@@ -313,7 +313,7 @@ export const getBattleMessage = (user: User, battle: IBattle, image: string, foo
                 thumbnail: { url: user.avatar },
                 fields: [
                     {
-                        name: 'Team A',
+                        name: `${battle.teamAName}`,
                         value: `Lv. ${battle.teamA[1].info.level} - ${battle.teamA[1].info.nickname}`,
                         inline: true
                     },
@@ -328,7 +328,7 @@ export const getBattleMessage = (user: User, battle: IBattle, image: string, foo
                         inline: true
                     },
                     {
-                        name: 'Team B',
+                        name: `${battle.teamBName}`,
                         value: `Lv. ${battle.teamB[2].info.level} - ${battle.teamB[2].info.nickname}`,
                         inline: true
                     },
