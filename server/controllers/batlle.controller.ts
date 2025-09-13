@@ -27,7 +27,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
         if (!currentUserTeam) {
             await messageFetch.update(
                 textMessage(
-                    '🚨 You don\'t have a team. \n→ Please create one first!\nUsage: *ainz team create "team name"'
+                    '🚨 You don\'t have a team. \n→ Plz create one first!\nUsage: *ainz team create "team name"'
                 )
             );
             return;
@@ -49,24 +49,24 @@ export const battleController = async (currentUser: User, targetId: string, chan
         if (targetId) {
             const user = await getUser(targetId);
             if (!user) {
-                await messageFetch.update(textMessage('🚨 Target Opponent not found!\n→ Please try again later!'));
+                await messageFetch.update(textMessage('🚨 Target Opponent not found!\n→ Plz search for another opponent!'));
                 return;
             }
             targetTeam = await getTeamForBattle(targetId);
             console.log(targetTeam);
             if (!targetTeam) {
-                await messageFetch.update(textMessage('🚨 Target Opponent team not found!\n→ Please try again later!'));
+                await messageFetch.update(textMessage('🚨 Target Opponent team not found!\n→ Plz search for another opponent!'));
                 return;
             }
             if (targetTeam.members.length !== 3) {
-                await messageFetch.update(textMessage('🙀 Oops! Your rival\'s team isn\'t ready yet.\nPlease search for another opponent!'));
+                await messageFetch.update(textMessage('🙀 Oops! Your rival\'s team isn\'t ready yet.\nPlz search for another opponent!'));
                 return;
             }
         } else {
             targetTeam = await getRandomTeamForBattle(currentUser.id);
 
             if (!targetTeam) {
-                await messageFetch.update(textMessage('🚨 Random Opponent team not found!\n→ Please try again later!'));
+                await messageFetch.update(textMessage('🚨 Random Opponent team not found!\n→ Plz try again later!'));
                 return;
             }
         }
@@ -130,8 +130,8 @@ export const battleController = async (currentUser: User, targetId: string, chan
                 imageQueue.push(image);
                 const msg =
                     teamATurnQueue.length === 0
-                        ? `You lost in ${battle.turn} turns! You gained 50 exp and 50 exp for each of your pets!`
-                        : `You won in ${battle.turn} turns! You gained 100 exp and 200 exp for each of your pets!`;
+                        ? `You LOST in ${battle.turn} turns! You gained 50 exp and 50 exp for each of your pets!`
+                        : `You WON in ${battle.turn} turns! You gained 100 exp and 200 exp for each of your pets!`;
                 await messageFetch.update(getBattleMessage(currentUser, battle, image.secure_url, msg));
             }
         }

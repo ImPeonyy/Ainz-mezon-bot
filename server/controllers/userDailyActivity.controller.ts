@@ -22,7 +22,7 @@ export const dailyController = async (mezon_id: string, message: Message, channe
             const { hours, minutes } = getMidnightRemainingTime();
             await messageFetch.update(
                 textMessage(
-                    `⏳ You have already received your daily reward today. Please come back in ${hours} hours and ${minutes} minutes.`
+                    `⏳ You have already received your daily reward today. Plz come back in ${hours} hours and ${minutes} minutes.`
                 )
             );
             return;

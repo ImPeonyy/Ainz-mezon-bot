@@ -8,7 +8,7 @@ CREATE TYPE "public"."EPetRole" AS ENUM ('Tank', 'Mage', 'Support', 'Assassin', 
 CREATE TYPE "public"."EElemental" AS ENUM ('Metal', 'Wood', 'Water', 'Fire', 'Earth');
 
 -- CreateEnum
-CREATE TYPE "public"."ERarity" AS ENUM ('Uncommon', 'Common', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Limited');
+CREATE TYPE "public"."ERarity" AS ENUM ('Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Limited');
 
 -- CreateEnum
 CREATE TYPE "public"."ETargetPosition" AS ENUM ('All', 'Random', 'Self', 'LowestHP', 'HighestHP', 'Nearest', 'Farthest');

@@ -25,16 +25,46 @@ export const manaAfterDealDamage = (hpBefore: number, hpAfter: number) => {
     }
 };
 
-export const hpAfterDealDame = (currentPet: IBPet, targetPet: IBPet) => {
+export const hpAfterDealAADame = (currentPet: IBPet, targetPet: IBPet) => {
     const currentAttackType = currentPet.info.autoAttack.scalingType;
     const currentAd = currentPet.stats.currentStats.ad;
     const currentAp = currentPet.stats.currentStats.ap;
     const targetAr = targetPet.stats.currentStats.ar;
     const targetMr = targetPet.stats.currentStats.mr;
 
-    const totalDamage =
+    let totalDamage =
         ((currentAttackType === EScalingType.Physical ? currentAd : currentAp) * currentPet.info.autoAttack.damage) /
         100;
+
+    if (currentAttackType === EScalingType.Hybrid) {
+        totalDamage =
+            ((currentAd * currentPet.info.autoAttack.damage) / 100 +
+                (currentAp * currentPet.info.autoAttack.damage) / 100) /
+            2;
+    }
+
+    const actualDamage = Math.max(0, totalDamage - (currentAttackType === EScalingType.Physical ? targetAr : targetMr));
+    return Math.floor(Math.max(0, targetPet.stats.currentStats.hp - actualDamage));
+};
+
+export const hpAfterDealASDame = (currentPet: IBPet, targetPet: IBPet) => {
+    const currentAttackType = currentPet.info.activeSkill.scalingType;
+    const currentAd = currentPet.stats.currentStats.ad;
+    const currentAp = currentPet.stats.currentStats.ap;
+    const targetAr = targetPet.stats.currentStats.ar;
+    const targetMr = targetPet.stats.currentStats.mr;
+
+    let totalDamage =
+        ((currentAttackType === EScalingType.Physical ? currentAd : currentAp) * currentPet.info.activeSkill.damage) /
+        100;
+
+    if (currentAttackType === EScalingType.Hybrid) {
+        totalDamage =
+            ((currentAd * currentPet.info.activeSkill.damage) / 100 +
+                (currentAp * currentPet.info.activeSkill.damage) / 100) /
+            2;
+    }
+
     const actualDamage = Math.max(0, totalDamage - (currentAttackType === EScalingType.Physical ? targetAr : targetMr));
     return Math.floor(Math.max(0, targetPet.stats.currentStats.hp - actualDamage));
 };
@@ -178,8 +208,8 @@ export const processTeam = (
                             activeSkill: { include: { effects: true } };
                         };
                     };
-                }
-            }
+                };
+            };
         };
     }>[],
     teamOrder: 1 | 2
@@ -364,7 +394,7 @@ export const processTurn = (
                 const deadPosition = new Set<number>();
                 for (const position of ASTargetPosition) {
                     const targetPet = defenderTeam[position];
-                    const remainingHp = hpAfterDealDame(currentPet, targetPet);
+                    const remainingHp = hpAfterDealASDame(currentPet, targetPet);
                     if (remainingHp > 0) {
                         const receivedManaPercent = manaAfterDealDamage(targetPet.stats.currentStats.hp, remainingHp);
                         const receivedMana = Math.ceil(targetPet.stats.currentStats.mana * receivedManaPercent);
@@ -402,7 +432,7 @@ export const processTurn = (
         const deadPosition = new Set<number>();
         for (const position of AATargetPosition) {
             const targetPet = defenderTeam[position];
-            const remainingHp = hpAfterDealDame(currentPet, targetPet);
+            const remainingHp = hpAfterDealAADame(currentPet, targetPet);
             if (remainingHp > 0) {
                 const receivedManaPercent = manaAfterDealDamage(targetPet.stats.currentStats.hp, remainingHp);
                 const receivedMana = Math.ceil(targetPet.stats.currentStats.mana * receivedManaPercent);

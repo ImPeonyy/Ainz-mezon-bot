@@ -69,6 +69,9 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.dex) {
+                if (!targetRaw) {
+                    return textMessage('🚨 Missing pet name!\nUsage: *ainz dex "Pet Name"');
+                }
                 const petDetailPayload = await dexController(targetRaw || '', message, channel, sender_id);
                 return petDetailPayload;
             }
@@ -111,6 +114,9 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.mydex) {
+                if (!targetRaw) {
+                    return textMessage('🚨 Missing pet name!\nUsage: *ainz mydex "Pet Name"');
+                }
                 const petDetailPayload = await myDexController(targetRaw || '', sender_id, message, channel);
                 return petDetailPayload;
             }
@@ -122,6 +128,9 @@ export const getActionController = async (
 
             if (action === COMMANDS.battle) {
                 const targetId = mentions[0]?.user_id || references[0]?.message_sender_id;
+                if(targetRaw && !targetId) {
+                    return textMessage('🚨 Missing target!\nUsage: *ainz battle "@user" or reply user with *ainz battle');
+                }
                 const battlePayload = await battleController(existingUser, targetId, channel, message);
                 return battlePayload;
             }
@@ -132,26 +141,28 @@ export const getActionController = async (
 
                 switch (action) {
                     case 'info':
-                        const getTeamPayload = await getTeamController(sender_id);
+                        const getTeamPayload = await getTeamController(sender_id, message, channel);
                         return getTeamPayload;
                     case 'create':
-                        const createTeamPayload = await createTeamController(targetRawTeam || '', sender_id);
+                        const createTeamPayload = await createTeamController(targetRawTeam || '', sender_id, message, channel);
                         return createTeamPayload;
                     case 'update':
-                        const updateTeamPayload = await updateTeamController(targetRawTeam || '', sender_id);
+                        const updateTeamPayload = await updateTeamController(targetRawTeam || '', sender_id, message, channel);
                         return updateTeamPayload;
                     case 'add':
                         const parts = targetRawTeam?.split(' ') || [];
                         const pos = parts[0];
                         const name = parts.slice(1).join(' ');
-                        const addPetToTeamPayload = await addPetToTeamController(Number(pos), name, sender_id);
+                        const addPetToTeamPayload = await addPetToTeamController(Number(pos), name, sender_id, message, channel);
                         return addPetToTeamPayload;
                     case 'swap':
                         const [pos1, pos2] = targetRawTeam?.split(' ') || [];
                         const swapPetInTeamPayload = await swapPetInTeamController(
                             Number(pos1),
                             Number(pos2),
-                            sender_id
+                            sender_id,
+                            message,
+                            channel
                         );
                         return swapPetInTeamPayload;
                     default:
@@ -166,10 +177,10 @@ export const getActionController = async (
                 }
                 const { petName, nickname } = renameCommand;
                 if (!petName) {
-                    return textMessage('Please enter the pet name!');
+                    return textMessage('🚨 Missing pet name!\nUsage: *ainz rename "Pet Name" > "Nickname"');
                 }
                 if (!nickname) {
-                    return textMessage('Please enter the nickname!');
+                    return textMessage('🚨 Missing nickname!\nUsage: *ainz rename "Pet Name" > "Nickname"');
                 }
 
                 await renamePetController(petName, nickname, sender_id, message, channel);
@@ -233,7 +244,7 @@ export const getActionGifController = async (actor: string, actionType: string, 
             const actionGif = await getActionGif(actionType);
 
             if (!actionGif || !actionGif.results || actionGif.results.length === 0) {
-                return textMessage('Action gif not found, please try again');
+                return textMessage('Action gif not found. Plz try again!');
             }
 
             const { url } = actionGif.results[0];
@@ -255,7 +266,7 @@ export const getActionGifController = async (actor: string, actionType: string, 
         const actionGif = await getActionGif(actionType);
 
         if (!actionGif || !actionGif.results || actionGif.results.length === 0) {
-            return textMessage('Action gif not found, please try again');
+            return textMessage('Action gif not found. Plz try again!');
         }
 
         const { url } = actionGif.results[0];
@@ -296,7 +307,7 @@ export const getBagController = async (
 ) => {
     let messageFetch: any;
     try {
-        const messageReply = await message.reply(textMessage('Looking inside your bag for your pets... please wait!'));
+        const messageReply = await message.reply(textMessage('Looking inside your bag for your pets... Plz wait!'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
         if (targetRaw) {
@@ -307,7 +318,7 @@ export const getBagController = async (
                 await messageFetch.update(bagMessage);
                 return;
             } else {
-                messageFetch.update(textMessage('Invalid rarity'));
+                messageFetch.update(textMessage('🚨 Invalid rarity!\nUsage: *ainz bag "Rarity"'));
                 return;
             }
         }

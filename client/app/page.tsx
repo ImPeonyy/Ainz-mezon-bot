@@ -86,14 +86,14 @@ function DailyPetCards() {
                    shadow border border-emerald-200/60 
                    transition-transform duration-300 hover:scale-105 active:scale-95"
       >
-        <div className="rounded-full p-3 bg-white/70 border animate-pulse">
+        <div className="rounded-full p-3 bg-white/70 border animate-bounce">
           <PetIcon className="text-emerald-600" />
         </div>
         <h3 className="text-lg font-semibold text-emerald-700">Pet Hunt</h3>
         <p className="text-sm text-slate-500">
           Catch, collect, and nurture your pets.
         </p>
-        <div className="absolute -bottom-3 -left-3 text-emerald-300 text-2xl animate-bounce">
+        <div className="absolute -bottom-3 -left-3 text-emerald-300 text-2xl animate-pulse">
           🐾
         </div>
       </a>
@@ -188,7 +188,7 @@ export default function Home() {
           </div>
           <div className="flex justify-center order-1 md:order-2">
             <img
-              src="/images/meme2.gif"
+              src="/images/action-msg.gif"
               alt="Action"
               className="rounded-xl shadow-md object-cover hover:scale-105 transition-transform duration-500"
             />
@@ -203,7 +203,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           <div className="flex justify-center">
             <img
-              src="/images/meme2.gif"
+              src="/images/meme.png"
               alt="Funny Meme"
               className="rounded-xl shadow-md max-w-full h-auto hover:scale-105 transition-transform duration-500"
             />
