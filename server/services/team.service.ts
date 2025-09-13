@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 
 export const getTeam = async (userId: string) => {
     try {
@@ -54,7 +55,7 @@ export const createTeam = async (name: string, userId: string) => {
     }
 };
 
-export const updateTeam = async (name: string, userId: string) => {
+export const updateTeamName = async (name: string, userId: string) => {
     try {
         return prisma.team.update({
             where: {
@@ -85,7 +86,7 @@ export const addPetToTeam = async (teamId: number, petId: number, pos: number) =
     }
 }
 
-export const updatePos = async (teamMemberId: number, pos: number) => {
+export const updatePetPosition = async (teamMemberId: number, pos: number) => {
     try {
         return prisma.teamMember.update({
             where: {
@@ -181,5 +182,18 @@ export const getRandomTeamForBattle = async (currentUserId: string) => {
         throw error;
     }
 };
+
+export const updateTeamMember = async (where: Prisma.TeamMemberWhereUniqueInput, data: Prisma.TeamMemberUncheckedUpdateInput) => {
+    try {
+        return prisma.teamMember.update({
+            where,
+            data
+        });
+    } catch (error) {
+        console.error('Error updating team member:', error);
+        throw error;
+    }
+}
+
 
 
