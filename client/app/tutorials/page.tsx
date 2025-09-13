@@ -63,25 +63,25 @@ export default function Tutorials() {
           <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
-                init
+                *ainz init
               </code>{" "}
               – Set up your Ainz Bot account.
             </li>
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
-                info
+                *ainz info
               </code>{" "}
               – View your profile.
             </li>
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
-                update
+                *ainz update
               </code>{" "}
               – Update your profile details.
             </li>
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
-                daily
+                *ainz daily
               </code>{" "}
               – Collect daily rewards.
             </li>
@@ -99,21 +99,46 @@ export default function Tutorials() {
           <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
-                hunt
+                *ainz hunt
               </code>{" "}
-              – Go out and catch pets 🦊🐱🐶.
+              – Hunt pets.
             </li>
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
-                dex
+                *ainz dex
               </code>{" "}
-              – View your pet collection 📖.
+              – View system pet information.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz mydex
+              </code>{" "}
+              – View your pets information.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz rename [pet name] {">"} [nick name]
+              </code>{" "}
+              – Give your pet a nickname.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz bag
+              </code>{" "}
+              – Show all pets and the number of pets.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz bag [Common | Uncommon | Rare | Epic | Legendary | Mythic
+                | Limited]
+              </code>{" "}
+              – Show all pets and the number of pets by Rarity.
             </li>
           </ul>
-          <p className="mt-4 text-gray-600">
+          {/* <p className="mt-4 text-gray-600">
             Pets can be collected, trained, and used in <strong>battles</strong>{" "}
             ⚔️ with your friends.
-          </p>
+          </p> */}
         </motion.div>
 
         {/* Team */}
@@ -127,23 +152,69 @@ export default function Tutorials() {
           <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
-                hunt
+                *ainz team info
               </code>{" "}
-              – Go out and catch pets 🦊🐱🐶.
+              – Information about pets in your team.
             </li>
             <li>
               <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
-                dex
+                *ainz team create [team name]
               </code>{" "}
-              – View your pet collection 📖.
+              – Create your team to battle.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz team update [team name]
+              </code>{" "}
+              – Update your team name.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz team add [position] [pet name]
+              </code>{" "}
+              – Add pet to your team.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz team swap [position 1] [position 2]
+              </code>{" "}
+              – Swap the positions 2 pets in your team.
             </li>
           </ul>
-          <p className="mt-4 text-gray-600">
+          {/* <p className="mt-4 text-gray-600">
             Pets can be collected, trained, and used in <strong>battles</strong>{" "}
             ⚔️ with your friends.
-          </p>
+          </p> */}
         </motion.div>
-
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.7 }}
+          className="p-6 rounded-2xl border bg-white shadow-md hover:shadow-lg transition lg:col-span-2"
+        >
+          <h3 className="text-2xl font-semibold mb-4">Miscellaneous</h3>
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz help
+              </code>{" "}
+              – Displays the full list of commands supported by the bot.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz meme
+              </code>{" "}
+              – Sends a random meme image.
+            </li>
+            <li>
+              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-sm">
+                *ainz [action] [@user(optional)]
+              </code>{" "}
+              – Shows or performs interactive actions that you can use with
+              other users.
+            </li>
+          </ul>
+        </motion.div>
         {/* Main Flow */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -169,10 +240,16 @@ export default function Tutorials() {
                 color: "text-yellow-500",
               },
               {
-                icon: "🐉",
+                icon: "🎯",
                 cmd: "*ainz hunt",
                 label: "Catch pets",
                 color: "text-green-500",
+              },
+              {
+                icon: "👥",
+                cmd: "*ainz team",
+                label: "Setup team",
+                color: "text-blue-500",
               },
               {
                 icon: "⚔️",

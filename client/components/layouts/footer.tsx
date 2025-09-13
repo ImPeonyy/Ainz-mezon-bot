@@ -49,7 +49,7 @@ export function Footer() {
         <div>
           <h5 className="font-semibold">Contact & Support</h5>
           <p className="text-sm mt-3">
-            support@ainzbot.com
+            <a href="mailto:thang.thieuquang@ncc.asia" className="text-blue hover:underline">Support mail</a>
             <br />
             Join our{" "}
             <a
