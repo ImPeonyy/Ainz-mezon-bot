@@ -1,29 +1,26 @@
 import { ACTIONS, COMMANDS } from '@/constants/Commands';
 import {
-    addPetToTeamController,
-    createTeamController,
-    getTeamController,
-    swapPetInTeamController,
-    updateTeamController
-} from './team.controller';
-import {
     battleController,
     createUserController,
     dailyController,
     dexController,
     getUserController,
     huntPetController,
-    updateUserController
+    updateUserController,
+    getTeamController,
+    createTeamController,
+    updateTeamController,
+    addPetToTeamController,
+    swapPetInTeamController,
+    myDexController,
+    renamePetController
 } from '@/controllers';
 import { embedMessage, getActorName, getBagMessage, getHelpMessage, getTargetFromMention, textMessage } from '@/utils';
 import { getActionGif, getMeme, getPets, getUser, getUserPets } from '@/services';
-
 import { EActionType } from '@/constants/Enum';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { parseActionCommandTeam, parseRenameCommand } from '@/utils/misc.util';
 import { prisma } from '@/lib/db';
-import { renamePetController } from './pet.controller';
-import { myDexController } from './pet.controller';
 import { ERarity } from '@prisma/client';
 import { getPetsByRarity } from '@/services/pet.service';
 import { getUserPetsByRarity } from '@/services/userPet.service';
@@ -184,6 +181,7 @@ export const getActionController = async (
                 }
 
                 await renamePetController(petName, nickname, sender_id, message, channel);
+                return;
             }
         }
 
@@ -223,7 +221,7 @@ export const getMemeController = async () => {
             ]
         });
     } catch (error) {
-        console.log('Error getting meme:', error);
+        console.error('Error getting meme:', error);
         return textMessage('❌ Internal server error');
     }
 };
