@@ -32,6 +32,10 @@
     "prisma": {
         "seed": "tsx prisma/seed/index.ts"
     },
+    "engines": {
+        "node": "20.x",
+        "npm": "10.x"
+    },
     "devDependencies": {
         "@eslint/css": "^0.10.0",
         "@eslint/js": "^9.32.0",
