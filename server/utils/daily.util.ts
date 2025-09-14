@@ -1,14 +1,11 @@
-import { USE_DAILY_ACTIVITY } from '@/constants/Constant';
+import { USE_DAILY_ACTIVITY } from '@/constants';
 
 export const getDailyReward = () => {
     const zCoinReward = getRandomInt(
         USE_DAILY_ACTIVITY.DAILY.REWARD.Z_COIN.MIN,
         USE_DAILY_ACTIVITY.DAILY.REWARD.Z_COIN.MAX
     );
-    const expReward = getRandomInt(
-        USE_DAILY_ACTIVITY.DAILY.REWARD.EXP.MIN,
-        USE_DAILY_ACTIVITY.DAILY.REWARD.EXP.MAX
-    );
+    const expReward = getRandomInt(USE_DAILY_ACTIVITY.DAILY.REWARD.EXP.MIN, USE_DAILY_ACTIVITY.DAILY.REWARD.EXP.MAX);
 
     return {
         zCoin: zCoinReward,

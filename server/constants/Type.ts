@@ -49,6 +49,7 @@ export interface IBPet {
     position: number;
     isAlive: boolean;
     info: {
+        petName: string;
         nickname: string;
         mezon_emoji_id: string;
         avatar: string;
@@ -70,6 +71,7 @@ export interface IBPet {
         };
     };
     stats: {
+        statsPerLevel: IBStats;
         originalStats: IBStats;
         currentStats: IBStats;
     };

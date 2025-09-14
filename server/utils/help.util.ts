@@ -1,4 +1,4 @@
-import { embedMessage } from './message.util';
+import { embedMessage } from '@/utils';
 
 export const getHelpMessage = () => {
     return embedMessage({

@@ -1,17 +1,16 @@
 import { createProfileCard, expToUserLevel, textMessage } from '@/utils';
 import { createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
 
-import { CLOUDINARY_PROFILE_FOLDER } from '@/constants/Constant';
-import { prisma } from '@/lib/db';
+import { CLOUDINARY_PROFILE_FOLDER } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { User } from '@prisma/client';
+import { prisma } from '@/lib/db';
 
 export const getUserController = async (existingUser: User, message: Message, channel: any) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Retrieving user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
-    
 
         const imageBuffer = await createProfileCard({
             username: existingUser?.username || '',
@@ -23,7 +22,7 @@ export const getUserController = async (existingUser: User, message: Message, ch
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
-       
+
         await messageFetch.update(
             {},
             [],
@@ -36,7 +35,7 @@ export const getUserController = async (existingUser: User, message: Message, ch
             ]
         );
     } catch (error) {
-        console.log('Error getting user:', error);
+        console.error('Error getting user:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {
@@ -46,12 +45,17 @@ export const getUserController = async (existingUser: User, message: Message, ch
     }
 };
 
-export const createUserController = async (username: string, mezon_id: string, avatar: string, message: Message, channel: any) => {
+export const createUserController = async (
+    username: string,
+    mezon_id: string,
+    avatar: string,
+    message: Message,
+    channel: any
+) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Initializing user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
-        
 
         const existingUser = await getUser(mezon_id);
 
@@ -85,7 +89,7 @@ export const createUserController = async (username: string, mezon_id: string, a
             ]
         );
     } catch (error) {
-        console.log('Error creating user:', error);
+        console.error('Error creating user:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {
@@ -95,8 +99,14 @@ export const createUserController = async (username: string, mezon_id: string, a
     }
 };
 
-export const updateUserController = async (username: string, existingUser: User, avatar: string, message: Message, channel: any) => {
-   let messageFetch: any;
+export const updateUserController = async (
+    username: string,
+    existingUser: User,
+    avatar: string,
+    message: Message,
+    channel: any
+) => {
+    let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Updating user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
@@ -132,7 +142,7 @@ export const updateUserController = async (username: string, existingUser: User,
             ]
         );
     } catch (error) {
-        console.log('Error updating user:', error);
+        console.error('Error updating user:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {

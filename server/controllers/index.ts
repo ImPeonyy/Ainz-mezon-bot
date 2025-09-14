@@ -1,9 +1,22 @@
+import {
+    addPetToTeamController,
+    createTeamController,
+    getTeamController,
+    swapPetInTeamController,
+    updateTeamController
+} from './team.controller';
 import { createUserController, getUserController, updateUserController } from './user.controller';
-import { dexController, huntPetController, renamePetController, myDexController } from './pet.controller';
-import { getActionController, getActionGifController, getMemeController } from './misc.controller';
+import { dexController, huntPetController, myDexController, renamePetController } from './pet.controller';
+import {
+    getActionController,
+    getActionGifController,
+    getBagController,
+    getHelpController,
+    getMemeController
+} from './misc.controller';
+
 import { battleController } from './batlle.controller';
 import { dailyController } from './userDailyActivity.controller';
-import { getTeamController, createTeamController, updateTeamController, addPetToTeamController, swapPetInTeamController } from './team.controller';
 
 export {
     getActionController,
@@ -22,5 +35,7 @@ export {
     addPetToTeamController,
     swapPetInTeamController,
     renamePetController,
-    myDexController
+    myDexController,
+    getBagController,
+    getHelpController
 };

@@ -1,30 +1,36 @@
-import { ACTIONS, COMMANDS } from '@/constants/Commands';
+import { ACTIONS, COMMANDS, EActionType } from '@/constants';
 import {
+    addPetToTeamController,
     battleController,
+    createTeamController,
     createUserController,
     dailyController,
     dexController,
+    getTeamController,
     getUserController,
     huntPetController,
-    updateUserController,
-    getTeamController,
-    createTeamController,
-    updateTeamController,
-    addPetToTeamController,
-    swapPetInTeamController,
     myDexController,
-    renamePetController
+    renamePetController,
+    swapPetInTeamController,
+    updateTeamController,
+    updateUserController
 } from '@/controllers';
-import { embedMessage, getActorName, getBagMessage, getHelpMessage, getTargetFromMention, textMessage } from '@/utils';
-import { getActionGif, getMeme, getPets, getUser, getUserPets } from '@/services';
-import { EActionType } from '@/constants/Enum';
-import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { parseActionCommandTeam, parseRenameCommand } from '@/utils/misc.util';
-import { prisma } from '@/lib/db';
+import {
+    embedMessage,
+    getActorName,
+    getBagMessage,
+    getBagMessageByRarity,
+    getHelpMessage,
+    getTargetFromMention,
+    parseActionCommandTeam,
+    parseRenameCommand,
+    textMessage
+} from '@/utils';
+import { getActionGif, getMeme, getPets, getPetsByRarity, getUser, getUserPets, getUserPetsByRarity } from '@/services';
+
 import { ERarity } from '@prisma/client';
-import { getPetsByRarity } from '@/services/pet.service';
-import { getUserPetsByRarity } from '@/services/userPet.service';
-import { getBagMessageByRarity } from '@/utils/message.util';
+import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
+import { prisma } from '@/lib/db';
 
 export const getActionController = async (
     event: any,
@@ -81,7 +87,7 @@ export const getActionController = async (
             const existingUser = await getUser(sender_id);
 
             if (!existingUser) {
-                return textMessage('🚨 User not found!\n→ Plz initialize your user first!\nUsage: *ainz init');
+                return textMessage('🚨 User not found!\nPlz initialize your user first!\n→ Usage: *ainz init');
             }
 
             if (action === COMMANDS.info) {
@@ -125,8 +131,10 @@ export const getActionController = async (
 
             if (action === COMMANDS.battle) {
                 const targetId = mentions[0]?.user_id || references[0]?.message_sender_id;
-                if(targetRaw && !targetId) {
-                    return textMessage('🚨 Missing target!\nUsage: *ainz battle "@user" or reply user with *ainz battle');
+                if (targetRaw && !targetId) {
+                    return textMessage(
+                        '🚨 Missing target!\nUsage: *ainz battle "@user" or reply user with *ainz battle'
+                    );
                 }
                 const battlePayload = await battleController(existingUser, targetId, channel, message);
                 return battlePayload;
@@ -141,16 +149,32 @@ export const getActionController = async (
                         const getTeamPayload = await getTeamController(sender_id, message, channel);
                         return getTeamPayload;
                     case 'create':
-                        const createTeamPayload = await createTeamController(targetRawTeam || '', sender_id, message, channel);
+                        const createTeamPayload = await createTeamController(
+                            targetRawTeam || '',
+                            sender_id,
+                            message,
+                            channel
+                        );
                         return createTeamPayload;
                     case 'update':
-                        const updateTeamPayload = await updateTeamController(targetRawTeam || '', sender_id, message, channel);
+                        const updateTeamPayload = await updateTeamController(
+                            targetRawTeam || '',
+                            sender_id,
+                            message,
+                            channel
+                        );
                         return updateTeamPayload;
                     case 'add':
                         const parts = targetRawTeam?.split(' ') || [];
                         const pos = parts[0];
                         const name = parts.slice(1).join(' ');
-                        const addPetToTeamPayload = await addPetToTeamController(Number(pos), name, sender_id, message, channel);
+                        const addPetToTeamPayload = await addPetToTeamController(
+                            Number(pos),
+                            name,
+                            sender_id,
+                            message,
+                            channel
+                        );
                         return addPetToTeamPayload;
                     case 'swap':
                         const [pos1, pos2] = targetRawTeam?.split(' ') || [];

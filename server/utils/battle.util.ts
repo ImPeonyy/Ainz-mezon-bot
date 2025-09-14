@@ -1,5 +1,4 @@
-import { BATTLE } from '@/constants/Constant';
-import { IBPet } from '@/constants/Type';
+import { BATTLE, IBPet } from '@/constants';
 import { EEffect, ERarity, EScalingType, EStat, ETargetPosition, Prisma } from '@prisma/client';
 
 export const manaAfterDealDamage = (hpBefore: number, hpAfter: number) => {
@@ -223,6 +222,7 @@ export const processTeam = (
                 position: index * 2 + teamOrder,
                 isAlive: true,
                 info: {
+                    petName: member.userPet.pet.name,
                     nickname: member.userPet.nickname || member.userPet.pet.name,
                     mezon_emoji_id: member.userPet.pet.mezon_emoji_id,
                     avatar: member.userPet.pet.avatar || '',
@@ -254,6 +254,14 @@ export const processTeam = (
                     }
                 },
                 stats: {
+                    statsPerLevel: {
+                        hp: member.userPet.pet.statistic.hp_per_level,
+                        mana: 0,
+                        ad: member.userPet.pet.statistic.ad_per_level,
+                        ap: member.userPet.pet.statistic.ap_per_level,
+                        ar: member.userPet.pet.statistic.ar_per_level,
+                        mr: member.userPet.pet.statistic.mr_per_level
+                    },
                     originalStats: {
                         hp: member.userPet.pet.statistic.hp + member.userPet.additional_hp,
                         mana: member.userPet.pet.statistic.mana + member.userPet.additional_mana,
@@ -277,18 +285,6 @@ export const processTeam = (
     }
 
     return processedTeam;
-};
-
-export const logPet = (pet: IBPet) => {
-    const { nickname, level } = pet.info;
-    const { hp, mana, ad, ap, ar, mr } = pet.stats.currentStats;
-
-    return `
-    🐾 Pet: ${nickname} (Lv.${level}) [Pos: ${pet.position}] ${pet.isAlive ? '❤️ Alive' : '💀 Dead'}
-    ------------------
-    HP   : ${hp}\tAD   : ${ad}\tAR   : ${ar}
-    Mana : ${mana}\tAP   : ${ap}\tMR   : ${mr}
-    `;
 };
 
 export const processEffects = (pet: IBPet) => {

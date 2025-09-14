@@ -1,10 +1,7 @@
+import { ACTIONS, AINZ_THUMBNAIL, FAV_COLOR, IBattle } from '@/constants';
 import { ChannelMessageContent, EmojiOnMessage, IEmbedProps } from 'mezon-sdk';
-
-import { ACTIONS } from '@/constants/Commands';
-import { Prisma, Pet, User, ERarity } from '@prisma/client';
+import { ERarity, Prisma, User } from '@prisma/client';
 import { expToPetLevel, getRarityColor, getUrlEmoji } from '@/utils';
-import { AINZ_THUMBNAIL, FAV_COLOR } from '@/constants/Constant';
-import { IBattle } from '@/constants/Type';
 
 export const textMessage = (message: string) => {
     const messagePayload: ChannelMessageContent = {
@@ -163,10 +160,11 @@ export const getBagMessageByRarity = (
 };
 
 export const teamInfoMessage = (
-    pets: Prisma.TeamMemberGetPayload<{ include: { userPet: { include: { pet: true } } } }>[]
+    pets: Prisma.TeamMemberGetPayload<{ include: { userPet: { include: { pet: true } } } }>[],
+    teamName: string
 ) => {
     let messagePayload: ChannelMessageContent = {
-        t: 'Your team contains the following pets:\n',
+        t: `Your team "${teamName}" contains the following pets:\n`,
         ej: []
     };
 
@@ -180,7 +178,7 @@ export const teamInfoMessage = (
             s: messagePayload.t?.length || 0,
             e: messagePayload.t?.length || 0 + 1
         });
-        messagePayload.t += ` ${pet.userPet.pet.name}\n`;
+        messagePayload.t += ` ${pet.userPet.nickname || pet.userPet.pet.name}\n`;
     });
 
     return messagePayload;
@@ -314,32 +312,32 @@ export const getBattleMessage = (user: User, battle: IBattle, image: string, foo
                 fields: [
                     {
                         name: `${battle.teamAName}`,
-                        value: `Lv. ${battle.teamA[1].info.level} - ${battle.teamA[1].info.nickname}`,
+                        value: `Lv. ${battle.teamA[1].info.level} - ${battle.teamA[1].info.petName}`,
                         inline: true
                     },
                     {
                         name: '----------',
-                        value: `Lv. ${battle.teamA[3].info.level} - ${battle.teamA[3].info.nickname}`,
+                        value: `Lv. ${battle.teamA[3].info.level} - ${battle.teamA[3].info.petName}`,
                         inline: true
                     },
                     {
                         name: '----------',
-                        value: `Lv. ${battle.teamA[5].info.level} - ${battle.teamA[5].info.nickname}`,
+                        value: `Lv. ${battle.teamA[5].info.level} - ${battle.teamA[5].info.petName}`,
                         inline: true
                     },
                     {
                         name: `${battle.teamBName}`,
-                        value: `Lv. ${battle.teamB[2].info.level} - ${battle.teamB[2].info.nickname}`,
+                        value: `Lv. ${battle.teamB[2].info.level} - ${battle.teamB[2].info.petName}`,
                         inline: true
                     },
                     {
                         name: '----------',
-                        value: `Lv. ${battle.teamB[4].info.level} - ${battle.teamB[4].info.nickname}`,
+                        value: `Lv. ${battle.teamB[4].info.level} - ${battle.teamB[4].info.petName}`,
                         inline: true
                     },
                     {
                         name: '----------',
-                        value: `Lv. ${battle.teamB[6].info.level} - ${battle.teamB[6].info.nickname}`,
+                        value: `Lv. ${battle.teamB[6].info.level} - ${battle.teamB[6].info.petName}`,
                         inline: true
                     }
                 ],

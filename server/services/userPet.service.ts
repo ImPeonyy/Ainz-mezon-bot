@@ -1,5 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
+import { prisma } from '@/lib/db';
+
 export const getUserPets = async (prismaClient: PrismaClient | Prisma.TransactionClient, user_id: string) => {
     try {
         return await prismaClient.userPet.findMany({
@@ -165,6 +167,56 @@ export const updateUserPet = async (
         });
     } catch (error) {
         console.error('Error updating userPet:', error);
+        throw error;
+    }
+};
+
+export const getUserPetDetail = async (petName: string, userId: string) => {
+    try {
+        return prisma.userPet.findFirst({
+            where: {
+                user_id: userId,
+                pet: {
+                    name: {
+                        equals: petName,
+                        mode: 'insensitive'
+                    }
+                }
+            },
+            include: {
+                user: true,
+                pet: {
+                    include: {
+                        statistic: true,
+                        rarity: true,
+                        autoAttack: true,
+                        passiveSkill: true,
+                        activeSkill: true
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user pet:', error);
+        throw error;
+    }
+};
+
+export const getUserPetByPetName = async (userId: string, petName: string) => {
+    try {
+        return await prisma.userPet.findFirst({
+            where: {
+                user_id: userId,
+                pet: {
+                    name: {
+                        equals: petName,
+                        mode: 'insensitive'
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user pet by pet name:', error);
         throw error;
     }
 };
