@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 
 export const getTeam = async (userId: string) => {
@@ -17,7 +18,7 @@ export const getTeam = async (userId: string) => {
                     },
                     orderBy: {
                         position: 'asc'
-                    },
+                    }
                 }
             }
         });
@@ -54,7 +55,7 @@ export const createTeam = async (name: string, userId: string) => {
     }
 };
 
-export const updateTeam = async (name: string, userId: string) => {
+export const updateTeamName = async (name: string, userId: string) => {
     try {
         return prisma.team.update({
             where: {
@@ -83,9 +84,9 @@ export const addPetToTeam = async (teamId: number, petId: number, pos: number) =
         console.error('Error adding pet to team:', error);
         throw error;
     }
-}
+};
 
-export const updatePos = async (teamMemberId: number, pos: number) => {
+export const updatePetPosition = async (teamMemberId: number, pos: number) => {
     try {
         return prisma.teamMember.update({
             where: {
@@ -99,7 +100,7 @@ export const updatePos = async (teamMemberId: number, pos: number) => {
         console.error('Error updating pet position:', error);
         throw error;
     }
-}
+};
 
 export const getTeamForBattle = async (userId: string) => {
     try {
@@ -126,7 +127,7 @@ export const getTeamForBattle = async (userId: string) => {
                     },
                     orderBy: {
                         position: 'asc'
-                    },
+                    }
                 }
             }
         });
@@ -141,8 +142,8 @@ export const getRandomTeamForBattle = async (currentUserId: string) => {
         const teams = await prisma.team.findMany({
             where: {
                 user_id: {
-                    not: currentUserId,
-                },
+                    not: currentUserId
+                }
             },
             include: {
                 members: {
@@ -163,15 +164,15 @@ export const getRandomTeamForBattle = async (currentUserId: string) => {
                     },
                     orderBy: {
                         position: 'asc'
-                    },
+                    }
                 }
             }
         });
 
-        const validTeams = teams.filter(team => team.members.length === 3);
+        const validTeams = teams.filter((team) => team.members.length === 3);
 
         if (validTeams.length === 0) {
-            return null; 
+            return null;
         }
 
         const randomIndex = Math.floor(Math.random() * validTeams.length);
@@ -182,4 +183,17 @@ export const getRandomTeamForBattle = async (currentUserId: string) => {
     }
 };
 
-
+export const updateTeamMember = async (
+    where: Prisma.TeamMemberWhereUniqueInput,
+    data: Prisma.TeamMemberUncheckedUpdateInput
+) => {
+    try {
+        return prisma.teamMember.update({
+            where,
+            data
+        });
+    } catch (error) {
+        console.error('Error updating team member:', error);
+        throw error;
+    }
+};

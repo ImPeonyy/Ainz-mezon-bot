@@ -1,4 +1,4 @@
-import { LIMIT_PET_PER_HUNT, USE_DAILY_ACTIVITY } from '@/constants/Constant';
+import { LIMIT_PET_PER_HUNT, USE_DAILY_ACTIVITY } from '@/constants';
 import {
     createUserDailyActivity,
     getPetDetail,
@@ -6,19 +6,18 @@ import {
     getRarities,
     getTodayUserDailyActivity,
     getUser,
+    getUserPetByName,
+    getUserPetDetail,
     updateUser,
     updateUserDailyActivity,
     updateUserPet,
     upsertUserPetCount
 } from '@/services';
-import { getHuntMessage, getDexMessage, huntCheck, huntPet, textMessage } from '@/utils';
+import { getDexMessage, getHuntMessage, getMyDexMessage, huntCheck, huntPet, textMessage } from '@/utils';
 
+import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { Pet } from '@prisma/client';
 import { prisma } from '@/lib/db';
-import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { getUserPetDetail } from '@/services/pet.service';
-import { getMyDexMessage } from '@/utils/message.util';
-import { getUserPetByName } from '@/services/userPet.service';
 
 export const huntPetController = async (mezon_id: string, message: Message, channel: any) => {
     let messageFetch: any;
@@ -64,23 +63,27 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                     }
                 });
 
-                await messageFetch.update(getHuntMessage(
-                    yourPets.map((pet) => ({
-                        emojiid: pet.mezon_emoji_id
-                    }))
-                ));
+                await messageFetch.update(
+                    getHuntMessage(
+                        yourPets.map((pet) => ({
+                            emojiid: pet.mezon_emoji_id
+                        }))
+                    )
+                );
                 return;
             } catch (error) {
-                console.log('Error hunting pet:', error);
+                console.error('Error hunting pet:', error);
                 await messageFetch.update(textMessage('Error when hunting pet!'));
                 return;
             }
         } else {
             const huntPriority = huntCheck(user, todayActivity);
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[4]) {
-                await messageFetch.update(textMessage(
-                    '🚫 You’ve already used today’s free hunt, and you don’t have enough Z Coins to hunt!\n⏳ Come back and try again tomorrow!'
-                ));
+                await messageFetch.update(
+                    textMessage(
+                        '🚫 You’ve already used today’s free hunt, and you don’t have enough Z Coins to hunt!\n⏳ Come back and try again tomorrow!'
+                    )
+                );
                 return;
             }
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[2] && todayActivity) {
@@ -102,14 +105,16 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                         }
                     });
 
-                    await messageFetch.update(getHuntMessage(
-                        yourPets.map((pet) => ({
-                            emojiid: pet.mezon_emoji_id
-                        }))
-                    ));
+                    await messageFetch.update(
+                        getHuntMessage(
+                            yourPets.map((pet) => ({
+                                emojiid: pet.mezon_emoji_id
+                            }))
+                        )
+                    );
                     return;
                 } catch (error) {
-                    console.log('Error hunting pet:', error);
+                    console.error('Error hunting pet:', error);
                     await messageFetch.update(textMessage('Error when hunting pet!'));
                     return;
                 }
@@ -134,14 +139,16 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                         }
                     });
 
-                    await messageFetch.update(getHuntMessage(
-                        yourPets.map((pet) => ({
-                            emojiid: pet.mezon_emoji_id
-                        }))
-                    ));
+                    await messageFetch.update(
+                        getHuntMessage(
+                            yourPets.map((pet) => ({
+                                emojiid: pet.mezon_emoji_id
+                            }))
+                        )
+                    );
                     return;
                 } catch (error) {
-                    console.log('Error hunting pet:', error);
+                    console.error('Error hunting pet:', error);
                     await messageFetch.update(textMessage('Error when hunting pet!'));
                     return;
                 }
@@ -151,7 +158,7 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
         await messageFetch.update(textMessage('Hunt pet failed!'));
         return;
     } catch (error) {
-        console.log('Error hunting pet:', error);
+        console.error('Error hunting pet:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {
@@ -174,8 +181,12 @@ export const dexController = async (petName: string, message: Message, channel: 
         const dexMessagePayload = getDexMessage(pet);
         await messageFetch.update(dexMessagePayload);
     } catch (error) {
-        console.log('Error getting pet:', error);
-        await messageFetch.update(textMessage('❌ Internal server error'));
+        console.error('Error dex pet:', error);
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
         return;
     }
 };
@@ -193,28 +204,44 @@ export const myDexController = async (petName: string, userId: string, message: 
         const myDexMessagePayload = getMyDexMessage(userPet, userPet.user?.avatar);
         await messageFetch.update(myDexMessagePayload);
     } catch (error) {
-        console.log('Error getting user pet:', error);
-        await messageFetch.update(textMessage('❌ Internal server error'));
+        console.error('Error getting user pet:', error);
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
         return;
     }
 };
-export const renamePetController = async (petName: string, nickname: string, userId: string, message: Message, channel: any) => {
+export const renamePetController = async (
+    petName: string,
+    nickname: string,
+    userId: string,
+    message: Message,
+    channel: any
+) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('🔄 Renaming your pet...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
         const userPet = await getUserPetByName(prisma, userId, petName);
         if (!userPet) {
-            await messageFetch.update(textMessage('You don\'t have this pet!'));
+            await messageFetch.update(textMessage("You don't have this pet!"));
             return;
         }
 
         const updatedPet = await updateUserPet(prisma, { id: userPet.id }, { nickname });
 
-        await messageFetch.update(textMessage(`Pet "${userPet.pet.name}" has been renamed to "${updatedPet.nickname}" successfully!`));
+        await messageFetch.update(
+            textMessage(`Pet "${userPet.pet.name}" has been renamed to "${updatedPet.nickname}" successfully!`)
+        );
     } catch (error) {
-        console.log('Error renaming pet:', error);
-        await messageFetch.update(textMessage('❌ Internal server error'));
+        console.error('Error renaming pet:', error);
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
         return;
     }
 };

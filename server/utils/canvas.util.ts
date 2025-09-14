@@ -1,8 +1,7 @@
-import { CanvasRenderingContext2D, registerFont, createCanvas, loadImage } from 'canvas';
-import { IBPet } from '@/constants/Type';
+import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH, IBPet, PROFILE_CARD_BG } from '@/constants';
+import { CanvasRenderingContext2D, createCanvas, loadImage, registerFont } from 'canvas';
+
 import path from 'path';
-import fs from 'fs';
-import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH, PROFILE_CARD_BG } from '@/constants/Constant';
 
 registerFont(path.join(process.cwd(), 'assets/fonts/OpenSans-Regular.ttf'), {
     family: 'OpenSans',
@@ -186,20 +185,6 @@ const renderBattleCanvas = async (teamA: IBPet[], teamB: IBPet[]): Promise<Buffe
 export async function createBattleImage(teamA: IBPet[], teamB: IBPet[]) {
     try {
         const imageBuffer = await renderBattleCanvas(teamA, teamB);
-
-        // const tempDir = path.join(process.cwd(), 'tempimage');
-        // if (!fs.existsSync(tempDir)) {
-        //     fs.mkdirSync(tempDir, { recursive: true });
-        // }
-
-        // const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        // const filename = `battle-result-${timestamp}.png`;
-        // const filepath = path.join(tempDir, filename);
-
-        // fs.writeFileSync(filepath, imageBuffer);
-
-        // console.log(`✅ Battle image has been saved at: ${filepath}`);
-
         return imageBuffer;
     } catch (error) {
         console.error('❌ Error when rendering battle canvas:', error);
@@ -309,34 +294,9 @@ const renderProfileCanvas = async (profileData: ProfileData): Promise<Buffer> =>
     return canvas.toBuffer('image/jpeg');
 };
 
-export async function createProfileCard(profileData?: ProfileData) {
+export async function createProfileCard(profileData: ProfileData) {
     try {
-        // Data hardcode nếu không có input
-        const defaultProfileData: ProfileData = {
-            username: 'Im Peonyy~',
-            level: 1,
-            z_coin: 100,
-            currentXP: 3241,
-            nextLevelXP: 5196,
-            avatar: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1756608539/spider-gwen_ui0d6g.jpg' // Avatar mặc định
-        };
-
-        const data = profileData || defaultProfileData;
-        const imageBuffer = await renderProfileCanvas(data);
-
-        // const tempDir = path.join(process.cwd(), 'tempimage');
-        // if (!fs.existsSync(tempDir)) {
-        //     fs.mkdirSync(tempDir, { recursive: true });
-        // }
-
-        // const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        // const filename = `battle-result-${timestamp}.png`;
-        // const filepath = path.join(tempDir, filename);
-
-        // fs.writeFileSync(filepath, imageBuffer);
-
-        // console.log(`✅ Battle image has been saved at: ${filepath}`);
-
+        const imageBuffer = await renderProfileCanvas(profileData);
         return imageBuffer;
     } catch (error) {
         console.error('❌ Error when rendering profile canvas:', error);

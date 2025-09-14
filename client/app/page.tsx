@@ -1,5 +1,6 @@
 "use client";
 
+import { CLAN_INVITE_LINK } from "@/constants";
 import React from "react";
 
 // === Icons ===
@@ -60,7 +61,6 @@ function DailyPetCards() {
     <div className="w-full max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
       {/* Daily Card */}
       <a
-        href="/daily"
         className="group relative flex flex-col items-center gap-4 p-6 rounded-2xl 
                    bg-gradient-to-b from-pink-50 via-pink-100 to-white 
                    shadow border border-pink-200/60 
@@ -80,20 +80,19 @@ function DailyPetCards() {
 
       {/* Pet Hunt Card */}
       <a
-        href="/pet-hunt"
         className="group relative flex flex-col items-center gap-4 p-6 rounded-2xl 
                    bg-gradient-to-b from-emerald-50 via-emerald-100 to-white 
                    shadow border border-emerald-200/60 
                    transition-transform duration-300 hover:scale-105 active:scale-95"
       >
-        <div className="rounded-full p-3 bg-white/70 border animate-pulse">
+        <div className="rounded-full p-3 bg-white/70 border animate-bounce">
           <PetIcon className="text-emerald-600" />
         </div>
         <h3 className="text-lg font-semibold text-emerald-700">Pet Hunt</h3>
         <p className="text-sm text-slate-500">
           Catch, collect, and nurture your pets.
         </p>
-        <div className="absolute -bottom-3 -left-3 text-emerald-300 text-2xl animate-bounce">
+        <div className="absolute -bottom-3 -left-3 text-emerald-300 text-2xl animate-pulse">
           🐾
         </div>
       </a>
@@ -115,7 +114,7 @@ export default function Home() {
           laugh with memes.
         </p>
         <a
-          href="#daily"
+          href="#started"
           className="rounded-xl bg-blue-600 px-6 py-3 text-white 
                      hover:bg-blue-700 hover:scale-105 
                      transition-transform duration-300"
@@ -125,7 +124,7 @@ export default function Home() {
       </section>
 
       {/* Daily & Pet Hunt */}
-      <section id="daily" className="py-20 bg-white text-center">
+      <section id="started" className="py-20 bg-white text-center">
         <h2 className="text-3xl font-bold mb-10">🔥 Daily & Pet Hunt</h2>
         <DailyPetCards />
       </section>
@@ -139,7 +138,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           <div className="flex justify-center">
             <img
-              src="/images/meme2.gif"
+              src="/images/battle.gif"
               alt="Battle"
               className="rounded-xl shadow-md object-cover hover:scale-105 transition-transform duration-500"
             />
@@ -153,7 +152,7 @@ export default function Home() {
               strength.
             </p>
             <a
-              href="/battle"
+              href={CLAN_INVITE_LINK}
               className="inline-block px-5 py-3 bg-red-600 text-white rounded-md 
                          hover:bg-red-700 hover:scale-105 
                          transition-transform duration-300"
@@ -178,7 +177,7 @@ export default function Home() {
               reactions.
             </p>
             <a
-              href="/actions"
+              href={CLAN_INVITE_LINK}
               className="inline-block px-5 py-3 bg-green-600 text-white rounded-md 
                          hover:bg-green-700 hover:scale-105 
                          transition-transform duration-300"
@@ -188,7 +187,7 @@ export default function Home() {
           </div>
           <div className="flex justify-center order-1 md:order-2">
             <img
-              src="/images/meme2.gif"
+              src="/images/action-msg.gif"
               alt="Action"
               className="rounded-xl shadow-md object-cover hover:scale-105 transition-transform duration-500"
             />
@@ -203,23 +202,24 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           <div className="flex justify-center">
             <img
-              src="/images/meme2.gif"
+              src="/images/meme.png"
               alt="Funny Meme"
               className="rounded-xl shadow-md max-w-full h-auto hover:scale-105 transition-transform duration-500"
             />
           </div>
-          <div className="flex flex-col justify-center text-left p-6"> 
+          <div className="flex flex-col justify-center text-left p-6">
             <h3 className="text-2xl font-semibold mb-4">Share the Fun</h3>
             <p className="text-gray-600 mb-6">
               Take your memes and laugh with your friends!
             </p>
-            <button
+            <a
+              href={CLAN_INVITE_LINK}
               className="inline-block px-6 py-3 bg-purple-600 text-white rounded-xl 
                          hover:bg-purple-700 hover:scale-105 
                          transition-transform duration-300"
             >
               Let try it!
-            </button>
+            </a>
           </div>
         </div>
       </section>

@@ -1,20 +1,26 @@
-import { getRandomUserPets } from '@/services/userPet.service';
-import { prisma } from '@/lib/db';
+import { CLOUDINARY_BATTLE_FOLDER, IBPet, IBattle } from '@/constants';
 import {
-    userLevelUp,
+    createBattleImage,
+    getBattleMessage,
     petLevelUp,
     processTeam,
     processTurn,
     textMessage,
-    getBattleMessage,
-    createBattleImage
+    userLevelUp
 } from '@/utils';
+import {
+    deleteImagesFromCloudinary,
+    getRandomTeamForBattle,
+    getTeamForBattle,
+    getUser,
+    updateUser,
+    updateUserPet,
+    uploadImageToCloudinary
+} from '@/services';
+
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { IBattle, IBPet } from '@/constants/Type';
-import { CLOUDINARY_BATTLE_FOLDER } from '@/constants/Constant';
-import { uploadImageToCloudinary, deleteImagesFromCloudinary, getUser, updateUser, updateUserPet } from '@/services';
 import { User } from '@prisma/client';
-import { getRandomTeamForBattle, getTeamForBattle } from '@/services/team.service';
+import { prisma } from '@/lib/db';
 
 export const battleController = async (currentUser: User, targetId: string, channel: any, message: Message) => {
     let messageFetch: any;
@@ -26,9 +32,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
 
         if (!currentUserTeam) {
             await messageFetch.update(
-                textMessage(
-                    '🚨 You don\'t have a team. \n→ Please create one first!\nUsage: *ainz team create "team name"'
-                )
+                textMessage("🚨 You don't have a team. \nPlz create one first!\n→ Usage: *ainz team create [team name]")
             );
             return;
         }
@@ -36,7 +40,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
         if (currentUserTeam.members.length !== 3) {
             await messageFetch.update(
                 textMessage(
-                    '🚨 Your team is not ready!\n→ Add 3 pets to your team first!\nUsage: *ainz team add 1 "pet name"'
+                    '🚨 Your team is not ready!\nAdd 3 pets to your team first!\n→ Usage: *ainz team add 1 [pet name]'
                 )
             );
             return;
@@ -49,24 +53,30 @@ export const battleController = async (currentUser: User, targetId: string, chan
         if (targetId) {
             const user = await getUser(targetId);
             if (!user) {
-                await messageFetch.update(textMessage('🚨 Target Opponent not found!\n→ Please try again later!'));
+                await messageFetch.update(
+                    textMessage('🚨 Target Opponent not found!\nPlz search for another opponent!')
+                );
                 return;
             }
             targetTeam = await getTeamForBattle(targetId);
-            console.log(targetTeam);
+
             if (!targetTeam) {
-                await messageFetch.update(textMessage('🚨 Target Opponent team not found!\n→ Please try again later!'));
+                await messageFetch.update(
+                    textMessage('🚨 Target Opponent team not found!\nPlz search for another opponent!')
+                );
                 return;
             }
             if (targetTeam.members.length !== 3) {
-                await messageFetch.update(textMessage('🙀 Oops! Your rival\'s team isn\'t ready yet.\nPlease search for another opponent!'));
+                await messageFetch.update(
+                    textMessage("🙀 Oops! Your rival's team isn't ready yet.\nPlz search for another opponent!")
+                );
                 return;
             }
         } else {
             targetTeam = await getRandomTeamForBattle(currentUser.id);
 
             if (!targetTeam) {
-                await messageFetch.update(textMessage('🚨 Random Opponent team not found!\n→ Please try again later!'));
+                await messageFetch.update(textMessage('🚨 Random Opponent team not found!\nPlz try again later!'));
                 return;
             }
         }
@@ -130,8 +140,8 @@ export const battleController = async (currentUser: User, targetId: string, chan
                 imageQueue.push(image);
                 const msg =
                     teamATurnQueue.length === 0
-                        ? `You lost in ${battle.turn} turns! You gained 50 exp and 50 exp for each of your pets!`
-                        : `You won in ${battle.turn} turns! You gained 100 exp and 200 exp for each of your pets!`;
+                        ? `You LOST in ${battle.turn} turns! You gained 50 exp and 50 exp for each of your pets!`
+                        : `You WON in ${battle.turn} turns! You gained 100 exp and 200 exp for each of your pets!`;
                 await messageFetch.update(getBattleMessage(currentUser, battle, image.secure_url, msg));
             }
         }
@@ -169,13 +179,23 @@ export const battleController = async (currentUser: User, targetId: string, chan
                                 return updateUserPet(
                                     tx,
                                     { id: pet.id },
-                                    { exp: { increment: 200 }, level: { increment: isLevelUp ? 1 : 0 } }
+                                    {
+                                        exp: { increment: 200 },
+                                        ...(isLevelUp && {
+                                            level: { increment: 1 },
+                                            additional_hp: { increment: pet.stats.statsPerLevel.hp },
+                                            additional_ad: { increment: pet.stats.statsPerLevel.ad },
+                                            additional_ap: { increment: pet.stats.statsPerLevel.ap },
+                                            additional_ar: { increment: pet.stats.statsPerLevel.ar },
+                                            additional_mr: { increment: pet.stats.statsPerLevel.mr }
+                                        })
+                                    }
                                 );
                             })
                         );
                     });
                 } catch (error) {
-                    console.log('Error updating user:', error);
+                    console.error('Error updating user:', error);
                 }
             } else {
                 try {
@@ -202,18 +222,28 @@ export const battleController = async (currentUser: User, targetId: string, chan
                                 return updateUserPet(
                                     tx,
                                     { id: pet.id },
-                                    { exp: { increment: 50 }, level: { increment: isLevelUp ? 1 : 0 } }
+                                    {
+                                        exp: { increment: 50 },
+                                        ...(isLevelUp && {
+                                            level: { increment: 1 },
+                                            additional_hp: { increment: pet.stats.statsPerLevel.hp },
+                                            additional_ad: { increment: pet.stats.statsPerLevel.ad },
+                                            additional_ap: { increment: pet.stats.statsPerLevel.ap },
+                                            additional_ar: { increment: pet.stats.statsPerLevel.ar },
+                                            additional_mr: { increment: pet.stats.statsPerLevel.mr }
+                                        })
+                                    }
                                 );
                             })
                         );
                     });
                 } catch (error) {
-                    console.log('Error updating user:', error);
+                    console.error('Error updating user:', error);
                 }
             }
         }
     } catch (error) {
-        console.log('Error in battleController:', error);
+        console.error('Error in battleController:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {

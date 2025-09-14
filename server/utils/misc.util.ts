@@ -1,5 +1,4 @@
-import { ERarityColor } from '@/constants/Enum';
-import { ParsedAction } from '@/constants/Type';
+import { ERarityColor, ParsedAction } from '@/constants';
 
 export const extractFirstTokenWithAsterisk = (content: string): string | null => {
     if (!content) return null;
@@ -29,15 +28,17 @@ export const parseActionCommandTeam = (content: string): ParsedAction => {
 };
 
 export const parseRenameCommand = (content: string) => {
-    if (!content) return { error: 'Please enter the pet name and nickname!' };
+    if (!content) return { error: '🚨 Missing pet name and nickname!\nUsage: *ainz rename "Pet Name" > "Nickname"' };
 
     if (!content.includes('>') || content.trim().startsWith('>') || content.trim().endsWith('>'))
-        return { error: 'Must use ">" to separate pet name and nickname!' };
+        return {
+            error: '🚨 Must use ">" to separate pet name and nickname!\nUsage: *ainz rename "Pet Name" > "Nickname"'
+        };
 
     const parts = content.split('>').map((p) => p.trim());
 
     if (parts.length !== 2) {
-        return { error: 'Wrong format! Eg. *ainz rename "pet name" > "nickname"' };
+        return { error: '🚨 Wrong format!\nUsage: *ainz rename "Pet Name" > "Nickname"' };
     }
 
     return {

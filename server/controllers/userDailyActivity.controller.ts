@@ -1,8 +1,14 @@
-import { createUserDailyActivity, getTodayUserDailyActivity, getUser, updateUser, updateUserDailyActivity } from '@/services';
+import {
+    createUserDailyActivity,
+    getTodayUserDailyActivity,
+    getUser,
+    updateUser,
+    updateUserDailyActivity
+} from '@/services';
 import { getDailyReward, getMidnightRemainingTime, textMessage, userLevelUp } from '@/utils';
 
-import { prisma } from '@/lib/db';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
+import { prisma } from '@/lib/db';
 
 export const dailyController = async (mezon_id: string, message: Message, channel: any) => {
     let messageFetch: any;
@@ -22,7 +28,7 @@ export const dailyController = async (mezon_id: string, message: Message, channe
             const { hours, minutes } = getMidnightRemainingTime();
             await messageFetch.update(
                 textMessage(
-                    `⏳ You have already received your daily reward today. Please come back in ${hours} hours and ${minutes} minutes.`
+                    `⏳ You have already received your daily reward today. Plz come back in ${hours} hours and ${minutes} minutes.`
                 )
             );
             return;
@@ -33,12 +39,16 @@ export const dailyController = async (mezon_id: string, message: Message, channe
 
         if (todayActivity && todayActivity.daily === 0) {
             await prisma.$transaction(async (tx) => {
-                await updateUserDailyActivity(tx, {
-                    id: todayActivity.id
-                }, {
-                    daily: 1,
-                });
-    
+                await updateUserDailyActivity(
+                    tx,
+                    {
+                        id: todayActivity.id
+                    },
+                    {
+                        daily: 1
+                    }
+                );
+
                 await updateUser(
                     tx,
                     {
@@ -66,7 +76,7 @@ export const dailyController = async (mezon_id: string, message: Message, channe
                         id: user.id
                     }
                 },
-                daily: 1,
+                daily: 1
             });
 
             await updateUser(

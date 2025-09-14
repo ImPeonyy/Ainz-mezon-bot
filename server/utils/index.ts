@@ -1,41 +1,50 @@
+import { createBattleImage, createProfileCard } from './canvas.util';
 import {
-    getBagMessage,
     embedMessage,
     emojiMessage,
-    getHuntMessage,
     getActionMessage,
+    getBagMessage,
+    getBagMessageByRarity,
+    getBattleMessage,
     getDexMessage,
-    textMessage,
-    getBattleMessage
+    getHuntMessage,
+    getMyDexMessage,
+    teamInfoMessage,
+    textMessage
 } from './message.util';
 import {
+    expToPetLevel,
+    expToUserLevel,
     extractFirstTokenWithAsterisk,
     getActorName,
-    getTargetFromMention,
-    parseActionCommand,
-    parseRenameCommand,
     getRarityColor,
+    getTargetFromMention,
     getUrlEmoji,
-    expToUserLevel,
-    userLevelUp,
-    expToPetLevel,
-    petLevelUp
+    parseActionCommand,
+    parseActionCommandTeam,
+    parseRenameCommand,
+    petLevelUp,
+    userLevelUp
 } from './misc.util';
-import { getDailyReward, getMidnightRemainingTime } from './daily.util';
-import { getRandomPet, getRarityPets } from './pet.util';
-import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
-import { getHelpMessage } from './help.util';
 import {
-    manaAfterDealDamage,
-    getCurrentManaAfterReceive,
     getAttackPosition,
+    getCurrentManaAfterReceive,
     getPositionByDistance,
     getPositionByHp,
-    hpAfterDealDame,
+    hpAfterDealAADame,
+    hpAfterDealASDame,
+    manaAfterDealDamage,
+    processEffects,
     processTeam,
     processTurn
 } from './battle.util';
-import { createBattleImage, createProfileCard } from './canvas.util';
+import { getDailyReward, getMidnightRemainingTime, getRandomInt } from './daily.util';
+import { getRandomPet, getRarityPets } from './pet.util';
+import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
+
+import { getHelpMessage } from './help.util';
+import { isValidPosition } from './team.util';
+
 export {
     getActorName,
     getTargetFromMention,
@@ -64,7 +73,8 @@ export {
     getAttackPosition,
     getPositionByDistance,
     getPositionByHp,
-    hpAfterDealDame,
+    hpAfterDealAADame,
+    hpAfterDealASDame,
     processTeam,
     processTurn,
     expToUserLevel,
@@ -73,5 +83,12 @@ export {
     petLevelUp,
     getBattleMessage,
     createBattleImage,
-    createProfileCard
+    createProfileCard,
+    processEffects,
+    parseActionCommandTeam,
+    getBagMessageByRarity,
+    getMyDexMessage,
+    teamInfoMessage,
+    getRandomInt,
+    isValidPosition
 };

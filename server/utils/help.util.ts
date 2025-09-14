@@ -1,8 +1,8 @@
-import { embedMessage } from './message.util';
+import { embedMessage } from '@/utils';
 
 export const getHelpMessage = () => {
     return embedMessage({
-        title: 'Here is the help message',
+        title: 'Here is the Ainz Mezon Bot help message',
         description: '\`TRIGGER: *ainz [action] [target(optional)].\`',
         fields: [
             {
@@ -17,7 +17,17 @@ export const getHelpMessage = () => {
             },
             {
                 name: '🐾 Pets',
-                value: 'hunt | dex',
+                value: 'hunt | dex | mydex | rename | bag | bag "Rarity"',
+                inline: false
+            },
+            {
+                name: '👥 Team',
+                value: 'team info | team create | team update | team add | team swap',
+                inline: false
+            },
+            {
+                name: '⚔️ Battle',
+                value: 'battle | battle "@user"',
                 inline: false
             },
             {

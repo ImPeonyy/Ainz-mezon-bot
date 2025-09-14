@@ -1,7 +1,7 @@
 import { Pet, Rarity, User, UserDailyActivities } from '@prisma/client';
 import { getRandomPet, getRarityPets } from '@/utils';
 
-import { USE_DAILY_ACTIVITY } from '@/constants/Constant';
+import { USE_DAILY_ACTIVITY } from '@/constants';
 
 export const shuffleRarities = (rarities: Rarity[]) => {
     const arr = [...rarities];
