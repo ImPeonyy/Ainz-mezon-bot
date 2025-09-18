@@ -24,7 +24,8 @@ import {
     parseActionCommandTeam,
     parseRenameCommand,
     petLevelUp,
-    userLevelUp
+    userLevelUp,
+    getRandomPastelHexColor
 } from './misc.util';
 import {
     getAttackPosition,
@@ -90,5 +91,6 @@ export {
     getMyDexMessage,
     teamInfoMessage,
     getRandomInt,
-    isValidPosition
+    isValidPosition,
+    getRandomPastelHexColor
 };
