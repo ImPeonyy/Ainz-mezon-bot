@@ -1,5 +1,5 @@
 import { ACTIONS, AINZ_THUMBNAIL, FAV_COLOR, IBattle } from '@/constants';
-import { ChannelMessageContent, EmojiOnMessage, IEmbedProps } from 'mezon-sdk';
+import { ChannelMessageContent, EmojiOnMessage, IInteractiveMessageProps } from 'mezon-sdk';
 import { ERarity, Prisma, User } from '@prisma/client';
 import { expToPetLevel, getRarityColor, getUrlEmoji } from '@/utils';
 
@@ -11,8 +11,8 @@ export const textMessage = (message: string) => {
     return messagePayload;
 };
 
-export const embedMessage = (embed: IEmbedProps) => {
-    const embedPayload: IEmbedProps = embed;
+export const embedMessage = (embed: IInteractiveMessageProps) => {
+    const embedPayload: IInteractiveMessageProps = embed;
     const messagePayload: ChannelMessageContent = {
         embed: [embedPayload]
     };
@@ -284,7 +284,7 @@ export const getMyDexMessage = (
         );
     }
 
-    const embedConfig: IEmbedProps = {
+    const embedConfig: IInteractiveMessageProps = {
         color: getRarityColor(statistic.rarity),
         title: `${userPet.pet.name} Information 🔍`,
         thumbnail: {
