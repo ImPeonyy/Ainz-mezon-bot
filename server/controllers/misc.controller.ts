@@ -63,7 +63,7 @@ export const getActionController = async (
                 if (targetRaw) {
                     target = getTargetFromMention(targetRaw);
                 }
-                target = references?.[0]?.message_sender_display_name;
+                target = references?.[0]?.message_sender_clan_nick || references?.[0]?.message_sender_display_name;
                 if (targetRaw && mentions.length > 0) {
                     target = getTargetFromMention(targetRaw);
                 }

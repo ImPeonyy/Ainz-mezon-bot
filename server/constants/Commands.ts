@@ -132,10 +132,10 @@ export const ACTIONS = {
         type: EActionType.INTERACTIVE,
         getMessage: (user: string, target?: string) => `${user} đã đá vào mặt ${target}!`
     },
-    kiss: {
-        type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) => `${user} đang hôn ${target}!`
-    },
+    // kiss: {
+    //     type: EActionType.INTERACTIVE,
+    //     getMessage: (user: string, target?: string) => `${user} đang hôn ${target}!`
+    // },
     pat: {
         type: EActionType.INTERACTIVE,
         getMessage: (user: string, target?: string) => `${user} đang xoa đầu ${target}!`
