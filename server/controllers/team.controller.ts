@@ -50,52 +50,6 @@ export const getTeamController = async (userId: string, message: Message, channe
     }
 };
 
-export const createTeamController = async (teamName: string, userId: string, message: Message, channel: any) => {
-    let messageFetch: any;
-    try {
-        const messageReply = await message.reply(textMessage('🔍 Creating your team...'));
-        messageFetch = await channel.messages.fetch(messageReply.message_id);
-
-        if (!teamName) {
-            await messageFetch.update(
-                textMessage('❓ Plz provide a team name! \n→ Usage: *ainz team create [team name]')
-            );
-            return;
-        }
-
-        const existingTeam = await getTeam(userId);
-        if (existingTeam) {
-            await messageFetch.update(textMessage('🚨 You already have a team! \nPlz use another name!'));
-            return;
-        }
-
-        const duplicateTeam = await getTeamByName(teamName);
-        if (duplicateTeam) {
-            await messageFetch.update(
-                textMessage(
-                    `🚨 Team name "${teamName}" is already taken. \nPlz choose a different name! \n→ Usage: *ainz team create [team name]`
-                )
-            );
-            return;
-        }
-
-        const team = await createTeam(teamName, userId);
-        await messageFetch.update(
-            textMessage(
-                `✅ Your team "${team.name}" has been created successfully. \nPlz add pets to start fighting! \n→ Usage: *ainz team add [pos] [pet name]`
-            )
-        );
-    } catch (error: any) {
-        console.error('Error creating team:', error);
-        if (messageFetch) {
-            await messageFetch.update(textMessage('❌ Internal server error'));
-        } else {
-            await message.reply(textMessage('❌ Internal server error'));
-        }
-        return;
-    }
-};
-
 export const updateTeamController = async (teamName: string, userId: string, message: Message, channel: any) => {
     let messageFetch: any;
     try {

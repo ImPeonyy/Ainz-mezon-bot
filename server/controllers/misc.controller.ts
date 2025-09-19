@@ -2,7 +2,6 @@ import { ACTIONS, COMMANDS, EActionType } from '@/constants';
 import {
     addPetToTeamController,
     battleController,
-    createTeamController,
     createUserController,
     dailyController,
     dexController,
@@ -25,7 +24,8 @@ import {
     parseActionCommandTeam,
     parseRenameCommand,
     textMessage,
-    getRandomPastelHexColor
+    getRandomPastelHexColor,
+    getForFunHelpMessage
 } from '@/utils';
 import { getActionGif, getMeme, getPets, getPetsByRarity, getUser, getUserPets, getUserPetsByRarity } from '@/services';
 
@@ -41,7 +41,7 @@ export const getActionController = async (
     targetRaw?: string | null
 ) => {
     try {
-        const { sender_id, display_name, avatar, clan_nick, references, mentions } = event;
+        const { sender_id, username, display_name, avatar, clan_nick, references, mentions } = event;
 
         if (Object.keys(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (!display_name || !sender_id) {
@@ -49,7 +49,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.init) {
-                const createUserPayload = await createUserController(display_name, sender_id, avatar, message, channel);
+                const createUserPayload = await createUserController(display_name, username, sender_id, avatar, message, channel);
                 return createUserPayload;
             }
 
@@ -81,7 +81,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.help) {
-                const helpPayload = await getHelpController();
+                const helpPayload = await getHelpController(targetRaw);
                 return helpPayload;
             }
 
@@ -149,14 +149,6 @@ export const getActionController = async (
                     case 'info':
                         const getTeamPayload = await getTeamController(sender_id, message, channel);
                         return getTeamPayload;
-                    case 'create':
-                        const createTeamPayload = await createTeamController(
-                            targetRawTeam || '',
-                            sender_id,
-                            message,
-                            channel
-                        );
-                        return createTeamPayload;
                     case 'update':
                         const updateTeamPayload = await updateTeamController(
                             targetRawTeam || '',
@@ -312,10 +304,15 @@ export const getActionGifController = async (actor: string, actionType: string, 
     }
 };
 
-export const getHelpController = () => {
+export const getHelpController = (targetRaw?: string | null) => {
     try {
-        const helpMessage = getHelpMessage();
-        return helpMessage;
+        if (!targetRaw) return getHelpMessage();
+        if (targetRaw === "ff") {
+            return getForFunHelpMessage();
+        } else {
+            return textMessage('❌ Invalid help command \n → *ainz help - bot guide help \n → *ainz help ff - for fun help');
+        }
+       
     } catch (error) {
         console.error('Error getting help message:', error);
         return textMessage('❌ Internal server error');
