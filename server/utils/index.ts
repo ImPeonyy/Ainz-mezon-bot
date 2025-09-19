@@ -25,7 +25,9 @@ import {
     parseRenameCommand,
     petLevelUp,
     userLevelUp,
-    getRandomPastelHexColor
+    getRandomPastelHexColor,
+    formatSecondsToMinutes
+
 } from './misc.util';
 import {
     getAttackPosition,
@@ -92,5 +94,6 @@ export {
     teamInfoMessage,
     getRandomInt,
     isValidPosition,
-    getRandomPastelHexColor
+    getRandomPastelHexColor,
+    formatSecondsToMinutes
 };
