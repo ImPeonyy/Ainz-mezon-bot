@@ -50,3 +50,4 @@ export const PROFILE_CARD_BG = 'https://res.cloudinary.com/do2rk0jz8/image/uploa
 export const AINZ_THUMBNAIL = 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1757658432/Overlord-dance_nlr2dt.gif';
 export const AINZ_DEFAULT_AVATAR = 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1757571181/download_ygjzey.jpg';
 export const DEFAULT_RENDER_CYCLE = '6';
+export const DEFAULT_TTL = 300; // 5 minutes

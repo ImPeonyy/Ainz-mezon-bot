@@ -11,7 +11,8 @@ import {
     LIMIT_PET_PER_HUNT,
     USE_DAILY_ACTIVITY,
     AINZ_DEFAULT_AVATAR,
-    DEFAULT_RENDER_CYCLE
+    DEFAULT_RENDER_CYCLE,
+    DEFAULT_TTL
 } from './Constant';
 import { EActionType, ERarityColor } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction } from './Type';
@@ -39,5 +40,6 @@ export {
     BATTLE,
     FAV_COLOR,
     AINZ_DEFAULT_AVATAR,
-    DEFAULT_RENDER_CYCLE
+    DEFAULT_RENDER_CYCLE,
+    DEFAULT_TTL
 };

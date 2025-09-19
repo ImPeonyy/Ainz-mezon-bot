@@ -1,6 +1,9 @@
 import { redis } from '@/configs';
+import { DEFAULT_TTL } from '@/constants';
 
-export async function logRedisWithExpire(userId: string, expireInSeconds: number = 5 * 60): Promise<void> {
+const TTL = Number(process.env.DEFAULT_TTL) || DEFAULT_TTL;
+
+export async function logRedisWithExpire(userId: string, expireInSeconds: number = TTL): Promise<void> {
     const key = `logs:${userId}:${Date.now()}`;
     await redis.set(key, '1', 'EX', expireInSeconds);
     console.log(`📝 Saved log for user ${userId} with TTL ${expireInSeconds}s`);
