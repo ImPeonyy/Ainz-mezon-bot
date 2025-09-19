@@ -6,7 +6,8 @@ import {
     processTeam,
     processTurn,
     textMessage,
-    userLevelUp
+    userLevelUp,
+    formatSecondsToMinutes
 } from '@/utils';
 import {
     deleteImagesFromCloudinary,
@@ -21,6 +22,7 @@ import {
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { User } from '@prisma/client';
 import { prisma } from '@/lib/db';
+import { hasActiveLog, logRedisWithExpire } from '@/redis';
 
 export const battleController = async (currentUser: User, targetId: string, channel: any, message: Message) => {
     const renderCycle: number = parseInt(process.env.RENDER_CYCLE || DEFAULT_RENDER_CYCLE);
@@ -28,6 +30,12 @@ export const battleController = async (currentUser: User, targetId: string, chan
     try {
         const battleMessage = await message.reply(textMessage('🛠️ Setup for battle...'));
         messageFetch = await channel.messages.fetch(battleMessage.message_id);
+
+        const activeLog = await hasActiveLog(currentUser.id);
+        if (activeLog) {
+            await messageFetch.update(textMessage(`🚨 Your pet is currently resting. Please try again after ${formatSecondsToMinutes(activeLog)}!`));
+            return;
+        }
 
         const currentUserTeam = await getTeamForBattle(currentUser.id);
 
@@ -81,6 +89,8 @@ export const battleController = async (currentUser: User, targetId: string, chan
                 return;
             }
         }
+
+        await logRedisWithExpire(currentUser.id);
 
         const processedTeamA: IBPet[] = processTeam(currentUserTeam.members, 1);
         const processedTeamB: IBPet[] = processTeam(targetTeam.members, 2);

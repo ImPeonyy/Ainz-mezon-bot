@@ -117,3 +117,7 @@ export const getRandomPastelHexColor = () => {
       .map((x) => x.toString(16).padStart(2, "0"))
       .join("")}`;
   }
+
+  export const formatSecondsToMinutes = (seconds: number) => {
+    return `${Math.floor(seconds / 60)} Minutes and ${seconds % 60} Seconds`;
+  };

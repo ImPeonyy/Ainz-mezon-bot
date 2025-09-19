@@ -25,6 +25,7 @@
         "dotenv": "^17.2.1",
         "express": "^5.1.0",
         "fs": "^0.0.1-security",
+        "ioredis": "^5.7.0",
         "mezon-sdk": "^2.8.13",
         "path": "^0.12.7",
         "typescript": "^5.8.3"

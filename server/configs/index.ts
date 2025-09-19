@@ -1,3 +1,4 @@
 import cloudinary from './cloudinary';
+import redis from './redis';
 
-export { cloudinary };
+export { cloudinary, redis };
