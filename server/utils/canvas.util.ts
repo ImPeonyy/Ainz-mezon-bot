@@ -1,5 +1,6 @@
 import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH, IBPet, PROFILE_CARD_BG } from '@/constants';
 import { CanvasRenderingContext2D, createCanvas, loadImage, registerFont } from 'canvas';
+import axios from 'axios';
 
 import path from 'path';
 
@@ -64,7 +65,16 @@ const drawTeamPets = async (
         ctx.restore();
 
         try {
-            const petImage = await loadImage(pet.info.avatar);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            const response = await axios.get(pet.info.avatar, {
+                responseType: 'arraybuffer',
+                signal: controller.signal,
+                maxRedirects: 3,
+                timeout: 10000
+            });
+            clearTimeout(timeoutId);
+            const petImage = await loadImage(Buffer.from(response.data));
             const avatarSize = 80;
 
             ctx.save();

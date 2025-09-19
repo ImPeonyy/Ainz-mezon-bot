@@ -73,7 +73,7 @@ export const getUrlEmoji = (emojiId: string) => {
     return `https://cdn.mezon.ai/emojis/${emojiId}.webp`;
 };
 
-export const expToUserLevel = (level: number) => {
+const expToUserLevel = (level: number) => {
     return 100 * level ** 2;
 };
 
@@ -81,12 +81,12 @@ export const userLevelUp = (currentExp: number, currentLevel: number) => {
     return currentExp >= expToUserLevel(currentLevel + 1);
 };
 
-export const expToPetLevel = (level: number) => {
+const expToPetLevel = (level: number) => {
     return Math.round(100 * level ** 1.5);
 };
 
 export const petLevelUp = (currentExp: number, currentLevel: number) => {
-    return currentExp >= expToUserLevel(currentLevel + 1);
+    return currentExp >= expToPetLevel(currentLevel + 1);
 };
 
 // export const getRandomHexColor = () => {

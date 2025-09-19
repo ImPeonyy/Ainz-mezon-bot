@@ -164,7 +164,11 @@ export const battleController = async (currentUser: User, targetId: string, chan
         };
 
         if (result.isOver) {
-            deleteImagesFromCloudinary(imageQueue.slice(0, -1).map((image) => image.public_id));
+            try {
+                await deleteImagesFromCloudinary(imageQueue.slice(0, -1).map((image) => image.public_id));
+            } catch (err) {
+                console.error('Error deleting images from Cloudinary:', err);
+            }
             if (result.winner === 'Team A') {
                 try {
                     const isLevelUp = userLevelUp(currentUser.exp + BATTLE.USER.WIN_EXP, currentUser.level);
