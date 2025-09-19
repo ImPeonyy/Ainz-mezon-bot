@@ -13,6 +13,8 @@ import {
     textMessage
 } from './message.util';
 import {
+    expToPetLevel,
+    expToUserLevel,
     extractFirstTokenWithAsterisk,
     getActorName,
     getRarityColor,
@@ -78,7 +80,9 @@ export {
     hpAfterDealASDame,
     processTeam,
     processTurn,
+    expToUserLevel,
     userLevelUp,
+    expToPetLevel,
     petLevelUp,
     getBattleMessage,
     createBattleImage,
