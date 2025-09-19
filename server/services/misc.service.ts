@@ -32,7 +32,9 @@ export const getMeme = async (): Promise<IMeme> => {
         // 3. Lọc bỏ NSFW + spoiler + chỉ lấy image
         const posts = res.data.data.children
             .map((c: any) => c.data)
-            .filter((post: any) => !post.over_18 && !post.spoiler);
+            .filter(
+                (post: any) => !post.over_18 && !post.spoiler && !post.is_video
+            );
 
         // 4. Random chọn 1
         const post = posts[Math.floor(Math.random() * posts.length)];
