@@ -81,7 +81,7 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[4]) {
                 await messageFetch.update(
                     textMessage(
-                        '🚫 You’ve already used today’s free hunt, and you don’t have enough Z Coins to hunt!\n⏳ Come back and try again tomorrow!'
+                        '🚫 You’ve already used today’s free hunt, and you don’t have enough Z Coins to hunt (300 Z Coins per hunt)!\n⏳ Come back and try again tomorrow!'
                     )
                 );
                 return;

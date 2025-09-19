@@ -1,4 +1,4 @@
-import { CLOUDINARY_BATTLE_FOLDER, IBPet, IBattle } from '@/constants';
+import { CLOUDINARY_BATTLE_FOLDER, IBPet, IBattle, BATTLE, DEFAULT_RENDER_CYCLE } from '@/constants';
 import {
     createBattleImage,
     getBattleMessage,
@@ -23,6 +23,7 @@ import { User } from '@prisma/client';
 import { prisma } from '@/lib/db';
 
 export const battleController = async (currentUser: User, targetId: string, channel: any, message: Message) => {
+    const renderCycle: number = parseInt(process.env.RENDER_CYCLE || DEFAULT_RENDER_CYCLE);
     let messageFetch: any;
     try {
         const battleMessage = await message.reply(textMessage('🛠️ Setup for battle...'));
@@ -120,7 +121,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
             } else {
                 processTurn(teamBTurnQueue, battle.teamB, teamATurnQueue, battle.teamA, [1, 3, 5]);
             }
-            if (battle.turn % 6 === 0) {
+            if (battle.turn % renderCycle === 0) {
                 const imageBuffer = await createBattleImage(
                     [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
                     [battle.teamB[2], battle.teamB[4], battle.teamB[6]]
@@ -140,8 +141,8 @@ export const battleController = async (currentUser: User, targetId: string, chan
                 imageQueue.push(image);
                 const msg =
                     teamATurnQueue.length === 0
-                        ? `You LOST in ${battle.turn} turns! You gained 50 exp and 50 exp for each of your pets!`
-                        : `You WON in ${battle.turn} turns! You gained 100 exp and 200 exp for each of your pets!`;
+                        ? `You LOST in ${battle.turn} turns! You gained ${BATTLE.USER.LOSE_EXP} exp and ${BATTLE.PET.LOSE_EXP} exp for each of your pets!`
+                        : `You WON in ${battle.turn} turns! You gained ${BATTLE.USER.WIN_EXP} exp and ${BATTLE.PET.WIN_EXP} exp for each of your pets!`;
                 await messageFetch.update(getBattleMessage(currentUser, battle, image.secure_url, msg));
             }
         }
@@ -155,8 +156,8 @@ export const battleController = async (currentUser: User, targetId: string, chan
         if (result.isOver) {
             deleteImagesFromCloudinary(imageQueue.slice(0, -1).map((image) => image.public_id));
             if (result.winner === 'Team A') {
-                const isLevelUp = userLevelUp(currentUser.exp + 100, currentUser.level);
                 try {
+                    const isLevelUp = userLevelUp(currentUser.exp + BATTLE.USER.WIN_EXP, currentUser.level);
                     await prisma.$transaction(async (tx) => {
                         await updateUser(
                             tx,
@@ -165,7 +166,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
                             },
                             {
                                 exp: {
-                                    increment: 100
+                                    increment: BATTLE.USER.WIN_EXP
                                 },
                                 level: {
                                     increment: isLevelUp ? 1 : 0
@@ -175,12 +176,12 @@ export const battleController = async (currentUser: User, targetId: string, chan
 
                         await Promise.all(
                             processedTeamA.map((pet) => {
-                                const isLevelUp = petLevelUp(pet.info.exp + 200, pet.info.level);
+                                const isLevelUp = petLevelUp(pet.info.exp + BATTLE.PET.WIN_EXP, pet.info.level);
                                 return updateUserPet(
                                     tx,
                                     { id: pet.id },
                                     {
-                                        exp: { increment: 200 },
+                                        exp: { increment: BATTLE.PET.WIN_EXP },
                                         ...(isLevelUp && {
                                             level: { increment: 1 },
                                             additional_hp: { increment: pet.stats.statsPerLevel.hp },
@@ -200,7 +201,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
             } else {
                 try {
                     await prisma.$transaction(async (tx) => {
-                        const isLevelUp = userLevelUp(currentUser.exp + 50, currentUser.level);
+                        const isLevelUp = userLevelUp(currentUser.exp + BATTLE.USER.LOSE_EXP, currentUser.level);
                         await updateUser(
                             tx,
                             {
@@ -208,7 +209,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
                             },
                             {
                                 exp: {
-                                    increment: 50
+                                    increment: BATTLE.USER.LOSE_EXP
                                 },
                                 level: {
                                     increment: isLevelUp ? 1 : 0
@@ -218,12 +219,12 @@ export const battleController = async (currentUser: User, targetId: string, chan
 
                         await Promise.all(
                             processedTeamA.map((pet) => {
-                                const isLevelUp = petLevelUp(pet.info.exp + 50, pet.info.level);
+                                const isLevelUp = petLevelUp(pet.info.exp + BATTLE.PET.LOSE_EXP, pet.info.level);
                                 return updateUserPet(
                                     tx,
                                     { id: pet.id },
                                     {
-                                        exp: { increment: 50 },
+                                        exp: { increment: BATTLE.PET.LOSE_EXP },
                                         ...(isLevelUp && {
                                             level: { increment: 1 },
                                             additional_hp: { increment: pet.stats.statsPerLevel.hp },

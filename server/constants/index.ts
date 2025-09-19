@@ -9,7 +9,9 @@ import {
     BATTLE_CARD_WIDTH,
     PROFILE_CARD_BG,
     LIMIT_PET_PER_HUNT,
-    USE_DAILY_ACTIVITY
+    USE_DAILY_ACTIVITY,
+    AINZ_DEFAULT_AVATAR,
+    DEFAULT_RENDER_CYCLE
 } from './Constant';
 import { EActionType, ERarityColor } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction } from './Type';
@@ -35,5 +37,7 @@ export {
     USE_DAILY_ACTIVITY,
     AINZ_THUMBNAIL,
     BATTLE,
-    FAV_COLOR
+    FAV_COLOR,
+    AINZ_DEFAULT_AVATAR,
+    DEFAULT_RENDER_CYCLE
 };

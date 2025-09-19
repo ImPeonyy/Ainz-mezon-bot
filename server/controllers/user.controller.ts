@@ -1,7 +1,7 @@
 import { createProfileCard, expToUserLevel, textMessage } from '@/utils';
 import { createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
 
-import { CLOUDINARY_PROFILE_FOLDER } from '@/constants';
+import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { User } from '@prisma/client';
 import { prisma } from '@/lib/db';
@@ -72,7 +72,7 @@ export const createUserController = async (
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
             nextLevelXP: expToUserLevel(user.level + 1) || 0,
-            avatar: user?.avatar || ''
+            avatar: user?.avatar || AINZ_DEFAULT_AVATAR
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);

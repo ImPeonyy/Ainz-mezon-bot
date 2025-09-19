@@ -24,7 +24,8 @@ import {
     getTargetFromMention,
     parseActionCommandTeam,
     parseRenameCommand,
-    textMessage
+    textMessage,
+    getRandomPastelHexColor
 } from '@/utils';
 import { getActionGif, getMeme, getPets, getPetsByRarity, getUser, getUserPets, getUserPetsByRarity } from '@/services';
 
@@ -227,7 +228,7 @@ export const getMemeController = async () => {
         const { title, url, postLink } = meme;
 
         return embedMessage({
-            color: '#f3aab5',
+            color: getRandomPastelHexColor(),
             title: title,
             image: { url: url },
             url: postLink,
@@ -294,7 +295,7 @@ export const getActionGifController = async (actor: string, actionType: string, 
         const { url } = actionGif.results[0];
 
         return embedMessage({
-            color: '#f3aab5',
+            color: getRandomPastelHexColor(),
             title: `${action.getMessage(actor, target)}`,
             image: { url: url },
             fields: [

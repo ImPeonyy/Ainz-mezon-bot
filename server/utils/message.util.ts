@@ -1,7 +1,7 @@
 import { ACTIONS, AINZ_THUMBNAIL, FAV_COLOR, IBattle } from '@/constants';
 import { ChannelMessageContent, EmojiOnMessage, IInteractiveMessageProps } from 'mezon-sdk';
 import { ERarity, Prisma, User } from '@prisma/client';
-import { expToPetLevel, getRarityColor, getUrlEmoji } from '@/utils';
+import { expToPetLevel, getRandomPastelHexColor, getRarityColor, getUrlEmoji } from '@/utils';
 
 export const textMessage = (message: string) => {
     const messagePayload: ChannelMessageContent = {
@@ -306,7 +306,7 @@ export const getBattleMessage = (user: User, battle: IBattle, image: string, foo
     const messagePayload: ChannelMessageContent = {
         embed: [
             {
-                color: FAV_COLOR,
+                color: getRandomPastelHexColor(),
                 title: `${user.username} is in a battle!`,
                 thumbnail: { url: user.avatar },
                 fields: [
