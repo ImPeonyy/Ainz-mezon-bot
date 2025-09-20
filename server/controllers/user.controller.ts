@@ -1,5 +1,5 @@
 import { createProfileCard, expToUserLevel, textMessage } from '@/utils';
-import { createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
+import { createTeam, createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
 
 import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
@@ -46,6 +46,7 @@ export const getUserController = async (existingUser: User, message: Message, ch
 };
 
 export const createUserController = async (
+    display_name: string,
     username: string,
     mezon_id: string,
     avatar: string,
@@ -64,7 +65,8 @@ export const createUserController = async (
             return;
         }
 
-        const user = await createUser(prisma, { username, id: mezon_id, avatar });
+        const user = await createUser(prisma, { username: display_name, id: mezon_id, avatar });
+        await createTeam(username, mezon_id);
 
         const imageBuffer = await createProfileCard({
             username: user?.username || '',

@@ -1,6 +1,5 @@
 import {
     addPetToTeamController,
-    createTeamController,
     getTeamController,
     swapPetInTeamController,
     updateTeamController
@@ -30,7 +29,6 @@ export {
     dailyController,
     battleController,
     getTeamController,
-    createTeamController,
     updateTeamController,
     addPetToTeamController,
     swapPetInTeamController,

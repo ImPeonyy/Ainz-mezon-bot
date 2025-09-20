@@ -45,7 +45,7 @@ import { getDailyReward, getMidnightRemainingTime, getRandomInt } from './daily.
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
 
-import { getHelpMessage } from './help.util';
+import { getHelpMessage, getForFunHelpMessage } from './help.util';
 import { isValidPosition } from './team.util';
 
 export {
@@ -71,6 +71,7 @@ export {
     getRarityColor,
     getUrlEmoji,
     getHelpMessage,
+    getForFunHelpMessage,
     manaAfterDealDamage,
     getCurrentManaAfterReceive,
     getAttackPosition,
