@@ -44,9 +44,10 @@ import {
 import { getDailyReward, getMidnightRemainingTime, getRandomInt } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
-
 import { getHelpMessage, getForFunHelpMessage } from './help.util';
-import { isValidPosition } from './team.util';
+import { isValidPosition, calculateTeamCP } from './team.util';
+import { myLeaderBoard, levelLeaderBoard, combatPowerLeaderBoard, winsLeaderBoard, lossesLeaderBoard } from './leaderBoard.util';
+
 
 export {
     getActorName,
@@ -97,5 +98,11 @@ export {
     isValidPosition,
     getRandomPastelHexColor,
     formatSecondsToMinutes,
-    getAdditionalStats
+    getAdditionalStats,
+    myLeaderBoard,
+    levelLeaderBoard,
+    combatPowerLeaderBoard,
+    winsLeaderBoard,
+    lossesLeaderBoard,
+    calculateTeamCP
 };

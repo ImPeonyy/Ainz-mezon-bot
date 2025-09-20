@@ -1,6 +1,6 @@
 import { BATTLE, IBPet } from '@/constants';
 import { EEffect, ERarity, EScalingType, EStat, ETargetPosition, Prisma } from '@prisma/client';
-import { getAdditionalStats, getPetLevelFromExp } from './misc.util';
+import { getAdditionalStats, getPetLevelFromExp } from '@/utils';
 
 export const manaAfterDealDamage = (hpBefore: number, hpAfter: number) => {
     const lostHpPercent = (hpBefore - hpAfter) / hpBefore;

@@ -7,7 +7,9 @@ import {
     getTeamForBattle,
     updatePetPosition,
     updateTeamMember,
-    updateTeamName
+    updateTeamName,
+    getTeamForCalcCP,
+    updateTeamCombatPower
 } from '@/services/team.service';
 import { createUser, getUser, updateUser } from '@/services/user.service';
 import {
@@ -30,9 +32,19 @@ import {
 import { deleteImagesFromCloudinary, uploadImageToCloudinary } from '@/services/cloudinary.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
 import { getPet, getPetDetail, getPets, getPetsByRarity } from '@/services/pet.service';
-
 import { getRarities } from '@/services/rarity.service';
-import { createLeaderBoard } from '@/services/leaderBoard.service';
+import { 
+    createLeaderBoard, 
+    getMyLeaderBoard, 
+    getLevelLeaderBoard, 
+    getCombatPowerLeaderBoard, 
+    getWinsLeaderBoard, 
+    getLossesLeaderBoard, 
+    getUserRank,
+    autoUpdateLeaderBoard,
+    upsertLeaderBoard
+} from '@/services/leaderBoard.service';
+import { scheduleUpdateLeaderBoard } from '@/services/schedule.service';
 
 export {
     getActionGif,
@@ -69,5 +81,16 @@ export {
     getRandomUserPets,
     getPet,
     getPetsByRarity,
-    createLeaderBoard
+    createLeaderBoard,
+    getMyLeaderBoard,
+    getLevelLeaderBoard,
+    getCombatPowerLeaderBoard,
+    getWinsLeaderBoard,
+    getLossesLeaderBoard,
+    getUserRank,
+    autoUpdateLeaderBoard,
+    scheduleUpdateLeaderBoard,
+    upsertLeaderBoard,
+    getTeamForCalcCP,
+    updateTeamCombatPower
 };

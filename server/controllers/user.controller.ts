@@ -3,10 +3,10 @@ import { createLeaderBoard, createTeam, createUser, getUser, updateUser, uploadI
 
 import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 
-export const getUserController = async (existingUser: User, message: Message, channel: any) => {
+export const getUserController = async (existingUser: Prisma.UserGetPayload<{ include: { team: true } }>, message: Message, channel: any) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Retrieving user...'));
@@ -20,7 +20,8 @@ export const getUserController = async (existingUser: User, message: Message, ch
             z_coin: existingUser?.z_coin || 0,
             currentXP: existingUser?.exp || 0,
             nextLevelXP: expToUserLevel(currentLevel + 1),
-            avatar: existingUser?.avatar || ''
+            avatar: existingUser?.avatar || '',
+            combat_power: existingUser?.team?.combat_power || 0
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
@@ -79,7 +80,8 @@ export const createUserController = async (
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
             nextLevelXP: expToUserLevel(currentLevel + 1),
-            avatar: user?.avatar || AINZ_DEFAULT_AVATAR
+            avatar: user?.avatar || AINZ_DEFAULT_AVATAR,
+            combat_power: 0
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
@@ -108,7 +110,7 @@ export const createUserController = async (
 
 export const updateUserController = async (
     username: string,
-    existingUser: User,
+    existingUser: Prisma.UserGetPayload<{ include: { team: true } }>,
     avatar: string,
     message: Message,
     channel: any,
@@ -142,7 +144,8 @@ export const updateUserController = async (
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
             nextLevelXP: expToUserLevel(currentLevel + 1),
-            avatar: user?.avatar || ''
+            avatar: user?.avatar || '',
+            combat_power: existingUser?.team?.combat_power || 0
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);

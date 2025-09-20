@@ -13,7 +13,8 @@ export const COMMANDS = {
     battle: 'battle',
     help: 'help',
     team: 'team',
-    rename: 'rename'
+    rename: 'rename',
+    leaderboard: 'lb'
 };
 
 export const ACTIONS = {

@@ -8,6 +8,7 @@ import {
     getTeamController,
     getUserController,
     huntPetController,
+    leaderBoardController,
     myDexController,
     renamePetController,
     swapPetInTeamController,
@@ -43,7 +44,7 @@ export const getActionController = async (
     try {
         const { sender_id, username, display_name, avatar, clan_nick, references, mentions } = event;
 
-        if (Object.keys(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
+        if (Object.values(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (!display_name || !sender_id) {
                 return textMessage('Error retrieving username or mezon id');
             }
@@ -83,6 +84,11 @@ export const getActionController = async (
             if (action === COMMANDS.help) {
                 const helpPayload = await getHelpController(targetRaw);
                 return helpPayload;
+            }
+            
+            if (action === COMMANDS.leaderboard) {
+                const leaderBoardPayload = await leaderBoardController(message, channel, sender_id, targetRaw);
+                return leaderBoardPayload;
             }
 
             const existingUser = await getUser(sender_id);

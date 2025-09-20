@@ -13,7 +13,8 @@ import {
     processTeam,
     processTurn,
     textMessage,
-    formatSecondsToMinutes
+    formatSecondsToMinutes,
+    calculateTeamCP
 } from '@/utils';
 import {
     createUserDailyActivity,
@@ -25,7 +26,10 @@ import {
     updateUser,
     updateUserDailyActivity,
     updateUserPet,
-    uploadImageToCloudinary
+    uploadImageToCloudinary,
+    upsertLeaderBoard,
+    getTeamForCalcCP,
+    updateTeamCombatPower
 } from '@/services';
 
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
@@ -105,7 +109,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
                 return;
             }
         } else {
-            targetTeam = await getRandomTeamForBattle(currentUser.id);
+            targetTeam = await getRandomTeamForBattle(currentUser.id, currentUserTeam.combat_power);
 
             if (!targetTeam) {
                 await messageFetch.update(textMessage('🚨 Random Opponent team not found!\nPlz try again later!'));
@@ -240,6 +244,8 @@ export const battleController = async (currentUser: User, targetId: string, chan
                                 );
                             })
                         );
+
+                        await upsertLeaderBoard(tx, currentUser, true);
                     });
                 } catch (error) {
                     console.error('Error updating user:', error);
@@ -270,7 +276,13 @@ export const battleController = async (currentUser: User, targetId: string, chan
                                 );
                             })
                         );
+
+                        await upsertLeaderBoard(tx, currentUser, false);
                     });
+                    const currentTeam = await getTeamForCalcCP(currentUser.id);
+                    if (currentTeam) {
+                        await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
+                    }
                 } catch (error) {
                     console.error('Error updating user:', error);
                 }

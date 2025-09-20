@@ -89,7 +89,7 @@ model User {
 
   dailyActivities UserDailyActivities[]
   userPets        UserPet[]
-  teams           Team[]
+  team            Team?
   leaderBoard     LeaderBoard?
 }
 
@@ -109,7 +109,7 @@ model Rarity {
   id              Int                    @id @default(autoincrement())
   name            String                 @unique
   mezon_emoji_id  String                 @unique
-  type            ERarity?
+  type            ERarity
   catch_rate      Float
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         

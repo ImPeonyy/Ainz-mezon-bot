@@ -68,7 +68,6 @@ export const upsertUserPetCount = async (
     pet: Pet
 ) => {
     try {
-        // Sử dụng upsert để kiểm tra và cập nhật count
         return await prismaClient.userPet.upsert({
             where: {
                 user_id_pet_id: {

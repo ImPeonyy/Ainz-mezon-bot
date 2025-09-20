@@ -160,26 +160,25 @@ export const getBagMessageByRarity = (
 };
 
 export const teamInfoMessage = (
-    pets: Prisma.TeamMemberGetPayload<{ include: { userPet: { include: { pet: true } } } }>[],
-    teamName: string
+    team: Prisma.TeamGetPayload<{ include: { members: { include: { userPet: { include: { pet: true } } } } } }>,
 ) => {
     let messagePayload: ChannelMessageContent = {
-        t: `Your team "${teamName}" contains the following pets:\n`,
+        t: `Your team "${team.name}" contains the following pets:\nCombat Power: ${team.combat_power}\n`,
         ej: []
     };
 
     const Position = ['1️⃣', '2️⃣', '3️⃣'];
 
-    pets.forEach((pet) => {
-        const currentLevel = getPetLevelFromExp(pet.userPet.exp);
-        messagePayload.t += `${Position[pet.position - 1]}: `;
+    team.members.forEach((member) => {
+        const currentLevel = getPetLevelFromExp(member.userPet.exp);
+        messagePayload.t += `${Position[member.position - 1]}: `;
         messagePayload.t += `Lv. ${currentLevel} - `;
         messagePayload.ej?.push({
-            emojiid: pet.userPet.pet.mezon_emoji_id,
+            emojiid: member.userPet.pet.mezon_emoji_id,
             s: messagePayload.t?.length || 0,
             e: messagePayload.t?.length || 0 + 1
         });
-        messagePayload.t += ` ${pet.userPet.nickname || pet.userPet.pet.name}\n`;
+        messagePayload.t += ` ${member.userPet.nickname || member.userPet.pet.name}\n`;
     });
 
     return messagePayload;
@@ -269,7 +268,7 @@ export const getMyDexMessage = (
     if (statistic) {
         messageContent.push(
             { name: '🏷️ Nickname', value: userPet.nickname || userPet.pet.name, inline: true },
-            { name: '🎖️ Level', value: currentLevel.toString() || '0', inline: true },
+            { name: '📊 Level', value: currentLevel.toString() || '0', inline: true },
             {
                 name: '✨ Exp',
                 value: `${userPet.exp.toString() || '0'}/${expToPetLevel(currentLevel + 1 || 0)}`,
