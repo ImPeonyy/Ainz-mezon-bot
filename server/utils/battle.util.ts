@@ -1,5 +1,6 @@
 import { BATTLE, IBPet } from '@/constants';
 import { EEffect, ERarity, EScalingType, EStat, ETargetPosition, Prisma } from '@prisma/client';
+import { getAdditionalStats, getPetLevelFromExp } from '@/utils';
 
 export const manaAfterDealDamage = (hpBefore: number, hpAfter: number) => {
     const lostHpPercent = (hpBefore - hpAfter) / hpBefore;
@@ -217,17 +218,18 @@ export const processTeam = (
 
     for (const [index, member] of team.entries()) {
         if (member.userPet.pet.autoAttack && member.userPet.pet.activeSkill) {
+            const currentLevel = getPetLevelFromExp(member.userPet.exp);
             processedTeam.push({
                 id: member.userPet.id,
                 position: index * 2 + teamOrder,
                 isAlive: true,
                 info: {
                     petName: member.userPet.pet.name,
-                    nickname: member.userPet.nickname || member.userPet.pet.name,
+                    nickname: member.userPet.nickname,
                     mezon_emoji_id: member.userPet.pet.mezon_emoji_id,
                     avatar: member.userPet.pet.avatar || '',
                     rarity: member.userPet.pet.rarity.type as ERarity,
-                    level: member.userPet.level,
+                    level: currentLevel,
                     exp: member.userPet.exp,
                     autoAttack: {
                         damage: member.userPet.pet.autoAttack.damage,
@@ -263,20 +265,20 @@ export const processTeam = (
                         mr: member.userPet.pet.statistic.mr_per_level
                     },
                     originalStats: {
-                        hp: member.userPet.pet.statistic.hp + member.userPet.additional_hp,
-                        mana: member.userPet.pet.statistic.mana + member.userPet.additional_mana,
-                        ad: member.userPet.pet.statistic.ad + member.userPet.additional_ad,
-                        ap: member.userPet.pet.statistic.ap + member.userPet.additional_ap,
-                        ar: member.userPet.pet.statistic.ar + member.userPet.additional_ar,
-                        mr: member.userPet.pet.statistic.mr + member.userPet.additional_mr
+                        hp: member.userPet.pet.statistic.hp + getAdditionalStats(member.userPet.pet.statistic.hp_per_level, currentLevel),
+                        mana: member.userPet.pet.statistic.mana,    
+                        ad: member.userPet.pet.statistic.ad + getAdditionalStats(member.userPet.pet.statistic.ad_per_level, currentLevel),
+                        ap: member.userPet.pet.statistic.ap + getAdditionalStats(member.userPet.pet.statistic.ap_per_level, currentLevel),
+                        ar: member.userPet.pet.statistic.ar + getAdditionalStats(member.userPet.pet.statistic.ar_per_level, currentLevel),
+                        mr: member.userPet.pet.statistic.mr + getAdditionalStats(member.userPet.pet.statistic.mr_per_level, currentLevel)
                     },
                     currentStats: {
-                        hp: member.userPet.pet.statistic.hp + member.userPet.additional_hp,
-                        mana: member.userPet.pet.statistic.mana + member.userPet.additional_mana,
-                        ad: member.userPet.pet.statistic.ad + member.userPet.additional_ad,
-                        ap: member.userPet.pet.statistic.ap + member.userPet.additional_ap,
-                        ar: member.userPet.pet.statistic.ar + member.userPet.additional_ar,
-                        mr: member.userPet.pet.statistic.mr + member.userPet.additional_mr
+                        hp: member.userPet.pet.statistic.hp + getAdditionalStats(member.userPet.pet.statistic.hp_per_level, currentLevel),
+                        mana: member.userPet.pet.statistic.mana,
+                        ad: member.userPet.pet.statistic.ad + getAdditionalStats(member.userPet.pet.statistic.ad_per_level, currentLevel),
+                        ap: member.userPet.pet.statistic.ap + getAdditionalStats(member.userPet.pet.statistic.ap_per_level, currentLevel),
+                        ar: member.userPet.pet.statistic.ar + getAdditionalStats(member.userPet.pet.statistic.ar_per_level, currentLevel),
+                        mr: member.userPet.pet.statistic.mr + getAdditionalStats(member.userPet.pet.statistic.mr_per_level, currentLevel)
                     }
                 },
                 effects: []

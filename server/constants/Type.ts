@@ -1,4 +1,4 @@
-import { EEffect, EEffectTarget, ERarity, EStat, EScalingType, ETargetPosition } from '@prisma/client';
+import { EEffect, EEffectTarget, ERarity, EStat, EScalingType, ETargetPosition, User } from '@prisma/client';
 
 export interface IMeme {
     postLink: string;
@@ -91,5 +91,25 @@ export interface IBattle {
         2: IBPet;
         4: IBPet;
         6: IBPet;
+    };
+}
+
+export interface IMyLeaderBoard {
+    user: User;
+    level:{
+        rank: number;
+        value: number;
+    }
+    cp: {
+        rank: number;
+        value: number;
+    };
+    wins: {
+        rank: number;
+        value: number;
+    };
+    losses: {
+        rank: number;
+        value: number;
     };
 }

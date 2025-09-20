@@ -16,6 +16,7 @@ import {
 
 import { battleController } from './batlle.controller';
 import { dailyController } from './userDailyActivity.controller';
+import { leaderBoardController } from './leaderBoard.controller';
 
 export {
     getActionController,
@@ -35,5 +36,6 @@ export {
     renamePetController,
     myDexController,
     getBagController,
-    getHelpController
+    getHelpController,
+    leaderBoardController
 };

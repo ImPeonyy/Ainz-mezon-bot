@@ -3,7 +3,7 @@ import { embedMessage, getRandomPastelHexColor } from '@/utils';
 export const getHelpMessage = () => {
     return embedMessage({
         title: 'Here is the Ainz Mezon Bot guide help message',
-        description: '\`TRIGGER: *ainz [action] [target(optional)].\`',
+        description: '\`TRIGGER: *ainz [action] [target(optional)].\`\nNOTE: Daily Activity is reset at midnight.\nDaily: 1 time.\nHunt: 1 time (next hunt is 300 Z Coin).\nBattle: 10 times.',
         fields: [
             {
                 name: '❓ For Fun Help',
@@ -12,17 +12,17 @@ export const getHelpMessage = () => {
             },
             {
                 name: '🪪 User',
-                value: 'init | info | update | daily',
+                value: 'init | info | update [username] | daily',
                 inline: false
             },
             {
                 name: '🐾 Pets',
-                value: 'hunt | dex | mydex | rename | bag | bag "Rarity"',
+                value: 'hunt | dex [pet name] | mydex [pet name] | rename [pet name] > [nickname] | bag | bag [Rarity]',
                 inline: false
             },
             {
                 name: '👥 Team',
-                value: 'team info | team create | team update | team add | team swap',
+                value: 'team info | team update [team name] | team add [position] [pet name] | team swap [position1] [position2]',
                 inline: false
             },
             {
