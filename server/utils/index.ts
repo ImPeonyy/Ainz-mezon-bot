@@ -23,11 +23,11 @@ import {
     parseActionCommand,
     parseActionCommandTeam,
     parseRenameCommand,
-    petLevelUp,
-    userLevelUp,
+    getPetLevelFromExp,
+    getUserLevelFromExp,
     getRandomPastelHexColor,
-    formatSecondsToMinutes
-
+    formatSecondsToMinutes,
+    getAdditionalStats
 } from './misc.util';
 import {
     getAttackPosition,
@@ -82,9 +82,9 @@ export {
     processTeam,
     processTurn,
     expToUserLevel,
-    userLevelUp,
     expToPetLevel,
-    petLevelUp,
+    getUserLevelFromExp,
+    getPetLevelFromExp,
     getBattleMessage,
     createBattleImage,
     createProfileCard,
@@ -96,5 +96,6 @@ export {
     getRandomInt,
     isValidPosition,
     getRandomPastelHexColor,
-    formatSecondsToMinutes
+    formatSecondsToMinutes,
+    getAdditionalStats
 };

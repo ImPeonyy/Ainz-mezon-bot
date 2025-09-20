@@ -32,6 +32,7 @@ import { getActionGif, getMeme } from '@/services/misc.service';
 import { getPet, getPetDetail, getPets, getPetsByRarity } from '@/services/pet.service';
 
 import { getRarities } from '@/services/rarity.service';
+import { createLeaderBoard } from '@/services/leaderBoard.service';
 
 export {
     getActionGif,
@@ -67,5 +68,6 @@ export {
     getUserPetByName,
     getRandomUserPets,
     getPet,
-    getPetsByRarity
+    getPetsByRarity,
+    createLeaderBoard
 };

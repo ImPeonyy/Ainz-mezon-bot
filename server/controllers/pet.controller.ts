@@ -59,7 +59,7 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                     });
 
                     for (const pet of yourPets) {
-                        await upsertUserPetCount(tx, user.id, pet.id);
+                        await upsertUserPetCount(tx, user.id, pet);
                     }
                 });
 
@@ -101,7 +101,7 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                         );
 
                         for (const pet of yourPets) {
-                            await upsertUserPetCount(tx, user.id, pet.id);
+                            await upsertUserPetCount(tx, user.id, pet);
                         }
                     });
 
@@ -135,7 +135,7 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                         );
 
                         for (const pet of yourPets) {
-                            await upsertUserPetCount(tx, user.id, pet.id);
+                            await upsertUserPetCount(tx, user.id, pet);
                         }
                     });
 

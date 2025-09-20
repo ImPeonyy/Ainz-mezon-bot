@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Pet, Prisma, PrismaClient } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 
@@ -65,7 +65,7 @@ export const createUserPets = async (
 export const upsertUserPetCount = async (
     prismaClient: PrismaClient | Prisma.TransactionClient,
     user_id: string,
-    pet_id: number
+    pet: Pet
 ) => {
     try {
         // Sử dụng upsert để kiểm tra và cập nhật count
@@ -73,7 +73,7 @@ export const upsertUserPetCount = async (
             where: {
                 user_id_pet_id: {
                     user_id: user_id,
-                    pet_id: pet_id
+                    pet_id: pet.id
                 }
             },
             update: {
@@ -83,7 +83,8 @@ export const upsertUserPetCount = async (
             },
             create: {
                 user_id: user_id,
-                pet_id: pet_id,
+                pet_id: pet.id,
+                nickname: pet.name,
                 count: 1
             }
         });

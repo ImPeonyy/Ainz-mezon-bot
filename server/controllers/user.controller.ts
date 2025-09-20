@@ -1,5 +1,5 @@
-import { createProfileCard, expToUserLevel, textMessage } from '@/utils';
-import { createTeam, createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
+import { createProfileCard, expToUserLevel, getUserLevelFromExp, textMessage } from '@/utils';
+import { createLeaderBoard, createTeam, createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
 
 import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
@@ -12,12 +12,14 @@ export const getUserController = async (existingUser: User, message: Message, ch
         const messageReply = await message.reply(textMessage('Retrieving user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
+        const currentLevel = getUserLevelFromExp(existingUser?.exp || 0);
+
         const imageBuffer = await createProfileCard({
             username: existingUser?.username || '',
-            level: existingUser?.level || 0,
+            level: currentLevel,
             z_coin: existingUser?.z_coin || 0,
             currentXP: existingUser?.exp || 0,
-            nextLevelXP: expToUserLevel(existingUser.level + 1) || 0,
+            nextLevelXP: expToUserLevel(currentLevel + 1),
             avatar: existingUser?.avatar || ''
         });
 
@@ -66,14 +68,17 @@ export const createUserController = async (
         }
 
         const user = await createUser(prisma, { username: display_name, id: mezon_id, avatar });
-        await createTeam(username, mezon_id);
+        await createTeam(username, user.id);
+        await createLeaderBoard(user.id);
+
+        const currentLevel = getUserLevelFromExp(user?.exp || 0);
 
         const imageBuffer = await createProfileCard({
             username: user?.username || '',
-            level: user?.level || 0,
+            level: currentLevel,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: expToUserLevel(user.level + 1) || 0,
+            nextLevelXP: expToUserLevel(currentLevel + 1),
             avatar: user?.avatar || AINZ_DEFAULT_AVATAR
         });
 
@@ -106,27 +111,37 @@ export const updateUserController = async (
     existingUser: User,
     avatar: string,
     message: Message,
-    channel: any
+    channel: any,
+    targetRaw?: string | null
 ) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Updating user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
+        let usernameUpdate;
+        if (targetRaw) {
+            usernameUpdate = targetRaw;
+        } else {
+            usernameUpdate = username;
+        }
+
         const user = await updateUser(
             prisma,
             {
                 id: existingUser?.id
             },
-            { username, avatar }
+            { username: usernameUpdate, avatar }
         );
+
+        const currentLevel = getUserLevelFromExp(user?.exp || 0);
 
         const imageBuffer = await createProfileCard({
             username: user?.username || '',
-            level: user?.level || 0,
+            level: currentLevel,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: expToUserLevel(user.level + 1) || 0,
+            nextLevelXP: expToUserLevel(currentLevel + 1),
             avatar: user?.avatar || ''
         });
 

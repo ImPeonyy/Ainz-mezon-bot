@@ -27,6 +27,9 @@ export const USE_DAILY_ACTIVITY = {
             3: 'Hunt with Z-Coin',
             4: "Can't hunt"
         }
+    },
+    BATTLE: {
+        BATTLE_PER_DAY: 10
     }
 };
 

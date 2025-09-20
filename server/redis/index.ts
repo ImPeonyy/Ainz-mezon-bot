@@ -1,3 +1,19 @@
-import { logRedisWithExpire, getLogsByUser, hasActiveLog } from './redis.service';
+import {
+    logBattleWithExpire,
+    getBattlesLogByUser,
+    hasActiveBattleLog,
+    logChallengeWithExpire,
+    getChallengesLogByUser,
+    hasActiveChallengeLog,
+    removeChallengeLog
+} from './redis.service';
 
-export { logRedisWithExpire, getLogsByUser, hasActiveLog };
+export {
+    logBattleWithExpire,
+    getBattlesLogByUser,
+    hasActiveBattleLog,
+    logChallengeWithExpire,
+    getChallengesLogByUser,
+    hasActiveChallengeLog,
+    removeChallengeLog
+};

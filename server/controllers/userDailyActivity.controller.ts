@@ -5,7 +5,7 @@ import {
     updateUser,
     updateUserDailyActivity
 } from '@/services';
-import { getDailyReward, getMidnightRemainingTime, textMessage, userLevelUp } from '@/utils';
+import { getDailyReward, getMidnightRemainingTime, textMessage} from '@/utils';
 
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { prisma } from '@/lib/db';
@@ -35,7 +35,6 @@ export const dailyController = async (mezon_id: string, message: Message, channe
         }
 
         const dailyReward = getDailyReward();
-        const isLevelUp = userLevelUp(user.exp + dailyReward.exp, user.level);
 
         if (todayActivity && todayActivity.daily === 0) {
             await prisma.$transaction(async (tx) => {
@@ -57,7 +56,6 @@ export const dailyController = async (mezon_id: string, message: Message, channe
                     {
                         z_coin: { increment: dailyReward.zCoin },
                         exp: { increment: dailyReward.exp },
-                        level: { increment: isLevelUp ? 1 : 0 }
                     }
                 );
             });
@@ -87,7 +85,6 @@ export const dailyController = async (mezon_id: string, message: Message, channe
                 {
                     z_coin: { increment: dailyReward.zCoin },
                     exp: { increment: dailyReward.exp },
-                    level: { increment: isLevelUp ? 1 : 0 }
                 }
             );
         });

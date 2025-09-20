@@ -1,20 +1,29 @@
-import { CLOUDINARY_BATTLE_FOLDER, IBPet, IBattle, BATTLE, DEFAULT_RENDER_CYCLE } from '@/constants';
+import {
+    CLOUDINARY_BATTLE_FOLDER,
+    IBPet,
+    IBattle,
+    BATTLE,
+    DEFAULT_RENDER_CYCLE,
+    USE_DAILY_ACTIVITY
+} from '@/constants';
 import {
     createBattleImage,
     getBattleMessage,
-    petLevelUp,
+    getPetLevelFromExp,
     processTeam,
     processTurn,
     textMessage,
-    userLevelUp,
     formatSecondsToMinutes
 } from '@/utils';
 import {
+    createUserDailyActivity,
     deleteImagesFromCloudinary,
     getRandomTeamForBattle,
     getTeamForBattle,
+    getTodayUserDailyActivity,
     getUser,
     updateUser,
+    updateUserDailyActivity,
     updateUserPet,
     uploadImageToCloudinary
 } from '@/services';
@@ -22,7 +31,7 @@ import {
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { User } from '@prisma/client';
 import { prisma } from '@/lib/db';
-import { hasActiveLog, logRedisWithExpire } from '@/redis';
+import { hasActiveBattleLog, logBattleWithExpire } from '@/redis';
 
 export const battleController = async (currentUser: User, targetId: string, channel: any, message: Message) => {
     const renderCycle: number = parseInt(process.env.RENDER_CYCLE || DEFAULT_RENDER_CYCLE);
@@ -31,9 +40,23 @@ export const battleController = async (currentUser: User, targetId: string, chan
         const battleMessage = await message.reply(textMessage('🛠️ Setup for battle...'));
         messageFetch = await channel.messages.fetch(battleMessage.message_id);
 
-        const activeLog = await hasActiveLog(currentUser.id);
+        const activeLog = await hasActiveBattleLog(currentUser);
         if (activeLog) {
-            await messageFetch.update(textMessage(`🚨 Your pet is currently resting. Please try again after ${formatSecondsToMinutes(activeLog)}!`));
+            await messageFetch.update(
+                textMessage(
+                    `🚨 Your pet is currently resting. Please try again after ${formatSecondsToMinutes(activeLog)}!`
+                )
+            );
+            return;
+        }
+
+        const todayActivity = await getTodayUserDailyActivity(currentUser.id);
+        if (todayActivity && todayActivity.battle >= USE_DAILY_ACTIVITY.BATTLE.BATTLE_PER_DAY) {
+            await messageFetch.update(
+                textMessage(
+                    `🚨 You’ve reached today’s battle limit (${todayActivity.battle}/${USE_DAILY_ACTIVITY.BATTLE.BATTLE_PER_DAY}). Please try again tomorrow!`
+                )
+            );
             return;
         }
 
@@ -90,10 +113,10 @@ export const battleController = async (currentUser: User, targetId: string, chan
             }
         }
 
-        await logRedisWithExpire(currentUser.id);
+        await logBattleWithExpire(currentUser);
 
         const processedTeamA: IBPet[] = processTeam(currentUserTeam.members, 1);
-        const processedTeamB: IBPet[] = processTeam(targetTeam.members, 2);
+        const processedTeamB: IBPet[] = processTeam(currentUserTeam.members, 2);
 
         let teamATurnQueue: number[] = [1, 3, 5];
         let teamBTurnQueue: number[] = [2, 4, 6];
@@ -102,7 +125,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
         const battle: IBattle = {
             turn: 0,
             teamAName: currentUserTeam.name,
-            teamBName: targetTeam.name,
+            teamBName: currentUserTeam.name,
             teamA: {
                 1: processedTeamA[0],
                 3: processedTeamA[1],
@@ -169,9 +192,30 @@ export const battleController = async (currentUser: User, targetId: string, chan
             } catch (err) {
                 console.error('Error deleting images from Cloudinary:', err);
             }
+            if (todayActivity) {
+                await updateUserDailyActivity(
+                    prisma,
+                    {
+                        id: todayActivity.id
+                    },
+                    {
+                        battle: {
+                            increment: 1
+                        }
+                    }
+                );
+            } else {
+                await createUserDailyActivity(prisma, {
+                    user: {
+                        connect: {
+                            id: currentUser.id
+                        }
+                    },
+                    battle: 1
+                });
+            }
             if (result.winner === 'Team A') {
                 try {
-                    const isLevelUp = userLevelUp(currentUser.exp + BATTLE.USER.WIN_EXP, currentUser.level);
                     await prisma.$transaction(async (tx) => {
                         await updateUser(
                             tx,
@@ -181,29 +225,17 @@ export const battleController = async (currentUser: User, targetId: string, chan
                             {
                                 exp: {
                                     increment: BATTLE.USER.WIN_EXP
-                                },
-                                level: {
-                                    increment: isLevelUp ? 1 : 0
                                 }
                             }
                         );
 
                         await Promise.all(
                             processedTeamA.map((pet) => {
-                                const isLevelUp = petLevelUp(pet.info.exp + BATTLE.PET.WIN_EXP, pet.info.level);
                                 return updateUserPet(
                                     tx,
                                     { id: pet.id },
                                     {
-                                        exp: { increment: BATTLE.PET.WIN_EXP },
-                                        ...(isLevelUp && {
-                                            level: { increment: 1 },
-                                            additional_hp: { increment: pet.stats.statsPerLevel.hp },
-                                            additional_ad: { increment: pet.stats.statsPerLevel.ad },
-                                            additional_ap: { increment: pet.stats.statsPerLevel.ap },
-                                            additional_ar: { increment: pet.stats.statsPerLevel.ar },
-                                            additional_mr: { increment: pet.stats.statsPerLevel.mr }
-                                        })
+                                        exp: { increment: BATTLE.PET.WIN_EXP }
                                     }
                                 );
                             })
@@ -215,7 +247,6 @@ export const battleController = async (currentUser: User, targetId: string, chan
             } else {
                 try {
                     await prisma.$transaction(async (tx) => {
-                        const isLevelUp = userLevelUp(currentUser.exp + BATTLE.USER.LOSE_EXP, currentUser.level);
                         await updateUser(
                             tx,
                             {
@@ -224,29 +255,17 @@ export const battleController = async (currentUser: User, targetId: string, chan
                             {
                                 exp: {
                                     increment: BATTLE.USER.LOSE_EXP
-                                },
-                                level: {
-                                    increment: isLevelUp ? 1 : 0
                                 }
                             }
                         );
 
                         await Promise.all(
                             processedTeamA.map((pet) => {
-                                const isLevelUp = petLevelUp(pet.info.exp + BATTLE.PET.LOSE_EXP, pet.info.level);
                                 return updateUserPet(
                                     tx,
                                     { id: pet.id },
                                     {
-                                        exp: { increment: BATTLE.PET.LOSE_EXP },
-                                        ...(isLevelUp && {
-                                            level: { increment: 1 },
-                                            additional_hp: { increment: pet.stats.statsPerLevel.hp },
-                                            additional_ad: { increment: pet.stats.statsPerLevel.ad },
-                                            additional_ap: { increment: pet.stats.statsPerLevel.ap },
-                                            additional_ar: { increment: pet.stats.statsPerLevel.ar },
-                                            additional_mr: { increment: pet.stats.statsPerLevel.mr }
-                                        })
+                                        exp: { increment: BATTLE.PET.LOSE_EXP }
                                     }
                                 );
                             })
