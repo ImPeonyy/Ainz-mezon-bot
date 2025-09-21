@@ -27,6 +27,7 @@ CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "z_coin" INTEGER NOT NULL DEFAULT 0,
+    "mezon_token" INTEGER NOT NULL DEFAULT 0,
     "exp" INTEGER NOT NULL DEFAULT 0,
     "avatar" TEXT NOT NULL DEFAULT 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1757571181/download_ygjzey.jpg',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
