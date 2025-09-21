@@ -1,6 +1,5 @@
 import {
     addPetToTeamController,
-    createTeamController,
     getTeamController,
     swapPetInTeamController,
     updateTeamController
@@ -17,6 +16,7 @@ import {
 
 import { battleController } from './batlle.controller';
 import { dailyController } from './userDailyActivity.controller';
+import { leaderBoardController } from './leaderBoard.controller';
 
 export {
     getActionController,
@@ -30,12 +30,12 @@ export {
     dailyController,
     battleController,
     getTeamController,
-    createTeamController,
     updateTeamController,
     addPetToTeamController,
     swapPetInTeamController,
     renamePetController,
     myDexController,
     getBagController,
-    getHelpController
+    getHelpController,
+    leaderBoardController
 };

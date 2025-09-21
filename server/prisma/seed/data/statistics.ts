@@ -3,6 +3,7 @@ import { EElemental, EPetRole, ERarity, EScalingType, PrismaClient } from '@pris
 const prisma = new PrismaClient();
 
 export type StatisticsSeed = {
+    id: number;
     name: string;
     scaling_type: EScalingType;
     role: EPetRole;
@@ -23,59 +24,52 @@ export type StatisticsSeed = {
 
 export const seedStatistics = async () => {
     for (const statistic of statisticsSeedData) {
-        const existing = await prisma.statistics.findFirst({
-            where: { name: statistic.name }
+        await prisma.statistics.upsert({
+            where: { id: statistic.id },
+            update: {
+                name: statistic.name,
+                scaling_type: statistic.scaling_type,
+                role: statistic.role,
+                element_type: statistic.element_type ?? null,
+                rarity: statistic.rarity,
+                hp: statistic.hp,
+                mana: statistic.mana,
+                ad: statistic.ad,
+                ap: statistic.ap,
+                ar: statistic.ar,
+                mr: statistic.mr,
+                hp_per_level: statistic.hp_per_level,
+                ad_per_level: statistic.ad_per_level,
+                ap_per_level: statistic.ap_per_level,
+                ar_per_level: statistic.ar_per_level,
+                mr_per_level: statistic.mr_per_level
+            },
+            create: {
+                id: statistic.id,
+                name: statistic.name,
+                scaling_type: statistic.scaling_type,
+                role: statistic.role,
+                element_type: statistic.element_type ?? null,
+                rarity: statistic.rarity,
+                hp: statistic.hp,
+                mana: statistic.mana,
+                ad: statistic.ad,
+                ap: statistic.ap,
+                ar: statistic.ar,
+                mr: statistic.mr,
+                hp_per_level: statistic.hp_per_level,
+                ad_per_level: statistic.ad_per_level,
+                ap_per_level: statistic.ap_per_level,
+                ar_per_level: statistic.ar_per_level,
+                mr_per_level: statistic.mr_per_level
+            }
         });
-
-        if (!existing) {
-            await prisma.statistics.create({
-                data: {
-                    name: statistic.name,
-                    scaling_type: statistic.scaling_type,
-                    role: statistic.role,
-                    element_type: statistic.element_type ?? null,
-                    rarity: statistic.rarity,
-                    hp: statistic.hp,
-                    mana: statistic.mana,
-                    ad: statistic.ad,
-                    ap: statistic.ap,
-                    ar: statistic.ar,
-                    mr: statistic.mr,
-                    hp_per_level: statistic.hp_per_level,
-                    ad_per_level: statistic.ad_per_level,
-                    ap_per_level: statistic.ap_per_level,
-                    ar_per_level: statistic.ar_per_level,
-                    mr_per_level: statistic.mr_per_level
-                }
-            });
-        } else {
-            await prisma.statistics.update({
-                where: { id: existing.id },
-                data: {
-                    name: statistic.name,
-                    scaling_type: statistic.scaling_type,
-                    role: statistic.role,
-                    element_type: statistic.element_type ?? null,
-                    rarity: statistic.rarity,
-                    hp: statistic.hp,
-                    mana: statistic.mana,
-                    ad: statistic.ad,
-                    ap: statistic.ap,
-                    ar: statistic.ar,
-                    mr: statistic.mr,
-                    hp_per_level: statistic.hp_per_level,
-                    ad_per_level: statistic.ad_per_level,
-                    ap_per_level: statistic.ap_per_level,
-                    ar_per_level: statistic.ar_per_level,
-                    mr_per_level: statistic.mr_per_level
-                }
-            });
-        }
     }
 };
 
 const statisticsSeedData: StatisticsSeed[] = [
     {
+        id: 1,
         name: 'Common Physical Assassin',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Assassin,
@@ -94,6 +88,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 2,
         name: 'Common Magical Assassin',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Assassin,
@@ -112,6 +107,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 3,
         name: 'Common Physical Warrior',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
@@ -130,6 +126,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 4,
         name: 'Common Magical Warrior',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Warrior,
@@ -148,6 +145,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 5,
         name: 'Common Physical Support',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Support,
@@ -166,6 +164,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 6,
         name: 'Common Magical Support',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Support,
@@ -184,6 +183,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 7,
         name: 'Common Physical Tank',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Tank,
@@ -202,6 +202,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 8,
         name: 'Common Magical Tank',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Tank,
@@ -220,6 +221,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 9,
         name: 'Common Physical Mage',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Mage,
@@ -238,6 +240,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 10,
         name: 'Common Magical Mage',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -256,6 +259,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 11,
         name: 'Uncommon Physical Assassin',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Assassin,
@@ -274,6 +278,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 12,
         name: 'Uncommon Magical Assassin',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Assassin,
@@ -292,6 +297,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 13,
         name: 'Uncommon Physical Warrior',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
@@ -310,6 +316,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 14,
         name: 'Uncommon Magical Warrior',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Warrior,
@@ -328,6 +335,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 15,
         name: 'Uncommon Physical Support',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Support,
@@ -346,6 +354,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 16,
         name: 'Uncommon Magical Support',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Support,
@@ -364,6 +373,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 17,
         name: 'Uncommon Physical Tank',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Tank,
@@ -382,6 +392,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 18,
         name: 'Uncommon Magical Tank',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Tank,
@@ -400,6 +411,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 19,
         name: 'Uncommon Physical Mage',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Mage,
@@ -418,6 +430,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 20,
         name: 'Uncommon Magical Mage',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -436,6 +449,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 21,
         name: 'Rare Physical Assassin',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Assassin,
@@ -454,6 +468,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 22,
         name: 'Rare Magical Assassin',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Assassin,
@@ -472,6 +487,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 23,
         name: 'Rare Physical Warrior',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
@@ -490,6 +506,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 24,
         name: 'Rare Magical Warrior',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Warrior,
@@ -508,6 +525,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 25,
         name: 'Rare Physical Support',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Support,
@@ -526,6 +544,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 26,
         name: 'Rare Magical Support',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Support,
@@ -544,6 +563,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 27,
         name: 'Rare Physical Tank',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Tank,
@@ -562,6 +582,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 28,
         name: 'Rare Magical Tank',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Tank,
@@ -580,6 +601,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 4
     },
     {
+        id: 29,
         name: 'Rare Physical Mage',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Mage,
@@ -598,6 +620,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 30,
         name: 'Rare Magical Mage',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -616,6 +639,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 31,
         name: 'Epic Physical Assassin',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Assassin,
@@ -634,6 +658,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 32,
         name: 'Epic Magical Assassin',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Assassin,
@@ -652,6 +677,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 33,
         name: 'Epic Physical Warrior',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
@@ -670,6 +696,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 34,
         name: 'Epic Magical Warrior',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Warrior,
@@ -688,6 +715,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 35,
         name: 'Epic Physical Support',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Support,
@@ -706,6 +734,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 36,
         name: 'Epic Magical Support',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Support,
@@ -724,6 +753,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 37,
         name: 'Epic Physical Tank',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Tank,
@@ -742,6 +772,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 38,
         name: 'Epic Magical Tank',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Tank,
@@ -760,6 +791,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 5
     },
     {
+        id: 39,
         name: 'Epic Physical Mage',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Mage,
@@ -778,6 +810,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 1
     },
     {
+        id: 40,
         name: 'Epic Magical Mage',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -796,6 +829,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 41,
         name: 'Legendary Physical Assassin',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Assassin,
@@ -814,6 +848,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 42,
         name: 'Legendary Magical Assassin',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Assassin,
@@ -832,6 +867,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 43,
         name: 'Legendary Physical Warrior',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
@@ -850,6 +886,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 44,
         name: 'Legendary Magical Warrior',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Warrior,
@@ -868,6 +905,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 45,
         name: 'Legendary Physical Support',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Support,
@@ -886,6 +924,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 46,
         name: 'Legendary Magical Support',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Support,
@@ -904,6 +943,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 47,
         name: 'Legendary Physical Tank',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Tank,
@@ -922,6 +962,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 4
     },
     {
+        id: 48,
         name: 'Legendary Magical Tank',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Tank,
@@ -940,6 +981,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 7
     },
     {
+        id: 49,
         name: 'Legendary Physical Mage',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Mage,
@@ -958,6 +1000,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 50,
         name: 'Legendary Magical Mage',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -976,6 +1019,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 51,
         name: 'Mythic Physical Assassin',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Assassin,
@@ -994,6 +1038,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 52,
         name: 'Mythic Magical Assassin',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Assassin,
@@ -1012,6 +1057,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 53,
         name: 'Mythic Physical Warrior',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
@@ -1030,6 +1076,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 54,
         name: 'Mythic Magical Warrior',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Warrior,
@@ -1048,6 +1095,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 55,
         name: 'Mythic Physical Support',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Support,
@@ -1066,6 +1114,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 56,
         name: 'Mythic Magical Support',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Support,
@@ -1084,6 +1133,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 57,
         name: 'Mythic Physical Tank',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Tank,
@@ -1102,6 +1152,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 6
     },
     {
+        id: 58,
         name: 'Mythic Magical Tank',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Tank,
@@ -1120,6 +1171,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 8
     },
     {
+        id: 59,
         name: 'Mythic Physical Mage',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Mage,
@@ -1138,6 +1190,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 2
     },
     {
+        id: 60,
         name: 'Mythic Magical Mage',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -1156,6 +1209,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 61,
         name: 'Limited Physical Assassin',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Assassin,
@@ -1174,6 +1228,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 62,
         name: 'Limited Magical Assassin',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Assassin,
@@ -1192,6 +1247,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 63,
         name: 'Limited Physical Warrior',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
@@ -1210,6 +1266,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 64,
         name: 'Limited Magical Warrior',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Warrior,
@@ -1228,6 +1285,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 65,
         name: 'Limited Physical Support',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Support,
@@ -1246,6 +1304,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 66,
         name: 'Limited Magical Support',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Support,
@@ -1264,6 +1323,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 4
     },
     {
+        id: 67,
         name: 'Limited Physical Tank',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Tank,
@@ -1282,6 +1342,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 7
     },
     {
+        id: 68,
         name: 'Limited Magical Tank',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Tank,
@@ -1300,6 +1361,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 11
     },
     {
+        id: 69,
         name: 'Limited Physical Mage',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Mage,
@@ -1318,6 +1380,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 70,
         name: 'Limited Magical Mage',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -1336,6 +1399,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 71,
         name: 'Limited Magical Mage (Azure Dragon)',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -1354,6 +1418,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 4
     },
     {
+        id: 72,
         name: 'Limited Physical Warrior (White Tiger)',
         scaling_type: EScalingType.Physical,
         role: EPetRole.Warrior,
@@ -1372,6 +1437,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 73,
         name: 'Limited Magical Mage (Vermilion Bird)',
         scaling_type: EScalingType.Magical,
         role: EPetRole.Mage,
@@ -1390,6 +1456,7 @@ const statisticsSeedData: StatisticsSeed[] = [
         mr_per_level: 3
     },
     {
+        id: 74,
         name: 'Limited Hybrid Tank (Black Tortoise Snake)',
         scaling_type: EScalingType.Hybrid,
         role: EPetRole.Tank,

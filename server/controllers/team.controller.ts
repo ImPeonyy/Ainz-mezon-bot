@@ -1,15 +1,16 @@
+import { MAX_TEAM_NAME_LENGTH } from '@/constants';
 import {
     addPetToTeam,
-    createTeam,
     getPet,
     getTeam,
-    getTeamByName,
+    getTeamForCalcCP,
     getUserPetByPetName,
     updatePetPosition,
+    updateTeamCombatPower,
     updateTeamMember,
     updateTeamName
 } from '@/services';
-import { isValidPosition, teamInfoMessage, textMessage } from '@/utils';
+import { calculateTeamCP, isValidPosition, teamInfoMessage, textMessage } from '@/utils';
 
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 
@@ -32,61 +33,15 @@ export const getTeamController = async (userId: string, message: Message, channe
         if (!existingTeam.members.length) {
             await messageFetch.update(
                 textMessage(
-                    `🚨 Your team "${existingTeam.name}" is empty. \nPlz add some pets to your team! \n→ Usage: *ainz team add [pos] [pet name]`
+                    `🚨 Your team "${existingTeam.name}" is empty. \nPlz add some pets to your team! \n→ Usage: *ainz team add [position] [pet name]`
                 )
             );
             return;
         }
 
-        await messageFetch.update(teamInfoMessage(existingTeam.members, existingTeam.name));
+        await messageFetch.update(teamInfoMessage(existingTeam));
     } catch (error: any) {
         console.error('Error getting team:', error);
-        if (messageFetch) {
-            await messageFetch.update(textMessage('❌ Internal server error'));
-        } else {
-            await message.reply(textMessage('❌ Internal server error'));
-        }
-        return;
-    }
-};
-
-export const createTeamController = async (teamName: string, userId: string, message: Message, channel: any) => {
-    let messageFetch: any;
-    try {
-        const messageReply = await message.reply(textMessage('🔍 Creating your team...'));
-        messageFetch = await channel.messages.fetch(messageReply.message_id);
-
-        if (!teamName) {
-            await messageFetch.update(
-                textMessage('❓ Plz provide a team name! \n→ Usage: *ainz team create [team name]')
-            );
-            return;
-        }
-
-        const existingTeam = await getTeam(userId);
-        if (existingTeam) {
-            await messageFetch.update(textMessage('🚨 You already have a team! \nPlz use another name!'));
-            return;
-        }
-
-        const duplicateTeam = await getTeamByName(teamName);
-        if (duplicateTeam) {
-            await messageFetch.update(
-                textMessage(
-                    `🚨 Team name "${teamName}" is already taken. \nPlz choose a different name! \n→ Usage: *ainz team create [team name]`
-                )
-            );
-            return;
-        }
-
-        const team = await createTeam(teamName, userId);
-        await messageFetch.update(
-            textMessage(
-                `✅ Your team "${team.name}" has been created successfully. \nPlz add pets to start fighting! \n→ Usage: *ainz team add [pos] [pet name]`
-            )
-        );
-    } catch (error: any) {
-        console.error('Error creating team:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {
@@ -109,6 +64,13 @@ export const updateTeamController = async (teamName: string, userId: string, mes
             return;
         }
 
+        if (teamName.length > MAX_TEAM_NAME_LENGTH) {
+            await messageFetch.update(
+                textMessage(`❌ Team name is too long! Maximum ${MAX_TEAM_NAME_LENGTH} characters allowed.`)
+            );
+            return;
+        }
+
         const existingTeam = await getTeam(userId);
         if (!existingTeam) {
             await messageFetch.update(
@@ -122,7 +84,7 @@ export const updateTeamController = async (teamName: string, userId: string, mes
         const team = await updateTeamName(teamName, userId);
         await messageFetch.update(
             textMessage(
-                `✅ Your team "${team.name}" has been updated successfully! \nPlz add pets to start fighting! \n→ Usage: *ainz team add [pos] [pet name]`
+                `✅ Your team "${team.name}" has been updated successfully]`
             )
         );
     } catch (error) {
@@ -150,21 +112,21 @@ export const addPetToTeamController = async (
 
         if (!pos) {
             await messageFetch.update(
-                textMessage('❓ Plz provide a position! \n→ Usage: *ainz team add [pos] [pet name]')
+                textMessage('❓ Plz provide a position! \n→ Usage: *ainz team add [position] [pet name]')
             );
             return;
         }
 
         if (!petName) {
             await messageFetch.update(
-                textMessage('❓ Plz provide a pet name! \n→ Usage: *ainz team add [pos] [pet name]')
+                textMessage('❓ Plz provide a pet name! \n→ Usage: *ainz team add [position] [pet name]')
             );
             return;
         }
 
         if (!isValidPosition(pos)) {
             await messageFetch.update(
-                textMessage('🚨 Position must be 1, 2 or 3! \n→ Usage: *ainz team add [pos] [pet name]')
+                textMessage('🚨 Position must be 1, 2 or 3! \n→ Usage: *ainz team add [position] [pet name]')
             );
             return;
         }
@@ -185,21 +147,21 @@ export const addPetToTeamController = async (
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
 
-        const pet = await getPet(petName);
-        if (!pet) {
-            await messageFetch.update(
-                textMessage(
-                    `🚨 Pet "${capitalizedPetName}" is not found! \nPlz choose another pet! \n→ Usage: *ainz team add [pos] [pet name]`
-                )
-            );
-            return;
-        }
+        // const pet = await getPet(petName);
+        // if (!pet) {
+        //     await messageFetch.update(
+        //         textMessage(
+        //             `🚨 Pet "${capitalizedPetName}" is not found! \nPlz choose another pet! \n→ Usage: *ainz team add [position] [pet name]`
+        //         )
+        //     );
+        //     return;
+        // }
 
         const userPet = await getUserPetByPetName(userId, petName);
         if (!userPet) {
             await messageFetch.update(
                 textMessage(
-                    `🚨 You don't own a pet "${capitalizedPetName}"! \nPlz add this pet to your bag first! \n→ Usage: *ainz hunt to catch more pets"`
+                    `🚨 Invalid pet name or nickname! \nPlz check your pet name or nickname!`
                 )
             );
             return;
@@ -226,6 +188,10 @@ export const addPetToTeamController = async (
 
         await addPetToTeam(existingTeam.id, userPet.id, pos);
         await messageFetch.update(textMessage(`✅ Successfully added pet "${capitalizedPetName}" to your team!`));
+        const currentTeam = await getTeamForCalcCP(userId);
+        if (currentTeam) {
+            await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
+        }
     } catch (error) {
         console.error('Error adding pet to team:', error);
         if (messageFetch) {
@@ -296,7 +262,7 @@ export const swapPetInTeamController = async (
             await updatePetPosition(pet1.id, pos2);
             await messageFetch.update(
                 textMessage(
-                    `🔄 Successfully moved pet from position ${pos1} to position ${pos2}! \nPlz add pets to start fighting! \n→ Usage: *ainz team add [pos] [pet name]`
+                    `✅ Successfully moved pet from position ${pos1} to position ${pos2}!`
                 )
             );
             return;
@@ -309,7 +275,7 @@ export const swapPetInTeamController = async (
 
         await messageFetch.update(
             textMessage(
-                `🔄 Successfully swapped pets between position ${pos1} and position ${pos2}! \nPlz add pets to start fighting! \n→ Usage: *ainz team add [pos] [pet name]`
+                `✅ Successfully swapped pets between position ${pos1} and position ${pos2}!`
             )
         );
     } catch (error) {

@@ -82,15 +82,16 @@ model User {
   id              String                 @id
   username        String                 @unique
   z_coin          Int                    @default(0)
+  mezon_token     Int                    @default(0)
   exp             Int                    @default(0)
-  level           Int                    @default(0)
-  avatar          String                 @default("https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/spider-gwen-DLOjzOblyRzNGEngmQMOdf9VCWni6V.jpeg")
+  avatar          String                 @default("https://res.cloudinary.com/do2rk0jz8/image/upload/v1757571181/download_ygjzey.jpg")
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
   dailyActivities UserDailyActivities[]
   userPets        UserPet[]
-  teams           Team[]
+  team            Team?
+  leaderBoard     LeaderBoard?
 }
 
 model UserDailyActivities {
@@ -98,6 +99,7 @@ model UserDailyActivities {
   user_id         String
   daily           Int                    @default(0)
   hunt            Int                    @default(0)
+  battle          Int                    @default(0)
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
 
@@ -108,7 +110,7 @@ model Rarity {
   id              Int                    @id @default(autoincrement())
   name            String                 @unique
   mezon_emoji_id  String                 @unique
-  type            ERarity?
+  type            ERarity
   catch_rate      Float
   created_at      DateTime               @default(now())
   updated_at      DateTime               @default(now())          @updatedAt         
@@ -220,7 +222,7 @@ model Pet {
   id              Int                    @id @default(autoincrement())
   name            String                 @unique
   mezon_emoji_id  String                 @unique
-  avatar          String?                
+  avatar          String                
   description     String?
   statistic_id    Int
   rarity_id       Int
@@ -239,15 +241,8 @@ model UserPet {
   id              Int                    @id @default(autoincrement())
   user_id         String
   pet_id          Int
-  nickname        String?
-  level           Int                    @default(0)
+  nickname        String
   exp             Int                    @default(0)
-  additional_hp   Int                    @default(0)
-  additional_mana Int                    @default(0)
-  additional_ad   Int                    @default(0)
-  additional_ap   Int                    @default(0)
-  additional_ar   Int                    @default(0)
-  additional_mr   Int                    @default(0)
   count           Int                    @default(1)
   lock            Boolean                @default(false)
   created_at      DateTime               @default(now())
@@ -258,6 +253,7 @@ model UserPet {
   teamMembers     TeamMember[]
 
   @@unique([user_id, pet_id])
+  @@unique([user_id, nickname])
 }
 
 model Team {
@@ -270,9 +266,6 @@ model Team {
 
   user            User                   @relation(fields: [user_id], references: [id])
   members         TeamMember[]
-  battlesA        Battle[]               @relation("TeamA")
-  battlesB        Battle[]               @relation("TeamB")
-  wins            Battle[]               @relation("WinningTeam")
 }
 
 model TeamMember {
@@ -289,17 +282,15 @@ model TeamMember {
   @@unique([team_id, position])
 }
 
-model Battle {
+model LeaderBoard {
   id              Int                    @id @default(autoincrement())
-  team_a_id       Int
-  team_b_id       Int
-  winner_team_id  Int
-  started_at      DateTime               @default(now())
-  ended_at        DateTime?
+  userId          String                 @unique
+  wins            Int                    @default(0)
+  losses          Int                    @default(0)
+  combat_power    Int                    @default(0)
+  level           Int                    @default(0)
   created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())         @updatedAt         
+  updated_at      DateTime               @default(now())         @updatedAt
 
-  teamA           Team                   @relation("TeamA", fields: [team_a_id], references: [id])
-  teamB           Team                   @relation("TeamB", fields: [team_b_id], references: [id])
-  winner          Team                   @relation("WinningTeam", fields: [winner_team_id], references: [id])
+  user            User                   @relation(fields: [userId], references: [id])
 }

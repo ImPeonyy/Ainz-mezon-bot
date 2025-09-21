@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Pet, Prisma, PrismaClient } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 
@@ -65,15 +65,14 @@ export const createUserPets = async (
 export const upsertUserPetCount = async (
     prismaClient: PrismaClient | Prisma.TransactionClient,
     user_id: string,
-    pet_id: number
+    pet: Pet
 ) => {
     try {
-        // Sử dụng upsert để kiểm tra và cập nhật count
         return await prismaClient.userPet.upsert({
             where: {
                 user_id_pet_id: {
                     user_id: user_id,
-                    pet_id: pet_id
+                    pet_id: pet.id
                 }
             },
             update: {
@@ -83,7 +82,8 @@ export const upsertUserPetCount = async (
             },
             create: {
                 user_id: user_id,
-                pet_id: pet_id,
+                pet_id: pet.id,
+                nickname: pet.name,
                 count: 1
             }
         });
@@ -171,17 +171,27 @@ export const updateUserPet = async (
     }
 };
 
-export const getUserPetDetail = async (petName: string, userId: string) => {
+export const getUserPetDetail = async (name: string, userId: string) => {
     try {
         return prisma.userPet.findFirst({
             where: {
                 user_id: userId,
-                pet: {
-                    name: {
-                        equals: petName,
-                        mode: 'insensitive'
+                OR: [
+                    {
+                        nickname: {
+                            equals: name,
+                            mode: 'insensitive'
+                        }
+                    },
+                    {
+                        pet: {
+                            name: {
+                                equals: name,
+                                mode: 'insensitive'
+                            }
+                        }
                     }
-                }
+                ]
             },
             include: {
                 user: true,
@@ -202,17 +212,27 @@ export const getUserPetDetail = async (petName: string, userId: string) => {
     }
 };
 
-export const getUserPetByPetName = async (userId: string, petName: string) => {
+export const getUserPetByPetName = async (userId: string, name: string) => {
     try {
         return await prisma.userPet.findFirst({
             where: {
                 user_id: userId,
-                pet: {
-                    name: {
-                        equals: petName,
-                        mode: 'insensitive'
+                OR: [
+                    {
+                        nickname: {
+                            equals: name,
+                            mode: 'insensitive'
+                        }
+                    },
+                    {
+                        pet: {
+                            name: {
+                                equals: name,
+                                mode: 'insensitive'
+                            }
+                        }
                     }
-                }
+                ]
             }
         });
     } catch (error) {

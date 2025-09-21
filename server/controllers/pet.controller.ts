@@ -47,21 +47,26 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
 
         if (!todayActivity) {
             try {
-                await prisma.$transaction(async (tx) => {
-                    await createUserDailyActivity(tx, {
-                        user: {
-                            connect: {
-                                id: user.id
-                            }
-                        },
-                        daily: 0,
-                        hunt: 1
-                    });
+                await prisma.$transaction(
+                    async (tx) => {
+                        await createUserDailyActivity(tx, {
+                            user: {
+                                connect: {
+                                    id: user.id
+                                }
+                            },
+                            daily: 0,
+                            hunt: 1
+                        });
 
-                    for (const pet of yourPets) {
-                        await upsertUserPetCount(tx, user.id, pet.id);
+                        for (const pet of yourPets) {
+                            await upsertUserPetCount(tx, user.id, pet);
+                        }
+                    },
+                    {
+                        timeout: 10000
                     }
-                });
+                );
 
                 await messageFetch.update(
                     getHuntMessage(
@@ -73,7 +78,11 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                 return;
             } catch (error) {
                 console.error('Error hunting pet:', error);
-                await messageFetch.update(textMessage('Error when hunting pet!'));
+                if (messageFetch) {
+                    await messageFetch.update(textMessage('❌ Internal server error'));
+                } else {
+                    await message.reply(textMessage('❌ Internal server error'));
+                }
                 return;
             }
         } else {
@@ -81,29 +90,34 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[4]) {
                 await messageFetch.update(
                     textMessage(
-                        '🚫 You’ve already used today’s free hunt, and you don’t have enough Z Coins to hunt (300 Z Coins per hunt)!\n⏳ Come back and try again tomorrow!'
+                        '🚨 You’ve already used today’s free hunt, and you don’t have enough Z Coins to hunt (300 Z Coins per hunt)!\n⏳ Come back and try again tomorrow!'
                     )
                 );
                 return;
             }
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[2] && todayActivity) {
                 try {
-                    await prisma.$transaction(async (tx) => {
-                        await updateUserDailyActivity(
-                            tx,
-                            {
-                                id: todayActivity.id
-                            },
-                            {
-                                daily: 0,
-                                hunt: 1
-                            }
-                        );
+                    await prisma.$transaction(
+                        async (tx) => {
+                            await updateUserDailyActivity(
+                                tx,
+                                {
+                                    id: todayActivity.id
+                                },
+                                {
+                                    daily: 0,
+                                    hunt: 1
+                                }
+                            );
 
-                        for (const pet of yourPets) {
-                            await upsertUserPetCount(tx, user.id, pet.id);
+                            for (const pet of yourPets) {
+                                await upsertUserPetCount(tx, user.id, pet);
+                            }
+                        },
+                        {
+                            timeout: 10000
                         }
-                    });
+                    );
 
                     await messageFetch.update(
                         getHuntMessage(
@@ -115,29 +129,38 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                     return;
                 } catch (error) {
                     console.error('Error hunting pet:', error);
-                    await messageFetch.update(textMessage('Error when hunting pet!'));
+                    if (messageFetch) {
+                        await messageFetch.update(textMessage('❌ Internal server error'));
+                    } else {
+                        await message.reply(textMessage('❌ Internal server error'));
+                    }
                     return;
                 }
             }
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[3]) {
                 try {
-                    await prisma.$transaction(async (tx) => {
-                        await updateUser(
-                            tx,
-                            {
-                                id: user.id
-                            },
-                            {
-                                z_coin: {
-                                    decrement: USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
+                    await prisma.$transaction(
+                        async (tx) => {
+                            await updateUser(
+                                tx,
+                                {
+                                    id: user.id
+                                },
+                                {
+                                    z_coin: {
+                                        decrement: USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
+                                    }
                                 }
-                            }
-                        );
+                            );
 
-                        for (const pet of yourPets) {
-                            await upsertUserPetCount(tx, user.id, pet.id);
+                            for (const pet of yourPets) {
+                                await upsertUserPetCount(tx, user.id, pet);
+                            }
+                        },
+                        {
+                            timeout: 10000
                         }
-                    });
+                    );
 
                     await messageFetch.update(
                         getHuntMessage(
@@ -149,7 +172,11 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                     return;
                 } catch (error) {
                     console.error('Error hunting pet:', error);
-                    await messageFetch.update(textMessage('Error when hunting pet!'));
+                    if (messageFetch) {
+                        await messageFetch.update(textMessage('❌ Internal server error'));
+                    } else {
+                        await message.reply(textMessage('❌ Internal server error'));
+                    }
                     return;
                 }
             }

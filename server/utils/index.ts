@@ -23,11 +23,12 @@ import {
     parseActionCommand,
     parseActionCommandTeam,
     parseRenameCommand,
-    petLevelUp,
-    userLevelUp,
+    getPetLevelFromExp,
+    getUserLevelFromExp,
     getRandomPastelHexColor,
-    formatSecondsToMinutes
-
+    formatSecondsToMinutes,
+    getAdditionalStats,
+    geLBtNextUpdate
 } from './misc.util';
 import {
     getAttackPosition,
@@ -44,9 +45,10 @@ import {
 import { getDailyReward, getMidnightRemainingTime, getRandomInt } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
+import { getHelpMessage, getForFunHelpMessage } from './help.util';
+import { isValidPosition, calculateTeamCP } from './team.util';
+import { myLeaderBoard, levelLeaderBoard, combatPowerLeaderBoard, winsLeaderBoard, lossesLeaderBoard } from './leaderBoard.util';
 
-import { getHelpMessage } from './help.util';
-import { isValidPosition } from './team.util';
 
 export {
     getActorName,
@@ -71,6 +73,7 @@ export {
     getRarityColor,
     getUrlEmoji,
     getHelpMessage,
+    getForFunHelpMessage,
     manaAfterDealDamage,
     getCurrentManaAfterReceive,
     getAttackPosition,
@@ -81,9 +84,9 @@ export {
     processTeam,
     processTurn,
     expToUserLevel,
-    userLevelUp,
     expToPetLevel,
-    petLevelUp,
+    getUserLevelFromExp,
+    getPetLevelFromExp,
     getBattleMessage,
     createBattleImage,
     createProfileCard,
@@ -95,5 +98,13 @@ export {
     getRandomInt,
     isValidPosition,
     getRandomPastelHexColor,
-    formatSecondsToMinutes
+    formatSecondsToMinutes,
+    getAdditionalStats,
+    myLeaderBoard,
+    levelLeaderBoard,
+    combatPowerLeaderBoard,
+    winsLeaderBoard,
+    lossesLeaderBoard,
+    calculateTeamCP,
+    geLBtNextUpdate
 };
