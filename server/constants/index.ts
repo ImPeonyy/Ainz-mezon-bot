@@ -14,7 +14,8 @@ import {
     DEFAULT_RENDER_CYCLE,
     DEFAULT_TTL,
     RANK,
-    RARITY_CP_MULTIPLIERS
+    RARITY_CP_MULTIPLIERS,
+    UPDATE_LEADERBOARD_CRON_SCHEDULE
 } from './Constant';
 import { EActionType, ERarityColor, ERarityEmoji } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard } from './Type';
@@ -47,5 +48,6 @@ export {
     DEFAULT_RENDER_CYCLE,
     DEFAULT_TTL,
     RANK,
-    RARITY_CP_MULTIPLIERS
+    RARITY_CP_MULTIPLIERS,
+    UPDATE_LEADERBOARD_CRON_SCHEDULE
 };

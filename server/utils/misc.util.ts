@@ -121,4 +121,25 @@ export const formatSecondsToMinutes = (seconds: number) => {
 
 export const getAdditionalStats = (statPerLevel: number, level: number) => {
     return statPerLevel * level;
-}
+};
+
+export const geLBtNextUpdate = (hours: number[], now: Date = new Date()) => {
+    const sorted = [...hours].sort((a, b) => a - b);
+    const cur = now.getHours() + now.getMinutes() / 60;
+
+    const nextHour = sorted.find((h) => h > cur) ?? sorted[0];
+    const next = new Date(now);
+
+    if (nextHour <= cur) next.setDate(next.getDate() + 1);
+    next.setHours(nextHour, 0, 0, 0);
+
+    const diffMs = next.getTime() - now.getTime();
+
+    const totalMinutes = Math.floor(diffMs / 60000);
+
+    const diffHour = Math.floor(totalMinutes / 60);
+    const diffMin = totalMinutes % 60;
+    const msg = `Next update is in ${diffHour} hours and ${diffMin} minutes`;
+
+    return { next, msg };
+};

@@ -120,7 +120,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
         await logBattleWithExpire(currentUser);
 
         const processedTeamA: IBPet[] = processTeam(currentUserTeam.members, 1);
-        const processedTeamB: IBPet[] = processTeam(currentUserTeam.members, 2);
+        const processedTeamB: IBPet[] = processTeam(targetTeam.members, 2);
 
         let teamATurnQueue: number[] = [1, 3, 5];
         let teamBTurnQueue: number[] = [2, 4, 6];
@@ -129,7 +129,9 @@ export const battleController = async (currentUser: User, targetId: string, chan
         const battle: IBattle = {
             turn: 0,
             teamAName: currentUserTeam.name,
-            teamBName: currentUserTeam.name,
+            teamBName: targetTeam.name,
+            teamACP: currentUserTeam.combat_power,
+            teamBCP: targetTeam.combat_power,
             teamA: {
                 1: processedTeamA[0],
                 3: processedTeamA[1],
@@ -146,7 +148,9 @@ export const battleController = async (currentUser: User, targetId: string, chan
             if (battle.turn === 0) {
                 const imageBuffer = await createBattleImage(
                     [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
-                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]]
+                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]],
+                    [battle.teamAName, battle.teamBName],
+                    [battle.teamACP, battle.teamBCP]
                 );
                 const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
                 imageQueue.push(image);
@@ -161,7 +165,9 @@ export const battleController = async (currentUser: User, targetId: string, chan
             if (battle.turn % renderCycle === 0) {
                 const imageBuffer = await createBattleImage(
                     [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
-                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]]
+                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]],
+                    [battle.teamAName, battle.teamBName],
+                    [battle.teamACP, battle.teamBCP]
                 );
                 const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
                 imageQueue.push(image);
@@ -172,7 +178,9 @@ export const battleController = async (currentUser: User, targetId: string, chan
             if (teamATurnQueue.length === 0 || teamBTurnQueue.length === 0) {
                 const imageBuffer = await createBattleImage(
                     [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
-                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]]
+                    [battle.teamB[2], battle.teamB[4], battle.teamB[6]],
+                    [battle.teamAName, battle.teamBName],
+                    [battle.teamACP, battle.teamBCP]
                 );
                 const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
                 imageQueue.push(image);

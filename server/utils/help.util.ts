@@ -16,6 +16,11 @@ export const getHelpMessage = () => {
                 inline: false
             },
             {
+                name: '🏆 Leaderboard',
+                value: 'lb | lb level | lb cp | lb wins | lb losses',
+                inline: false
+            },
+            {
                 name: '🐾 Pets',
                 value: 'hunt | dex [pet name] | mydex [pet name] | rename [pet name] > [nickname] | bag | bag [Rarity]',
                 inline: false
@@ -33,7 +38,7 @@ export const getHelpMessage = () => {
         ],
         color: getRandomPastelHexColor(),
         footer: {
-            text: `👑 Ainz Ooal Gown • ${new Date().toLocaleDateString('vi-VN')}`
+            text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
         }
     });
 };
@@ -71,7 +76,7 @@ export const getForFunHelpMessage = () => {
         ],
         color: getRandomPastelHexColor(),
         footer: {
-            text: `👑 Ainz Ooal Gown • ${new Date().toLocaleDateString('vi-VN')}`
+            text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
         }
     });
 };

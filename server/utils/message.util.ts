@@ -238,7 +238,7 @@ export const getDexMessage = (
             url: getUrlEmoji(pet.mezon_emoji_id)
         },
         footer: {
-            text: `📙 Ainz Mezon Bot • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
+            text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
         }
     });
 };
@@ -297,7 +297,7 @@ export const getMyDexMessage = (
             url: getUrlEmoji(userPet.pet.mezon_emoji_id)
         },
         footer: {
-            text: `📙 Ainz Mezon Bot • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
+            text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
         }
     };
 

@@ -205,7 +205,7 @@ const drawTeamPets = async (
     }
 };
 
-const renderBattleCanvas = async (teamA: IBPet[], teamB: IBPet[], teamAName: string, teamACP: number, teamBName: string, teamBCP: number): Promise<Buffer> => {
+const renderBattleCanvas = async (teamA: IBPet[], teamB: IBPet[], teamName: string[], teamCP: number[]): Promise<Buffer> => {
     const width = BATTLE_CARD_WIDTH;
     const height = BATTLE_CARD_HEIGHT;
 
@@ -219,12 +219,12 @@ const renderBattleCanvas = async (teamA: IBPet[], teamB: IBPet[], teamAName: str
     ctx.fillStyle = '#FFFFFF';
     ctx.font = 'bold 18px Sans';
     ctx.textAlign = 'left';
-    ctx.fillText(`${teamAName}`, 80, 30);
-    ctx.fillText(`CP: ${teamACP.toLocaleString()}`, 80, 55);
+    ctx.fillText(`${teamName[0]}`, 80, 30);
+    ctx.fillText(`CP: ${teamCP[0].toLocaleString()}`, 80, 55);
 
     ctx.textAlign = 'right';
-    ctx.fillText(`${teamBName}`, width - 80, 30);
-    ctx.fillText(`CP: ${teamBCP.toLocaleString()}`, width - 80, 55);
+    ctx.fillText(`${teamName[1]}`, width - 80, 30);
+    ctx.fillText(`CP: ${teamCP[1].toLocaleString()}`, width - 80, 55);
 
     await drawTeamPets(ctx, teamA, 50, false);
     await drawTeamPets(ctx, teamB, 400, true);
@@ -232,9 +232,9 @@ const renderBattleCanvas = async (teamA: IBPet[], teamB: IBPet[], teamAName: str
     return canvas.toBuffer('image/jpeg');
 };
 
-export async function createBattleImage(teamA: IBPet[], teamB: IBPet[], teamAName: string, teamACP: number, teamBName: string, teamBCP: number) {
+export async function createBattleImage(teamA: IBPet[], teamB: IBPet[], teamName: string[], teamCP: number[]) {
     try {
-        const imageBuffer = await renderBattleCanvas(teamA, teamB, teamAName, teamACP, teamBName, teamBCP);
+        const imageBuffer = await renderBattleCanvas(teamA, teamB, teamName, teamCP);
         return imageBuffer;
     } catch (error) {
         console.error('❌ Error when rendering battle canvas:', error);

@@ -27,7 +27,8 @@ import {
     getUserLevelFromExp,
     getRandomPastelHexColor,
     formatSecondsToMinutes,
-    getAdditionalStats
+    getAdditionalStats,
+    geLBtNextUpdate
 } from './misc.util';
 import {
     getAttackPosition,
@@ -104,5 +105,6 @@ export {
     combatPowerLeaderBoard,
     winsLeaderBoard,
     lossesLeaderBoard,
-    calculateTeamCP
+    calculateTeamCP,
+    geLBtNextUpdate
 };

@@ -56,6 +56,7 @@ export const AINZ_THUMBNAIL = 'https://res.cloudinary.com/do2rk0jz8/image/upload
 export const AINZ_DEFAULT_AVATAR = 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1757571181/download_ygjzey.jpg';
 export const DEFAULT_RENDER_CYCLE = '6';
 export const DEFAULT_TTL = 300; // 5 minutes
+export const UPDATE_LEADERBOARD_CRON_SCHEDULE = [8, 12, 17];
 
 export const RANK = {
     1: '🥇',
