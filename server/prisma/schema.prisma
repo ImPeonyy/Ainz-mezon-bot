@@ -82,6 +82,7 @@ model User {
   id              String                 @id
   username        String                 @unique
   z_coin          Int                    @default(0)
+  mezon_token     Int                    @default(0)
   exp             Int                    @default(0)
   avatar          String                 @default("https://res.cloudinary.com/do2rk0jz8/image/upload/v1757571181/download_ygjzey.jpg")
   created_at      DateTime               @default(now())
