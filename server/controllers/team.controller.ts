@@ -1,3 +1,4 @@
+import { MAX_TEAM_NAME_LENGTH } from '@/constants';
 import {
     addPetToTeam,
     getPet,
@@ -32,7 +33,7 @@ export const getTeamController = async (userId: string, message: Message, channe
         if (!existingTeam.members.length) {
             await messageFetch.update(
                 textMessage(
-                    `🚨 Your team "${existingTeam.name}" is empty. \nPlz add some pets to your team! \n→ Usage: *ainz team add [pos] [pet name]`
+                    `🚨 Your team "${existingTeam.name}" is empty. \nPlz add some pets to your team! \n→ Usage: *ainz team add [position] [pet name]`
                 )
             );
             return;
@@ -63,6 +64,13 @@ export const updateTeamController = async (teamName: string, userId: string, mes
             return;
         }
 
+        if (teamName.length > MAX_TEAM_NAME_LENGTH) {
+            await messageFetch.update(
+                textMessage(`❌ Team name is too long! Maximum ${MAX_TEAM_NAME_LENGTH} characters allowed.`)
+            );
+            return;
+        }
+
         const existingTeam = await getTeam(userId);
         if (!existingTeam) {
             await messageFetch.update(
@@ -76,7 +84,7 @@ export const updateTeamController = async (teamName: string, userId: string, mes
         const team = await updateTeamName(teamName, userId);
         await messageFetch.update(
             textMessage(
-                `✅ Your team "${team.name}" has been updated successfully! \nPlz add pets to start fighting! \n→ Usage: *ainz team add [pos] [pet name]`
+                `✅ Your team "${team.name}" has been updated successfully]`
             )
         );
     } catch (error) {
@@ -104,21 +112,21 @@ export const addPetToTeamController = async (
 
         if (!pos) {
             await messageFetch.update(
-                textMessage('❓ Plz provide a position! \n→ Usage: *ainz team add [pos] [pet name]')
+                textMessage('❓ Plz provide a position! \n→ Usage: *ainz team add [position] [pet name]')
             );
             return;
         }
 
         if (!petName) {
             await messageFetch.update(
-                textMessage('❓ Plz provide a pet name! \n→ Usage: *ainz team add [pos] [pet name]')
+                textMessage('❓ Plz provide a pet name! \n→ Usage: *ainz team add [position] [pet name]')
             );
             return;
         }
 
         if (!isValidPosition(pos)) {
             await messageFetch.update(
-                textMessage('🚨 Position must be 1, 2 or 3! \n→ Usage: *ainz team add [pos] [pet name]')
+                textMessage('🚨 Position must be 1, 2 or 3! \n→ Usage: *ainz team add [position] [pet name]')
             );
             return;
         }
@@ -143,7 +151,7 @@ export const addPetToTeamController = async (
         if (!pet) {
             await messageFetch.update(
                 textMessage(
-                    `🚨 Pet "${capitalizedPetName}" is not found! \nPlz choose another pet! \n→ Usage: *ainz team add [pos] [pet name]`
+                    `🚨 Pet "${capitalizedPetName}" is not found! \nPlz choose another pet! \n→ Usage: *ainz team add [position] [pet name]`
                 )
             );
             return;
@@ -254,7 +262,7 @@ export const swapPetInTeamController = async (
             await updatePetPosition(pet1.id, pos2);
             await messageFetch.update(
                 textMessage(
-                    `🔄 Successfully moved pet from position ${pos1} to position ${pos2}! \nPlz add pets to start fighting! \n→ Usage: *ainz team add [pos] [pet name]`
+                    `✅ Successfully moved pet from position ${pos1} to position ${pos2}!`
                 )
             );
             return;
@@ -267,7 +275,7 @@ export const swapPetInTeamController = async (
 
         await messageFetch.update(
             textMessage(
-                `🔄 Successfully swapped pets between position ${pos1} and position ${pos2}! \nPlz add pets to start fighting! \n→ Usage: *ainz team add [pos] [pet name]`
+                `✅ Successfully swapped pets between position ${pos1} and position ${pos2}!`
             )
         );
     } catch (error) {

@@ -1,7 +1,7 @@
 import { createProfileCard, expToUserLevel, getUserLevelFromExp, textMessage } from '@/utils';
-import { createLeaderBoard, createTeam, createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
+import { createLeaderBoard, createTeam, createUser, getTodayUserDailyActivity, getUser, updateUser, uploadImageToCloudinary } from '@/services';
 
-import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER } from '@/constants';
+import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER, MAX_USER_NAME_LENGTH } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
@@ -13,6 +13,7 @@ export const getUserController = async (existingUser: Prisma.UserGetPayload<{ in
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
         const currentLevel = getUserLevelFromExp(existingUser?.exp || 0);
+        const todayActivity = await getTodayUserDailyActivity(existingUser.id);
 
         const imageBuffer = await createProfileCard({
             username: existingUser?.username || '',
@@ -21,7 +22,8 @@ export const getUserController = async (existingUser: Prisma.UserGetPayload<{ in
             currentXP: existingUser?.exp || 0,
             nextLevelXP: expToUserLevel(currentLevel + 1),
             avatar: existingUser?.avatar || '',
-            combat_power: existingUser?.team?.combat_power || 0
+            combat_power: existingUser?.team?.combat_power || 0,
+            dailyActivity: [todayActivity?.daily || 0, todayActivity?.hunt || 0, todayActivity?.battle || 0]
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
@@ -69,7 +71,7 @@ export const createUserController = async (
         }
 
         const user = await createUser(prisma, { username: display_name, id: mezon_id, avatar });
-        await createTeam(username, user.id);
+        await createTeam(username.slice(0, MAX_USER_NAME_LENGTH), user.id);
         await createLeaderBoard(user.id);
 
         const currentLevel = getUserLevelFromExp(user?.exp || 0);
@@ -81,7 +83,8 @@ export const createUserController = async (
             currentXP: user?.exp || 0,
             nextLevelXP: expToUserLevel(currentLevel + 1),
             avatar: user?.avatar || AINZ_DEFAULT_AVATAR,
-            combat_power: 0
+            combat_power: 0,
+            dailyActivity: [0, 0, 0]
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
@@ -128,6 +131,13 @@ export const updateUserController = async (
             usernameUpdate = username;
         }
 
+        if (usernameUpdate.length > MAX_USER_NAME_LENGTH) {
+            await messageFetch.update(
+                textMessage(`❌ Username is too long! Maximum ${MAX_USER_NAME_LENGTH} characters allowed.`)
+            );
+            return;
+        }
+
         const user = await updateUser(
             prisma,
             {
@@ -137,6 +147,7 @@ export const updateUserController = async (
         );
 
         const currentLevel = getUserLevelFromExp(user?.exp || 0);
+        const todayActivity = await getTodayUserDailyActivity(user.id);
 
         const imageBuffer = await createProfileCard({
             username: user?.username || '',
@@ -145,7 +156,8 @@ export const updateUserController = async (
             currentXP: user?.exp || 0,
             nextLevelXP: expToUserLevel(currentLevel + 1),
             avatar: user?.avatar || '',
-            combat_power: existingUser?.team?.combat_power || 0
+            combat_power: existingUser?.team?.combat_power || 0,
+            dailyActivity: [todayActivity?.daily || 0, todayActivity?.hunt || 0, todayActivity?.battle || 0]
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);

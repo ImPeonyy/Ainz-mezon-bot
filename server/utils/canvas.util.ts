@@ -1,7 +1,6 @@
-import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH, ERarityEmoji, IBPet, PROFILE_CARD_BG } from '@/constants';
+import { BATTLE_CARD_HEIGHT, BATTLE_CARD_WIDTH, ERarityEmoji, IBPet, PROFILE_CARD_BG, USE_DAILY_ACTIVITY } from '@/constants';
 import { CanvasRenderingContext2D, createCanvas, loadImage, registerFont } from 'canvas';
 import axios from 'axios';
-
 import path from 'path';
 
 registerFont(path.join(process.cwd(), 'assets/fonts/OpenSans-Regular.ttf'), {
@@ -64,6 +63,17 @@ const drawTeamPets = async (
         ctx.stroke();
         ctx.restore();
 
+        const currentHp = pet.stats.currentStats.hp;
+        const maxHp = pet.stats.originalStats.hp;
+        const currentMana = pet.stats.currentStats.mana;
+        const maxMana = pet.info.activeSkill.manaCost;
+        const hpPercent = Math.max(0, currentHp / maxHp);
+        const manaPercent = Math.max(0, currentMana / maxMana);
+        
+        // Kiểm tra nếu pet có máu = 0 thì giảm opacity
+        const isDead = currentHp <= 0;
+        const petOpacity = isDead ? 0.3 : 1.0;
+
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -78,6 +88,7 @@ const drawTeamPets = async (
             const avatarSize = 80;
 
             ctx.save();
+            ctx.globalAlpha = petOpacity;
             ctx.beginPath();
             ctx.roundRect(avatarX, y + 20, avatarSize, avatarSize, 8);
             ctx.closePath();
@@ -87,6 +98,7 @@ const drawTeamPets = async (
 
             // Draw avatar border
             ctx.save();
+            ctx.globalAlpha = petOpacity;
             ctx.beginPath();
             ctx.roundRect(avatarX, y + 20, avatarSize, avatarSize, 8);
             ctx.lineWidth = 1;
@@ -96,13 +108,6 @@ const drawTeamPets = async (
         } catch (error) {
             console.error('Error drawing pet card:', error);
         }
-
-        const currentHp = pet.stats.currentStats.hp;
-        const maxHp = pet.stats.originalStats.hp;
-        const currentMana = pet.stats.currentStats.mana;
-        const maxMana = pet.info.activeSkill.manaCost;
-        const hpPercent = Math.max(0, currentHp / maxHp);
-        const manaPercent = Math.max(0, currentMana / maxMana);
 
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 13px Sans';
@@ -121,6 +126,9 @@ const drawTeamPets = async (
             const rarityImage = await loadImage(Buffer.from(rarityResponse.data));
             const raritySize = 40;
             
+            ctx.save();
+            ctx.globalAlpha = petOpacity;
+            
             if (isRightTeam) {
                 ctx.textAlign = 'left';
                 ctx.drawImage(rarityImage, nameX -5, hpY - 35, raritySize, raritySize);
@@ -130,9 +138,14 @@ const drawTeamPets = async (
                 ctx.drawImage(rarityImage, nameX + barWidth - raritySize + 5, hpY - 35, raritySize, raritySize);
                 ctx.fillText(pet.info.nickname ?? '', nameX + barWidth - raritySize - 5, hpY - 10);
             }
+            
+            ctx.restore();
         } catch (error) {
             console.error('Error loading rarity image:', error);
             // Fallback to text only if image fails
+            ctx.save();
+            ctx.globalAlpha = petOpacity;
+            
             if (isRightTeam) {
                 ctx.textAlign = 'left';
                 ctx.fillText(pet.info.nickname ?? '', nameX, hpY - 10);
@@ -140,8 +153,13 @@ const drawTeamPets = async (
                 ctx.textAlign = 'right';
                 ctx.fillText(pet.info.nickname ?? '', nameX + barWidth, hpY - 10);
             }
+            
+            ctx.restore();
         }
 
+        ctx.save();
+        ctx.globalAlpha = petOpacity;
+        
         ctx.fillStyle = '#1A1A1A';
         ctx.fillRect(barsX, hpY, barWidth, barHeight);
 
@@ -182,6 +200,8 @@ const drawTeamPets = async (
             ctx.fillText(`${currentMana}/${maxMana}`, barsX + barWidth - 5, manaY + 12);
         }
         ctx.textAlign = 'left';
+        
+        ctx.restore();
 
         const stats = [
             { label: 'AD', value: pet.stats.currentStats.ad, color: '#FF6347' },
@@ -191,6 +211,8 @@ const drawTeamPets = async (
         ];
         const statsLength = stats.length;
 
+        ctx.save();
+        ctx.globalAlpha = petOpacity;
         ctx.font = '11px Sans';
         for (let j = 0; j < statsLength; j++) {
             const statX = statsStartX + j * 60;
@@ -202,6 +224,7 @@ const drawTeamPets = async (
             ctx.fillStyle = '#FFFFFF';
             ctx.fillText(`${stat.value}`, statX, statsY + 15);
         }
+        ctx.restore();
     }
 };
 
@@ -215,16 +238,32 @@ const renderBattleCanvas = async (teamA: IBPet[], teamB: IBPet[], teamName: stri
     ctx.fillStyle = '#2C2F33';
     ctx.fillRect(0, 0, width, height);
 
+    // Kiểm tra xem cả 3 pet của mỗi team có đều chết không
+    const isTeamADead = teamA.length > 0 && teamA.every(pet => pet.stats.currentStats.hp <= 0);
+    const isTeamBDead = teamB.length > 0 && teamB.every(pet => pet.stats.currentStats.hp <= 0);
+    
+    const teamAOpacity = isTeamADead ? 0.3 : 1.0;
+    const teamBOpacity = isTeamBDead ? 0.3 : 1.0;
+
     // Vẽ tên team và CP ở trên cùng
     ctx.fillStyle = '#FFFFFF';
     ctx.font = 'bold 18px Sans';
+    
+    // Team A
+    ctx.save();
+    ctx.globalAlpha = teamAOpacity;
     ctx.textAlign = 'left';
     ctx.fillText(`${teamName[0]}`, 80, 30);
     ctx.fillText(`CP: ${teamCP[0].toLocaleString()}`, 80, 55);
+    ctx.restore();
 
+    // Team B
+    ctx.save();
+    ctx.globalAlpha = teamBOpacity;
     ctx.textAlign = 'right';
     ctx.fillText(`${teamName[1]}`, width - 80, 30);
     ctx.fillText(`CP: ${teamCP[1].toLocaleString()}`, width - 80, 55);
+    ctx.restore();
 
     await drawTeamPets(ctx, teamA, 50, false);
     await drawTeamPets(ctx, teamB, 400, true);
@@ -251,6 +290,7 @@ interface ProfileData {
     currentXP: number;
     nextLevelXP: number;
     avatar: string;
+    dailyActivity: number[];
 }
 
 // Hàm vẽ profile card giống như hình ảnh
@@ -270,6 +310,55 @@ const renderProfileCanvas = async (profileData: ProfileData): Promise<Buffer> =>
     // Thêm overlay tối để text dễ đọc hơn
     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
     ctx.fillRect(0, 0, width, height);
+
+    // Vẽ 3 field ở góc trên bên phải (horizontal)
+    const fieldWidth = 120;
+    const fieldHeight = 50;
+    const fieldSpacing = 130;
+    const fieldX = width - (fieldWidth * 3 + fieldSpacing * 2) + 235; // Góc phải, giảm margin
+    const fieldY = 5; // Bắt đầu từ trên
+
+    const fields = [
+        { label: 'Daily', value: profileData.dailyActivity[0], limit: USE_DAILY_ACTIVITY.DAILY.DAILY_PER_DAY, color: '#4CAF50' },
+        { label: 'Hunt', value: profileData.dailyActivity[1], limit: USE_DAILY_ACTIVITY.HUNT.HUNT_PER_DAY, color: '#FF9800' },
+        { label: 'Battle', value: profileData.dailyActivity[2], limit: USE_DAILY_ACTIVITY.BATTLE.BATTLE_PER_DAY, color: '#F44336' }
+    ];
+
+    fields.forEach((field, index) => {
+        const x = fieldX + index * fieldSpacing;
+        const y = fieldY;
+
+        // Kiểm tra nếu value = limit thì giảm opacity
+        const isAtLimit = field.value >= field.limit;
+        const opacity = isAtLimit ? 0.5 : 1.0;
+
+        // Vẽ background cho field
+        ctx.fillStyle = `rgba(0, 0, 0, ${0.6 * opacity})`;
+        ctx.fillRect(x, y, fieldWidth, fieldHeight);
+
+        // Vẽ border cho field
+        ctx.strokeStyle = field.color;
+        ctx.globalAlpha = opacity;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, fieldWidth, fieldHeight);
+
+        // Vẽ label
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.font = 'bold 18px Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText(field.label, x + fieldWidth / 2, y + 20);
+
+        // Vẽ value/limit
+        ctx.fillStyle = field.color;
+        ctx.font = 'bold 20px Sans';
+        ctx.fillText(`${field.value}/${field.limit}`, x + fieldWidth / 2, y + 45);
+
+        // Reset globalAlpha
+        ctx.globalAlpha = 1.0;
+    });
+
+    // Reset text align
+    ctx.textAlign = 'left';
 
     // Vẽ avatar từ ảnh
     const avatarSize = 240; // Tăng từ 180 lên 240
@@ -297,7 +386,7 @@ const renderProfileCanvas = async (profileData: ProfileData): Promise<Buffer> =>
 
     // Vẽ thông tin text
     const textX = avatarX + avatarSize + 50; // Tăng khoảng cách từ avatar
-    const textY = height / 2 - 80; // Căn giữa theo chiều dọc để ngang hàng với avatar
+    const textY = height / 2 - 65; // Căn giữa theo chiều dọc để ngang hàng với avatar
 
     // Username
     ctx.fillStyle = '#ffffff';

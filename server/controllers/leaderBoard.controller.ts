@@ -106,7 +106,11 @@ export const leaderBoardController = async (
         }
     } catch (error) {
         console.error('Error getting Leader Board:', error);
-        await messageFetch.update(textMessage('❌ Internal server error'));
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
         return;
     }
 };

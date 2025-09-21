@@ -80,3 +80,6 @@ export const RARITY_CP_MULTIPLIERS: Record<ERarity, number> = {
     [ERarity.Mythic]: 3.0,
     [ERarity.Limited]: 3.5
 };
+
+export const MAX_TEAM_NAME_LENGTH = 31;
+export const MAX_USER_NAME_LENGTH = 27;

@@ -15,7 +15,9 @@ import {
     DEFAULT_TTL,
     RANK,
     RARITY_CP_MULTIPLIERS,
-    UPDATE_LEADERBOARD_CRON_SCHEDULE
+    UPDATE_LEADERBOARD_CRON_SCHEDULE,
+    MAX_TEAM_NAME_LENGTH,
+    MAX_USER_NAME_LENGTH
 } from './Constant';
 import { EActionType, ERarityColor, ERarityEmoji } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard } from './Type';
@@ -49,5 +51,7 @@ export {
     DEFAULT_TTL,
     RANK,
     RARITY_CP_MULTIPLIERS,
-    UPDATE_LEADERBOARD_CRON_SCHEDULE
+    UPDATE_LEADERBOARD_CRON_SCHEDULE,
+    MAX_TEAM_NAME_LENGTH,
+    MAX_USER_NAME_LENGTH
 };

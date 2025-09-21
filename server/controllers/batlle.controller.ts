@@ -48,7 +48,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
         if (activeLog) {
             await messageFetch.update(
                 textMessage(
-                    `🚨 Your pet is currently resting. Please try again after ${formatSecondsToMinutes(activeLog)}!`
+                    `🚨 Your pet is currently resting.⏳ Please try again after ${formatSecondsToMinutes(activeLog)}!`
                 )
             );
             return;
@@ -76,7 +76,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
         if (currentUserTeam.members.length !== 3) {
             await messageFetch.update(
                 textMessage(
-                    '🚨 Your team is not ready!\nAdd 3 pets to your team first!\n→ Usage: *ainz team add 1 [pet name]'
+                    '🚨 Your team is not ready!\nAdd 3 pets to your team first!\n→ Usage: *ainz team add [position] [pet name]'
                 )
             );
             return;
