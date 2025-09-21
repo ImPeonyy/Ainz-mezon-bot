@@ -232,6 +232,7 @@ export const getDexMessage = (
     return embedMessage({
         color: getRarityColor(statistic.rarity),
         title: `${pet.name} Information 🔍`,
+        description: `${pet?.description}\n${pet?.autoAttack?.name}: ${pet?.autoAttack?.description}\n${pet?.activeSkill?.name}: ${pet?.activeSkill?.description}` || 'Coming soon',
         thumbnail: { url: AINZ_THUMBNAIL },
         fields: messageContent,
         image: {
@@ -289,6 +290,7 @@ export const getMyDexMessage = (
     const embedConfig: IInteractiveMessageProps = {
         color: getRarityColor(statistic.rarity),
         title: `${userPet.pet.name} Information 🔍`,
+        description: `${userPet.pet?.description}\n${userPet.pet?.autoAttack?.name}: ${userPet.pet?.autoAttack?.description}\n${userPet.pet?.activeSkill?.name}: ${userPet.pet?.activeSkill?.description}` || 'Coming soon',
         thumbnail: {
             url: userAvatar
         },

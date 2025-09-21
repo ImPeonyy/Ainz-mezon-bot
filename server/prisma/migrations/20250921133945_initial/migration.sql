@@ -28,8 +28,7 @@ CREATE TABLE "public"."User" (
     "username" TEXT NOT NULL,
     "z_coin" INTEGER NOT NULL DEFAULT 0,
     "exp" INTEGER NOT NULL DEFAULT 0,
-    "level" INTEGER NOT NULL DEFAULT 0,
-    "avatar" TEXT NOT NULL DEFAULT 'https://bvntk1sxxrwdoxcc.public.blob.vercel-storage.com/spider-gwen-DLOjzOblyRzNGEngmQMOdf9VCWni6V.jpeg',
+    "avatar" TEXT NOT NULL DEFAULT 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1757571181/download_ygjzey.jpg',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -42,6 +41,7 @@ CREATE TABLE "public"."UserDailyActivities" (
     "user_id" TEXT NOT NULL,
     "daily" INTEGER NOT NULL DEFAULT 0,
     "hunt" INTEGER NOT NULL DEFAULT 0,
+    "battle" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -53,7 +53,7 @@ CREATE TABLE "public"."Rarity" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "mezon_emoji_id" TEXT NOT NULL,
-    "type" "public"."ERarity",
+    "type" "public"."ERarity" NOT NULL,
     "catch_rate" DOUBLE PRECISION NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -170,7 +170,7 @@ CREATE TABLE "public"."Pet" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "mezon_emoji_id" TEXT NOT NULL,
-    "avatar" TEXT,
+    "avatar" TEXT NOT NULL,
     "description" TEXT,
     "statistic_id" INTEGER NOT NULL,
     "rarity_id" INTEGER NOT NULL,
@@ -185,15 +185,8 @@ CREATE TABLE "public"."UserPet" (
     "id" SERIAL NOT NULL,
     "user_id" TEXT NOT NULL,
     "pet_id" INTEGER NOT NULL,
-    "nickname" TEXT,
-    "level" INTEGER NOT NULL DEFAULT 0,
+    "nickname" TEXT NOT NULL,
     "exp" INTEGER NOT NULL DEFAULT 0,
-    "additional_hp" INTEGER NOT NULL DEFAULT 0,
-    "additional_mana" INTEGER NOT NULL DEFAULT 0,
-    "additional_ad" INTEGER NOT NULL DEFAULT 0,
-    "additional_ap" INTEGER NOT NULL DEFAULT 0,
-    "additional_ar" INTEGER NOT NULL DEFAULT 0,
-    "additional_mr" INTEGER NOT NULL DEFAULT 0,
     "count" INTEGER NOT NULL DEFAULT 1,
     "lock" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -227,17 +220,17 @@ CREATE TABLE "public"."TeamMember" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Battle" (
+CREATE TABLE "public"."LeaderBoard" (
     "id" SERIAL NOT NULL,
-    "team_a_id" INTEGER NOT NULL,
-    "team_b_id" INTEGER NOT NULL,
-    "winner_team_id" INTEGER NOT NULL,
-    "started_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "ended_at" TIMESTAMP(3),
+    "userId" TEXT NOT NULL,
+    "wins" INTEGER NOT NULL DEFAULT 0,
+    "losses" INTEGER NOT NULL DEFAULT 0,
+    "combat_power" INTEGER NOT NULL DEFAULT 0,
+    "level" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Battle_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "LeaderBoard_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -268,6 +261,9 @@ CREATE UNIQUE INDEX "Pet_mezon_emoji_id_key" ON "public"."Pet"("mezon_emoji_id")
 CREATE UNIQUE INDEX "UserPet_user_id_pet_id_key" ON "public"."UserPet"("user_id", "pet_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "UserPet_user_id_nickname_key" ON "public"."UserPet"("user_id", "nickname");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Team_user_id_key" ON "public"."Team"("user_id");
 
 -- CreateIndex
@@ -278,6 +274,9 @@ CREATE UNIQUE INDEX "TeamMember_user_pet_id_key" ON "public"."TeamMember"("user_
 
 -- CreateIndex
 CREATE UNIQUE INDEX "TeamMember_team_id_position_key" ON "public"."TeamMember"("team_id", "position");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LeaderBoard_userId_key" ON "public"."LeaderBoard"("userId");
 
 -- AddForeignKey
 ALTER TABLE "public"."UserDailyActivities" ADD CONSTRAINT "UserDailyActivities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -319,10 +318,4 @@ ALTER TABLE "public"."TeamMember" ADD CONSTRAINT "TeamMember_team_id_fkey" FOREI
 ALTER TABLE "public"."TeamMember" ADD CONSTRAINT "TeamMember_user_pet_id_fkey" FOREIGN KEY ("user_pet_id") REFERENCES "public"."UserPet"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Battle" ADD CONSTRAINT "Battle_team_a_id_fkey" FOREIGN KEY ("team_a_id") REFERENCES "public"."Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."Battle" ADD CONSTRAINT "Battle_team_b_id_fkey" FOREIGN KEY ("team_b_id") REFERENCES "public"."Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."Battle" ADD CONSTRAINT "Battle_winner_team_id_fkey" FOREIGN KEY ("winner_team_id") REFERENCES "public"."Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."LeaderBoard" ADD CONSTRAINT "LeaderBoard_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
