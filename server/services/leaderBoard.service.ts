@@ -18,6 +18,7 @@ export const upsertLeaderBoard = async (
     user: User,
     isWin: boolean
 ) => {
+    const updateData = isWin ? { wins: { increment: 1 } } : { losses: { increment: 1 } };
     try {
         return prismaClient.leaderBoard.upsert({
             where: { userId: user.id },
@@ -26,10 +27,7 @@ export const upsertLeaderBoard = async (
                 wins: isWin ? 1 : 0,
                 losses: isWin ? 0 : 1
             },
-            update: {
-                wins: isWin ? { increment: 1 } : 0,
-                losses: isWin ? 0 : { increment: 1 }
-            }
+            update: updateData
         });
     } catch (error) {
         console.error('Error updating leader board:', error);

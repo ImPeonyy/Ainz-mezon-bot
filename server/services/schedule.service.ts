@@ -3,7 +3,7 @@ import { autoUpdateLeaderBoard } from "@/services";
 import { UPDATE_LEADERBOARD_CRON_SCHEDULE } from "@/constants";
 
 export const scheduleUpdateLeaderBoard = () => {
-    return cron.schedule(`21 ${UPDATE_LEADERBOARD_CRON_SCHEDULE.join(',')} * * *`, () => {
+    return cron.schedule(`0 ${UPDATE_LEADERBOARD_CRON_SCHEDULE.join(',')} * * *`, () => {
         autoUpdateLeaderBoard();
       }, 
     {
