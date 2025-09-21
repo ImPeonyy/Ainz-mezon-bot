@@ -171,17 +171,27 @@ export const updateUserPet = async (
     }
 };
 
-export const getUserPetDetail = async (petName: string, userId: string) => {
+export const getUserPetDetail = async (name: string, userId: string) => {
     try {
         return prisma.userPet.findFirst({
             where: {
                 user_id: userId,
-                pet: {
-                    name: {
-                        equals: petName,
-                        mode: 'insensitive'
+                OR: [
+                    {
+                        nickname: {
+                            equals: name,
+                            mode: 'insensitive'
+                        }
+                    },
+                    {
+                        pet: {
+                            name: {
+                                equals: name,
+                                mode: 'insensitive'
+                            }
+                        }
                     }
-                }
+                ]
             },
             include: {
                 user: true,
@@ -202,17 +212,27 @@ export const getUserPetDetail = async (petName: string, userId: string) => {
     }
 };
 
-export const getUserPetByPetName = async (userId: string, petName: string) => {
+export const getUserPetByPetName = async (userId: string, name: string) => {
     try {
         return await prisma.userPet.findFirst({
             where: {
                 user_id: userId,
-                pet: {
-                    name: {
-                        equals: petName,
-                        mode: 'insensitive'
+                OR: [
+                    {
+                        nickname: {
+                            equals: name,
+                            mode: 'insensitive'
+                        }
+                    },
+                    {
+                        pet: {
+                            name: {
+                                equals: name,
+                                mode: 'insensitive'
+                            }
+                        }
                     }
-                }
+                ]
             }
         });
     } catch (error) {

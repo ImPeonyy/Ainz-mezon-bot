@@ -147,21 +147,21 @@ export const addPetToTeamController = async (
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
 
-        const pet = await getPet(petName);
-        if (!pet) {
-            await messageFetch.update(
-                textMessage(
-                    `🚨 Pet "${capitalizedPetName}" is not found! \nPlz choose another pet! \n→ Usage: *ainz team add [position] [pet name]`
-                )
-            );
-            return;
-        }
+        // const pet = await getPet(petName);
+        // if (!pet) {
+        //     await messageFetch.update(
+        //         textMessage(
+        //             `🚨 Pet "${capitalizedPetName}" is not found! \nPlz choose another pet! \n→ Usage: *ainz team add [position] [pet name]`
+        //         )
+        //     );
+        //     return;
+        // }
 
         const userPet = await getUserPetByPetName(userId, petName);
         if (!userPet) {
             await messageFetch.update(
                 textMessage(
-                    `🚨 You don't own a pet "${capitalizedPetName}"! \nPlz add this pet to your bag first! \n→ Usage: *ainz hunt to catch more pets"`
+                    `🚨 Invalid pet name or nickname! \nPlz check your pet name or nickname!`
                 )
             );
             return;

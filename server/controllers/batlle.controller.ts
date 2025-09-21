@@ -9,7 +9,6 @@ import {
 import {
     createBattleImage,
     getBattleMessage,
-    getPetLevelFromExp,
     processTeam,
     processTurn,
     textMessage,
@@ -41,6 +40,10 @@ export const battleController = async (currentUser: User, targetId: string, chan
     const renderCycle: number = parseInt(process.env.RENDER_CYCLE || DEFAULT_RENDER_CYCLE);
     let messageFetch: any;
     try {
+        if(currentUser.id === targetId) {
+            await message.reply(textMessage('🚨 You cannot battle yourself!'));
+            return;
+        }
         const battleMessage = await message.reply(textMessage('🛠️ Setup for battle...'));
         messageFetch = await channel.messages.fetch(battleMessage.message_id);
 
