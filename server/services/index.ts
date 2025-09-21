@@ -45,6 +45,7 @@ import {
     upsertLeaderBoard
 } from '@/services/leaderBoard.service';
 import { scheduleUpdateLeaderBoard } from '@/services/schedule.service';
+import { sendDMToUser } from '@/services/mezon.service';
 
 export {
     getActionGif,
@@ -92,5 +93,6 @@ export {
     scheduleUpdateLeaderBoard,
     upsertLeaderBoard,
     getTeamForCalcCP,
-    updateTeamCombatPower
+    updateTeamCombatPower,
+    sendDMToUser
 };

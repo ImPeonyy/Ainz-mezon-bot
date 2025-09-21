@@ -33,12 +33,14 @@ import { getActionGif, getMeme, getPets, getPetsByRarity, getUser, getUserPets, 
 import { ERarity } from '@prisma/client';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { prisma } from '@/lib/db';
+import { MezonClient } from 'mezon-sdk';
 
 export const getActionController = async (
     event: any,
     action: string,
     channel: any,
     message: Message,
+    client: MezonClient,
     targetRaw?: string | null
 ) => {
     try {
@@ -50,7 +52,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.init) {
-                const createUserPayload = await createUserController(display_name, username, sender_id, avatar, message, channel);
+                const createUserPayload = await createUserController(display_name, username, sender_id, avatar, message, channel, client);
                 return createUserPayload;
             }
 
@@ -109,6 +111,7 @@ export const getActionController = async (
                     avatar,
                     message,
                     channel,
+                    client,
                     targetRaw
                 );
                 return updateUserPayload;

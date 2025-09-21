@@ -45,6 +45,7 @@ async function main() {
                     action || 'invalid command',
                     channelFetch,
                     messageFetch,
+                    client,
                     targetRaw
                 );
 

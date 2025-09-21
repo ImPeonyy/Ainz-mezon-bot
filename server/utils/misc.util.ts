@@ -143,3 +143,11 @@ export const geLBtNextUpdate = (hours: number[], now: Date = new Date()) => {
 
     return { next, msg };
 };
+
+export const isValidImageExtension = (filename: string): boolean => {
+    return (
+        filename.toLowerCase().endsWith('.png') ||
+        filename.toLowerCase().endsWith('.jpg') ||
+        filename.toLowerCase().endsWith('.jpeg')
+    );
+};

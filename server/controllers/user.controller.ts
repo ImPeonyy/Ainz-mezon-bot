@@ -1,10 +1,12 @@
 import { createProfileCard, expToUserLevel, getUserLevelFromExp, textMessage } from '@/utils';
-import { createLeaderBoard, createTeam, createUser, getTodayUserDailyActivity, getUser, updateUser, uploadImageToCloudinary } from '@/services';
+import { createLeaderBoard, createTeam, createUser, getTodayUserDailyActivity, getUser, sendDMToUser, updateUser, uploadImageToCloudinary } from '@/services';
 
 import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER, MAX_USER_NAME_LENGTH } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
+import { isValidImageExtension } from '@/utils/misc.util';
+import { MezonClient } from 'mezon-sdk';
 
 export const getUserController = async (existingUser: Prisma.UserGetPayload<{ include: { team: true } }>, message: Message, channel: any) => {
     let messageFetch: any;
@@ -21,7 +23,7 @@ export const getUserController = async (existingUser: Prisma.UserGetPayload<{ in
             z_coin: existingUser?.z_coin || 0,
             currentXP: existingUser?.exp || 0,
             nextLevelXP: expToUserLevel(currentLevel + 1),
-            avatar: existingUser?.avatar || '',
+            avatar: existingUser?.avatar || AINZ_DEFAULT_AVATAR,
             combat_power: existingUser?.team?.combat_power || 0,
             dailyActivity: [todayActivity?.daily || 0, todayActivity?.hunt || 0, todayActivity?.battle || 0]
         });
@@ -33,7 +35,7 @@ export const getUserController = async (existingUser: Prisma.UserGetPayload<{ in
             [],
             [
                 {
-                    filename: 'attachment.png',
+                    filename: 'profile.png',
                     filetype: 'image/png',
                     url: image.secure_url
                 }
@@ -56,7 +58,8 @@ export const createUserController = async (
     mezon_id: string,
     avatar: string,
     message: Message,
-    channel: any
+    channel: any,
+    client: MezonClient
 ) => {
     let messageFetch: any;
     try {
@@ -68,6 +71,11 @@ export const createUserController = async (
         if (existingUser) {
             await messageFetch.update(textMessage('User already exists'));
             return;
+        }
+
+        if (!isValidImageExtension(avatar)) {
+            avatar = AINZ_DEFAULT_AVATAR;
+            await sendDMToUser(client, mezon_id, textMessage('❌ Invalid avatar extension! Please use PNG, JPG, or JPEG format.\nYour avatar will be set to default.'));
         }
 
         const user = await createUser(prisma, { username: display_name, id: mezon_id, avatar });
@@ -94,7 +102,7 @@ export const createUserController = async (
             [],
             [
                 {
-                    filename: 'attachment.png',
+                    filename: 'profile.png',
                     filetype: 'image/png',
                     url: image.secure_url
                 }
@@ -117,6 +125,7 @@ export const updateUserController = async (
     avatar: string,
     message: Message,
     channel: any,
+    client: MezonClient,
     targetRaw?: string | null
 ) => {
     let messageFetch: any;
@@ -138,6 +147,11 @@ export const updateUserController = async (
             return;
         }
 
+        if (!isValidImageExtension(avatar)) {
+            avatar = AINZ_DEFAULT_AVATAR;
+            await sendDMToUser(client, existingUser?.id, textMessage('❌ Invalid avatar extension! Please use PNG, JPG, or JPEG format.\nYour avatar will be set to default.'));
+        }
+
         const user = await updateUser(
             prisma,
             {
@@ -155,7 +169,7 @@ export const updateUserController = async (
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
             nextLevelXP: expToUserLevel(currentLevel + 1),
-            avatar: user?.avatar || '',
+            avatar: user?.avatar || AINZ_DEFAULT_AVATAR,
             combat_power: existingUser?.team?.combat_power || 0,
             dailyActivity: [todayActivity?.daily || 0, todayActivity?.hunt || 0, todayActivity?.battle || 0]
         });
@@ -167,7 +181,7 @@ export const updateUserController = async (
             [],
             [
                 {
-                    filename: 'attachment.png',
+                    filename: 'profile.png',
                     filetype: 'image/png',
                     url: image.secure_url
                 }
