@@ -8,6 +8,7 @@ import {
     getTeamController,
     getUserController,
     huntPetController,
+    leaderBoardController,
     myDexController,
     renamePetController,
     swapPetInTeamController,
@@ -43,7 +44,7 @@ export const getActionController = async (
     try {
         const { sender_id, username, display_name, avatar, clan_nick, references, mentions } = event;
 
-        if (Object.keys(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
+        if (Object.values(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (!display_name || !sender_id) {
                 return textMessage('Error retrieving username or mezon id');
             }
@@ -74,7 +75,7 @@ export const getActionController = async (
 
             if (action === COMMANDS.dex) {
                 if (!targetRaw) {
-                    return textMessage('🚨 Missing pet name!\nUsage: *ainz dex "Pet Name"');
+                    return textMessage('🚨 Missing pet name!\nUsage: *ainz dex [Pet Name]');
                 }
                 const petDetailPayload = await dexController(targetRaw || '', message, channel, sender_id);
                 return petDetailPayload;
@@ -83,6 +84,11 @@ export const getActionController = async (
             if (action === COMMANDS.help) {
                 const helpPayload = await getHelpController(targetRaw);
                 return helpPayload;
+            }
+            
+            if (action === COMMANDS.leaderboard) {
+                const leaderBoardPayload = await leaderBoardController(message, channel, sender_id, targetRaw);
+                return leaderBoardPayload;
             }
 
             const existingUser = await getUser(sender_id);
@@ -102,7 +108,8 @@ export const getActionController = async (
                     existingUser,
                     avatar,
                     message,
-                    channel
+                    channel,
+                    targetRaw
                 );
                 return updateUserPayload;
             }
@@ -119,7 +126,7 @@ export const getActionController = async (
 
             if (action === COMMANDS.mydex) {
                 if (!targetRaw) {
-                    return textMessage('🚨 Missing pet name!\nUsage: *ainz mydex "Pet Name"');
+                    return textMessage('🚨 Missing pet name!\nUsage: *ainz mydex [Pet Name]');
                 }
                 const petDetailPayload = await myDexController(targetRaw || '', sender_id, message, channel);
                 return petDetailPayload;
@@ -134,7 +141,7 @@ export const getActionController = async (
                 const targetId = mentions[0]?.user_id || references[0]?.message_sender_id;
                 if (targetRaw && !targetId) {
                     return textMessage(
-                        '🚨 Missing target!\nUsage: *ainz battle "@user" or reply user with *ainz battle'
+                        '🚨 Missing target!\nUsage: *ainz battle [@user] or reply user with *ainz battle'
                     );
                 }
                 const battlePayload = await battleController(existingUser, targetId, channel, message);
@@ -191,10 +198,10 @@ export const getActionController = async (
                 }
                 const { petName, nickname } = renameCommand;
                 if (!petName) {
-                    return textMessage('🚨 Missing pet name!\nUsage: *ainz rename "Pet Name" > "Nickname"');
+                    return textMessage('🚨 Missing pet name!\nUsage: *ainz rename [Pet Name] > [Nickname]');
                 }
                 if (!nickname) {
-                    return textMessage('🚨 Missing nickname!\nUsage: *ainz rename "Pet Name" > "Nickname"');
+                    return textMessage('🚨 Missing nickname!\nUsage: *ainz rename [Pet Name] > [Nickname]');
                 }
 
                 await renamePetController(petName, nickname, sender_id, message, channel);
@@ -338,7 +345,7 @@ export const getBagController = async (
                 await messageFetch.update(bagMessage);
                 return;
             } else {
-                messageFetch.update(textMessage('🚨 Invalid rarity!\nUsage: *ainz bag "Rarity"'));
+                messageFetch.update(textMessage('🚨 Invalid rarity!\nUsage: *ainz bag [Rarity]'));
                 return;
             }
         }

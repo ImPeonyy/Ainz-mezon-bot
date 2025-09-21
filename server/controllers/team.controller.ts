@@ -1,15 +1,15 @@
 import {
     addPetToTeam,
-    createTeam,
     getPet,
     getTeam,
-    getTeamByName,
+    getTeamForCalcCP,
     getUserPetByPetName,
     updatePetPosition,
+    updateTeamCombatPower,
     updateTeamMember,
     updateTeamName
 } from '@/services';
-import { isValidPosition, teamInfoMessage, textMessage } from '@/utils';
+import { calculateTeamCP, isValidPosition, teamInfoMessage, textMessage } from '@/utils';
 
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 
@@ -38,7 +38,7 @@ export const getTeamController = async (userId: string, message: Message, channe
             return;
         }
 
-        await messageFetch.update(teamInfoMessage(existingTeam.members, existingTeam.name));
+        await messageFetch.update(teamInfoMessage(existingTeam));
     } catch (error: any) {
         console.error('Error getting team:', error);
         if (messageFetch) {
@@ -180,6 +180,10 @@ export const addPetToTeamController = async (
 
         await addPetToTeam(existingTeam.id, userPet.id, pos);
         await messageFetch.update(textMessage(`✅ Successfully added pet "${capitalizedPetName}" to your team!`));
+        const currentTeam = await getTeamForCalcCP(userId);
+        if (currentTeam) {
+            await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
+        }
     } catch (error) {
         console.error('Error adding pet to team:', error);
         if (messageFetch) {

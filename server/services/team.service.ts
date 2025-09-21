@@ -137,12 +137,17 @@ export const getTeamForBattle = async (userId: string) => {
     }
 };
 
-export const getRandomTeamForBattle = async (currentUserId: string) => {
+export const getRandomTeamForBattle = async (currentUserId: string, currentUserCombatPower: number) => {
     try {
-        const teams = await prisma.team.findMany({
+        let teams;
+        teams = await prisma.team.findMany({
             where: {
                 user_id: {
                     not: currentUserId
+                },
+                combat_power: {
+                    lte: currentUserCombatPower + 10000,
+                    gte: currentUserCombatPower - 10000
                 }
             },
             include: {
@@ -169,6 +174,38 @@ export const getRandomTeamForBattle = async (currentUserId: string) => {
             }
         });
 
+        if (teams.length === 0) {
+            teams = await prisma.team.findMany({
+                where: {
+                    user_id: {
+                        not: currentUserId
+                    }
+                },
+                include: {
+                    members: {
+                        include: {
+                            userPet: {
+                                include: {
+                                    pet: {
+                                        include: {
+                                            statistic: true,
+                                            rarity: true,
+                                            autoAttack: true,
+                                            passiveSkill: { include: { effects: true } },
+                                            activeSkill: { include: { effects: true } }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        orderBy: {
+                            position: 'asc'
+                        }
+                    }
+                }
+            });
+        }
+
         const validTeams = teams.filter((team) => team.members.length === 3);
 
         if (validTeams.length === 0) {
@@ -194,6 +231,32 @@ export const updateTeamMember = async (
         });
     } catch (error) {
         console.error('Error updating team member:', error);
+        throw error;
+    }
+};
+
+export const getTeamForCalcCP = async (userId: string) => {
+    try {
+        return prisma.team.findUnique({
+            where: { user_id: userId },
+            include: {
+                members: { include: { userPet: { include: { pet: { include: { statistic: true, rarity: true } } } } } }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting team for calc cp:', error);
+        throw error;
+    }
+};
+
+export const updateTeamCombatPower = async (teamId: number, combatPower: number) => {
+    try {
+        return prisma.team.update({
+            where: { id: teamId },
+            data: { combat_power: combatPower }
+        });
+    } catch (error) {
+        console.error('Error updating team combat power:', error);
         throw error;
     }
 };

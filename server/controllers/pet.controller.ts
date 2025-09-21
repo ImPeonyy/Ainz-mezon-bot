@@ -47,21 +47,26 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
 
         if (!todayActivity) {
             try {
-                await prisma.$transaction(async (tx) => {
-                    await createUserDailyActivity(tx, {
-                        user: {
-                            connect: {
-                                id: user.id
-                            }
-                        },
-                        daily: 0,
-                        hunt: 1
-                    });
+                await prisma.$transaction(
+                    async (tx) => {
+                        await createUserDailyActivity(tx, {
+                            user: {
+                                connect: {
+                                    id: user.id
+                                }
+                            },
+                            daily: 0,
+                            hunt: 1
+                        });
 
-                    for (const pet of yourPets) {
-                        await upsertUserPetCount(tx, user.id, pet.id);
+                        for (const pet of yourPets) {
+                            await upsertUserPetCount(tx, user.id, pet);
+                        }
+                    },
+                    {
+                        timeout: 10000
                     }
-                });
+                );
 
                 await messageFetch.update(
                     getHuntMessage(
@@ -88,22 +93,27 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
             }
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[2] && todayActivity) {
                 try {
-                    await prisma.$transaction(async (tx) => {
-                        await updateUserDailyActivity(
-                            tx,
-                            {
-                                id: todayActivity.id
-                            },
-                            {
-                                daily: 0,
-                                hunt: 1
-                            }
-                        );
+                    await prisma.$transaction(
+                        async (tx) => {
+                            await updateUserDailyActivity(
+                                tx,
+                                {
+                                    id: todayActivity.id
+                                },
+                                {
+                                    daily: 0,
+                                    hunt: 1
+                                }
+                            );
 
-                        for (const pet of yourPets) {
-                            await upsertUserPetCount(tx, user.id, pet.id);
+                            for (const pet of yourPets) {
+                                await upsertUserPetCount(tx, user.id, pet);
+                            }
+                        },
+                        {
+                            timeout: 10000
                         }
-                    });
+                    );
 
                     await messageFetch.update(
                         getHuntMessage(
@@ -121,23 +131,28 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
             }
             if (huntPriority === USE_DAILY_ACTIVITY.HUNT.PRIORITY[3]) {
                 try {
-                    await prisma.$transaction(async (tx) => {
-                        await updateUser(
-                            tx,
-                            {
-                                id: user.id
-                            },
-                            {
-                                z_coin: {
-                                    decrement: USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
+                    await prisma.$transaction(
+                        async (tx) => {
+                            await updateUser(
+                                tx,
+                                {
+                                    id: user.id
+                                },
+                                {
+                                    z_coin: {
+                                        decrement: USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
+                                    }
                                 }
-                            }
-                        );
+                            );
 
-                        for (const pet of yourPets) {
-                            await upsertUserPetCount(tx, user.id, pet.id);
+                            for (const pet of yourPets) {
+                                await upsertUserPetCount(tx, user.id, pet);
+                            }
+                        },
+                        {
+                            timeout: 10000
                         }
-                    });
+                    );
 
                     await messageFetch.update(
                         getHuntMessage(

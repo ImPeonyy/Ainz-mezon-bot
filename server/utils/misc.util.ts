@@ -77,16 +77,16 @@ export const expToUserLevel = (level: number) => {
     return 100 * level ** 2;
 };
 
-export const userLevelUp = (currentExp: number, currentLevel: number) => {
-    return currentExp >= expToUserLevel(currentLevel + 1);
+export const getUserLevelFromExp = (exp: number) => {
+    return Math.floor(Math.sqrt(exp / 100));
 };
 
 export const expToPetLevel = (level: number) => {
     return Math.round(100 * level ** 1.5);
 };
 
-export const petLevelUp = (currentExp: number, currentLevel: number) => {
-    return currentExp >= expToPetLevel(currentLevel + 1);
+export const getPetLevelFromExp = (exp: number) => {
+    return Math.floor((exp / 100) ** (2 / 3));
 };
 
 // export const getRandomHexColor = () => {
@@ -98,26 +98,48 @@ export const petLevelUp = (currentExp: number, currentLevel: number) => {
 export const getRandomPastelHexColor = () => {
     const hue = Math.floor(Math.random() * 360); // 0–360 độ
     const saturation = 70; // %
-    const lightness = 80;  // %
-  
+    const lightness = 80; // %
+
     return hslToHex(hue, saturation, lightness);
-  };
-  
-  // Helper: chuyển HSL → HEX
-  function hslToHex(h: number, s: number, l: number): string {
+};
+
+// Helper: chuyển HSL → HEX
+function hslToHex(h: number, s: number, l: number): string {
     s /= 100;
     l /= 100;
-  
+
     const k = (n: number) => (n + h / 30) % 12;
     const a = s * Math.min(l, 1 - l);
-    const f = (n: number) =>
-      Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))));
-  
-    return `#${[f(0), f(8), f(4)]
-      .map((x) => x.toString(16).padStart(2, "0"))
-      .join("")}`;
-  }
+    const f = (n: number) => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))));
 
-  export const formatSecondsToMinutes = (seconds: number) => {
+    return `#${[f(0), f(8), f(4)].map((x) => x.toString(16).padStart(2, '0')).join('')}`;
+}
+
+export const formatSecondsToMinutes = (seconds: number) => {
     return `${Math.floor(seconds / 60)} Minutes and ${seconds % 60} Seconds`;
-  };
+};
+
+export const getAdditionalStats = (statPerLevel: number, level: number) => {
+    return statPerLevel * level;
+};
+
+export const geLBtNextUpdate = (hours: number[], now: Date = new Date()) => {
+    const sorted = [...hours].sort((a, b) => a - b);
+    const cur = now.getHours() + now.getMinutes() / 60;
+
+    const nextHour = sorted.find((h) => h > cur) ?? sorted[0];
+    const next = new Date(now);
+
+    if (nextHour <= cur) next.setDate(next.getDate() + 1);
+    next.setHours(nextHour, 0, 0, 0);
+
+    const diffMs = next.getTime() - now.getTime();
+
+    const totalMinutes = Math.floor(diffMs / 60000);
+
+    const diffHour = Math.floor(totalMinutes / 60);
+    const diffMin = totalMinutes % 60;
+    const msg = `Next update is in ${diffHour} hours and ${diffMin} minutes`;
+
+    return { next, msg };
+};

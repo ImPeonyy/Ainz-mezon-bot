@@ -1,24 +1,27 @@
-import { createProfileCard, expToUserLevel, textMessage } from '@/utils';
-import { createTeam, createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
+import { createProfileCard, expToUserLevel, getUserLevelFromExp, textMessage } from '@/utils';
+import { createLeaderBoard, createTeam, createUser, getUser, updateUser, uploadImageToCloudinary } from '@/services';
 
 import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 
-export const getUserController = async (existingUser: User, message: Message, channel: any) => {
+export const getUserController = async (existingUser: Prisma.UserGetPayload<{ include: { team: true } }>, message: Message, channel: any) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Retrieving user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
+        const currentLevel = getUserLevelFromExp(existingUser?.exp || 0);
+
         const imageBuffer = await createProfileCard({
             username: existingUser?.username || '',
-            level: existingUser?.level || 0,
+            level: currentLevel,
             z_coin: existingUser?.z_coin || 0,
             currentXP: existingUser?.exp || 0,
-            nextLevelXP: expToUserLevel(existingUser.level + 1) || 0,
-            avatar: existingUser?.avatar || ''
+            nextLevelXP: expToUserLevel(currentLevel + 1),
+            avatar: existingUser?.avatar || '',
+            combat_power: existingUser?.team?.combat_power || 0
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
@@ -66,15 +69,19 @@ export const createUserController = async (
         }
 
         const user = await createUser(prisma, { username: display_name, id: mezon_id, avatar });
-        await createTeam(username, mezon_id);
+        await createTeam(username, user.id);
+        await createLeaderBoard(user.id);
+
+        const currentLevel = getUserLevelFromExp(user?.exp || 0);
 
         const imageBuffer = await createProfileCard({
             username: user?.username || '',
-            level: user?.level || 0,
+            level: currentLevel,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: expToUserLevel(user.level + 1) || 0,
-            avatar: user?.avatar || AINZ_DEFAULT_AVATAR
+            nextLevelXP: expToUserLevel(currentLevel + 1),
+            avatar: user?.avatar || AINZ_DEFAULT_AVATAR,
+            combat_power: 0
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);
@@ -103,31 +110,42 @@ export const createUserController = async (
 
 export const updateUserController = async (
     username: string,
-    existingUser: User,
+    existingUser: Prisma.UserGetPayload<{ include: { team: true } }>,
     avatar: string,
     message: Message,
-    channel: any
+    channel: any,
+    targetRaw?: string | null
 ) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('Updating user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
+        let usernameUpdate;
+        if (targetRaw) {
+            usernameUpdate = targetRaw;
+        } else {
+            usernameUpdate = username;
+        }
+
         const user = await updateUser(
             prisma,
             {
                 id: existingUser?.id
             },
-            { username, avatar }
+            { username: usernameUpdate, avatar }
         );
+
+        const currentLevel = getUserLevelFromExp(user?.exp || 0);
 
         const imageBuffer = await createProfileCard({
             username: user?.username || '',
-            level: user?.level || 0,
+            level: currentLevel,
             z_coin: user?.z_coin || 0,
             currentXP: user?.exp || 0,
-            nextLevelXP: expToUserLevel(user.level + 1) || 0,
-            avatar: user?.avatar || ''
+            nextLevelXP: expToUserLevel(currentLevel + 1),
+            avatar: user?.avatar || '',
+            combat_power: existingUser?.team?.combat_power || 0
         });
 
         const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_PROFILE_FOLDER);

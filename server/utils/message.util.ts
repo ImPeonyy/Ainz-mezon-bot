@@ -1,7 +1,7 @@
 import { ACTIONS, AINZ_THUMBNAIL, FAV_COLOR, IBattle } from '@/constants';
 import { ChannelMessageContent, EmojiOnMessage, IInteractiveMessageProps } from 'mezon-sdk';
 import { ERarity, Prisma, User } from '@prisma/client';
-import { expToPetLevel, getRandomPastelHexColor, getRarityColor, getUrlEmoji } from '@/utils';
+import { expToPetLevel, getAdditionalStats, getPetLevelFromExp, getRandomPastelHexColor, getRarityColor, getUrlEmoji } from '@/utils';
 
 export const textMessage = (message: string) => {
     const messagePayload: ChannelMessageContent = {
@@ -160,25 +160,25 @@ export const getBagMessageByRarity = (
 };
 
 export const teamInfoMessage = (
-    pets: Prisma.TeamMemberGetPayload<{ include: { userPet: { include: { pet: true } } } }>[],
-    teamName: string
+    team: Prisma.TeamGetPayload<{ include: { members: { include: { userPet: { include: { pet: true } } } } } }>,
 ) => {
     let messagePayload: ChannelMessageContent = {
-        t: `Your team "${teamName}" contains the following pets:\n`,
+        t: `Your team "${team.name}" contains the following pets:\nCombat Power: ${team.combat_power}\n`,
         ej: []
     };
 
     const Position = ['1️⃣', '2️⃣', '3️⃣'];
 
-    pets.forEach((pet) => {
-        messagePayload.t += `${Position[pet.position - 1]}: `;
-        messagePayload.t += `Lv. ${pet.userPet.level} - `;
+    team.members.forEach((member) => {
+        const currentLevel = getPetLevelFromExp(member.userPet.exp);
+        messagePayload.t += `${Position[member.position - 1]}: `;
+        messagePayload.t += `Lv. ${currentLevel} - `;
         messagePayload.ej?.push({
-            emojiid: pet.userPet.pet.mezon_emoji_id,
+            emojiid: member.userPet.pet.mezon_emoji_id,
             s: messagePayload.t?.length || 0,
             e: messagePayload.t?.length || 0 + 1
         });
-        messagePayload.t += ` ${pet.userPet.nickname || pet.userPet.pet.name}\n`;
+        messagePayload.t += ` ${member.userPet.nickname || member.userPet.pet.name}\n`;
     });
 
     return messagePayload;
@@ -238,7 +238,7 @@ export const getDexMessage = (
             url: getUrlEmoji(pet.mezon_emoji_id)
         },
         footer: {
-            text: `📙 Ainz Mezon Bot • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
+            text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
         }
     });
 };
@@ -263,24 +263,26 @@ export const getMyDexMessage = (
         }
     ];
 
+    const currentLevel = getPetLevelFromExp(userPet.exp);
+
     if (statistic) {
         messageContent.push(
             { name: '🏷️ Nickname', value: userPet.nickname || userPet.pet.name, inline: true },
-            { name: '🎖️ Level', value: userPet.level.toString() || '0', inline: true },
+            { name: '📊 Level', value: currentLevel.toString() || '0', inline: true },
             {
                 name: '✨ Exp',
-                value: `${userPet.exp.toString() || '0'}/${expToPetLevel(userPet.level + 1 || 0)}`,
+                value: `${userPet.exp.toString() || '0'}/${expToPetLevel(currentLevel + 1 || 0)}`,
                 inline: true
             },
             { name: '💎 Rarity', value: statistic.rarity, inline: true },
             { name: '🎭 Role', value: statistic.role, inline: true },
             { name: '⚔️ Attack type', value: statistic.scaling_type, inline: true },
-            { name: '❤️', value: (statistic.hp + userPet.additional_hp).toString(), inline: true },
-            { name: '🗡️', value: (statistic.ad + userPet.additional_ad).toString(), inline: true },
-            { name: '🛡️', value: (statistic.ar + userPet.additional_ar).toString(), inline: true },
-            { name: '💧', value: (statistic.mana + userPet.additional_mana).toString(), inline: true },
-            { name: '💫', value: (statistic.ap + userPet.additional_ap).toString(), inline: true },
-            { name: '⛊', value: (statistic.mr + userPet.additional_mr).toString(), inline: true }
+            { name: '❤️', value: (statistic.hp + getAdditionalStats(statistic.hp_per_level, currentLevel)).toString(), inline: true },
+            { name: '🗡️', value: (statistic.ad + getAdditionalStats(statistic.ad_per_level, currentLevel)).toString(), inline: true },
+            { name: '🛡️', value: (statistic.ar + getAdditionalStats(statistic.ar_per_level, currentLevel)).toString(), inline: true },
+            { name: '💧', value: (statistic.mana).toString(), inline: true },
+            { name: '💫', value: (statistic.ap + getAdditionalStats(statistic.ap_per_level, currentLevel)).toString(), inline: true },
+            { name: '⛊', value: (statistic.mr + getAdditionalStats(statistic.mr_per_level, currentLevel)).toString(), inline: true }
         );
     }
 
@@ -295,7 +297,7 @@ export const getMyDexMessage = (
             url: getUrlEmoji(userPet.pet.mezon_emoji_id)
         },
         footer: {
-            text: `📙 Ainz Mezon Bot • Last updated: ${new Date().toLocaleDateString('vi-VN')}`
+            text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
         }
     };
 

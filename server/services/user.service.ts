@@ -7,6 +7,9 @@ export const getUser = async (mezon_id: string) => {
         return await prisma.user.findUnique({
             where: {
                 id: mezon_id
+            },
+            include: {
+                team: true
             }
         });
     } catch (error) {
