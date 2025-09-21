@@ -82,11 +82,7 @@ export const updateTeamController = async (teamName: string, userId: string, mes
         }
 
         const team = await updateTeamName(teamName, userId);
-        await messageFetch.update(
-            textMessage(
-                `✅ Your team "${team.name}" has been updated successfully]`
-            )
-        );
+        await messageFetch.update(textMessage(`✅ Your team "${team.name}" has been updated successfully]`));
     } catch (error) {
         console.error('Error updating team:', error);
         if (messageFetch) {
@@ -160,9 +156,7 @@ export const addPetToTeamController = async (
         const userPet = await getUserPetByPetName(userId, petName);
         if (!userPet) {
             await messageFetch.update(
-                textMessage(
-                    `🚨 Invalid pet name or nickname! \nPlz check your pet name or nickname!`
-                )
+                textMessage(`🚨 Invalid pet name or nickname! \nPlz check your pet name or nickname!`)
             );
             return;
         }
@@ -183,6 +177,10 @@ export const addPetToTeamController = async (
             await messageFetch.update(
                 textMessage(`🔄 Successfully moved pet "${capitalizedPetName}" to position ${pos}!`)
             );
+            const currentTeam = await getTeamForCalcCP(userId);
+            if (currentTeam) {
+                await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
+            }
             return;
         }
 
@@ -261,9 +259,7 @@ export const swapPetInTeamController = async (
         if (!pet2) {
             await updatePetPosition(pet1.id, pos2);
             await messageFetch.update(
-                textMessage(
-                    `✅ Successfully moved pet from position ${pos1} to position ${pos2}!`
-                )
+                textMessage(`✅ Successfully moved pet from position ${pos1} to position ${pos2}!`)
             );
             return;
         }
@@ -274,9 +270,7 @@ export const swapPetInTeamController = async (
         await updatePetPosition(pet1.id, pos2);
 
         await messageFetch.update(
-            textMessage(
-                `✅ Successfully swapped pets between position ${pos1} and position ${pos2}!`
-            )
+            textMessage(`✅ Successfully swapped pets between position ${pos1} and position ${pos2}!`)
         );
     } catch (error) {
         console.error('Error swapping pet in team:', error);

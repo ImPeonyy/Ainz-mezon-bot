@@ -40,7 +40,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
     const renderCycle: number = parseInt(process.env.RENDER_CYCLE || DEFAULT_RENDER_CYCLE);
     let messageFetch: any;
     try {
-        if(currentUser.id === targetId) {
+        if (currentUser.id === targetId) {
             await message.reply(textMessage('🚨 You cannot battle yourself!'));
             return;
         }
@@ -290,13 +290,13 @@ export const battleController = async (currentUser: User, targetId: string, chan
 
                         await upsertLeaderBoard(tx, currentUser, false);
                     });
-                    const currentTeam = await getTeamForCalcCP(currentUser.id);
-                    if (currentTeam) {
-                        await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
-                    }
                 } catch (error) {
                     console.error('Error updating user:', error);
                 }
+            }
+            const currentTeam = await getTeamForCalcCP(currentUser.id);
+            if (currentTeam) {
+                await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
             }
         }
     } catch (error) {
