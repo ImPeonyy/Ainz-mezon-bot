@@ -285,7 +285,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 27,
         pet_id: 27,
         name: 'Cerberus AA',
-        description: 'Cerberus\'s basic attack deals 130% ATK to All targets.',
+        description: 'Cerberus\'s basic attack deals 90% ATK to All targets.',
         damage: 90,
         scaling_type: EScalingType.Physical,
         attack_position: ETargetPosition.All
@@ -294,7 +294,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 28,
         pet_id: 28,
         name: 'Dragon AA',
-        description: 'Dragon\'s basic attack deals 130% ATK to All targets.',
+        description: 'Dragon\'s basic attack deals 90% ATK to All targets.',
         damage: 90,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All
@@ -312,7 +312,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 30,
         pet_id: 30,
         name: 'Hydra AA',
-        description: 'Hydra\'s basic attack deals 130% ATK to All targets.',
+        description: 'Hydra\'s basic attack deals 90% ATK to All targets.',
         damage: 90,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All
@@ -321,7 +321,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 31,
         pet_id: 31,
         name: 'Phoenix AA',
-        description: 'Phoenix\'s basic attack deals 130% ATK to All targets.',
+        description: 'Phoenix\'s basic attack deals 90% ATK to All targets.',
         damage: 90,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All
@@ -386,7 +386,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 38,
         pet_id: 38,
         name: 'Lunar Dragon AA',
-        description: 'Lunar Dragon\'s basic attack deals 135% ATK to All targets.',
+        description: 'Lunar Dragon\'s basic attack deals 95% ATK to All targets.',
         damage: 95,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All
@@ -404,7 +404,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 40,
         pet_id: 40,
         name: 'Lunar Horse AA',
-        description: 'Lunar Horse\'s basic attack deals 135% ATK to All targets.',
+        description: 'Lunar Horse\'s basic attack deals 95% ATK to All targets.',
         damage: 95,
         scaling_type: EScalingType.Physical,
         attack_position: ETargetPosition.All
@@ -422,7 +422,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 42,
         pet_id: 42,
         name: 'Lunar Monkey AA',
-        description: 'Lunar Monkey\'s basic attack deals 135% ATK to All targets.',
+        description: 'Lunar Monkey\'s basic attack deals 95% ATK to All targets.',
         damage: 95,
         scaling_type: EScalingType.Physical,
         attack_position: ETargetPosition.All
@@ -449,7 +449,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 45,
         pet_id: 45,
         name: 'Lunar Pig AA',
-        description: 'Lunar Pig\'s basic attack deals 135% ATK to All targets.',
+        description: 'Lunar Pig\'s basic attack deals 95% ATK to All targets.',
         damage: 95,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All
@@ -469,7 +469,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 47,
         pet_id: 47,
         name: 'Taurus AA',
-        description: 'Taurus\'s basic attack deals 145% ATK to All targets.',
+        description: 'Taurus\'s basic attack deals 115% ATK to All targets.',
         damage: 115,
         scaling_type: EScalingType.Physical,
         attack_position: ETargetPosition.All
@@ -541,7 +541,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 55,
         pet_id: 55,
         name: 'Capricorn AA',
-        description: 'Capricorn\'s basic attack deals 145% ATK to All targets.',
+        description: 'Capricorn\'s basic attack deals 115% ATK to All targets.',
         damage: 115,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All
@@ -550,7 +550,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 56,
         pet_id: 56,
         name: 'Aquarius AA',
-        description: 'Aquarius\'s basic attack deals 145% ATK to All targets.',
+        description: 'Aquarius\'s basic attack deals 115% ATK to All targets.',
         damage: 115,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All
@@ -570,7 +570,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 58,
         pet_id: 58,
         name: 'Azure Dragon AA',
-        description: 'Azure Dragon\'s basic attack deals 155% ATK to All targets.',
+        description: 'Azure Dragon\'s basic attack deals 125% ATK to All targets.',
         damage: 125,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All
@@ -588,7 +588,7 @@ export const autoAttackSeedData: AutoAttackSeed[] = [
         id: 60,
         pet_id: 60,
         name: 'Vermilion Bird AA',
-        description: 'Vermilion Bird\'s basic attack deals 155% ATK to All targets.',
+        description: 'Vermilion Bird\'s basic attack deals 125% ATK to All targets.',
         damage: 125,
         scaling_type: EScalingType.Magical,
         attack_position: ETargetPosition.All

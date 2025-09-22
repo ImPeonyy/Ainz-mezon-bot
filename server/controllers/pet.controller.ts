@@ -55,7 +55,6 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                                     id: user.id
                                 }
                             },
-                            daily: 0,
                             hunt: 1
                         });
 
@@ -105,7 +104,6 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                                     id: todayActivity.id
                                 },
                                 {
-                                    daily: 0,
                                     hunt: 1
                                 }
                             );
