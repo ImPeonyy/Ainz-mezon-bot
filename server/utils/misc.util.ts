@@ -151,3 +151,7 @@ export const isValidImageExtension = (filename: string): boolean => {
         filename.toLowerCase().endsWith('.jpeg')
     );
 };
+
+export const isValidNumber = (value: string): boolean => {
+    return !isNaN(Number(value));
+};

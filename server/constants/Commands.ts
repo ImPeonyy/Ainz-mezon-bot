@@ -14,7 +14,9 @@ export const COMMANDS = {
     help: 'help',
     team: 'team',
     rename: 'rename',
-    leaderboard: 'lb'
+    leaderboard: 'lb',
+    withdraw: 'wd',
+    balance: 'balance',
 };
 
 export const ACTIONS = {

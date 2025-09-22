@@ -1,6 +1,7 @@
 import { ACTIONS, COMMANDS, EActionType } from '@/constants';
 import {
     addPetToTeamController,
+    balanceController,
     battleController,
     createUserController,
     dailyController,
@@ -13,7 +14,8 @@ import {
     renamePetController,
     swapPetInTeamController,
     updateTeamController,
-    updateUserController
+    updateUserController,
+    withdrawController
 } from '@/controllers';
 import {
     embedMessage,
@@ -28,12 +30,13 @@ import {
     getRandomPastelHexColor,
     getForFunHelpMessage
 } from '@/utils';
-import { getActionGif, getMeme, getPets, getPetsByRarity, getUser, getUserPets, getUserPetsByRarity } from '@/services';
+import { getActionGif, getMeme, getPets, getPetsByRarity, getUserWithTeam, getUserPets, getUserPetsByRarity } from '@/services';
 
 import { ERarity } from '@prisma/client';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { prisma } from '@/lib/db';
 import { MezonClient } from 'mezon-sdk';
+import { isValidNumber } from '@/utils/misc.util';
 
 export const getActionController = async (
     event: any,
@@ -93,7 +96,7 @@ export const getActionController = async (
                 return leaderBoardPayload;
             }
 
-            const existingUser = await getUser(sender_id);
+            const existingUser = await getUserWithTeam(sender_id);
 
             if (!existingUser) {
                 return textMessage('🚨 User not found!\nPlz initialize your user first!\n→ Usage: *ainz init');
@@ -209,6 +212,29 @@ export const getActionController = async (
 
                 await renamePetController(petName, nickname, sender_id, message, channel);
                 return;
+            }
+
+            if (action === COMMANDS.withdraw) {
+                if (!targetRaw) {
+                    return textMessage('🚨 Missing amount!\nUsage: *ainz wd [Amount]');
+                }
+                if (!isValidNumber(targetRaw)) {
+                    return textMessage('🚨 Amount must be a number!\nUsage: *ainz wd [Amount]');
+                }
+                const amount = Number(targetRaw);
+                if (amount <= 0) {
+                    return textMessage('🚨 Amount must be greater than 0!');
+                }
+                if (amount > existingUser.mezon_token) {
+                    return textMessage(`🚨 Insufficient balance!\nYou have [ ${existingUser.mezon_token}₫ ] 💰!`);
+                }
+                await withdrawController(existingUser, amount, client, message, channel);
+                return;
+            }
+
+            if (action === COMMANDS.balance) {
+                const balancePayload = await balanceController(existingUser);
+                return balancePayload;
             }
         }
 
