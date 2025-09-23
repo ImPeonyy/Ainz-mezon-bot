@@ -23,3 +23,9 @@ export enum ERarityEmoji {
     Mythic = 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1758388526/mythic_avmujp.png',
     Limited = 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1758388525/limited_xrmymh.png'
 }
+
+export enum EChallengeStatus {
+    ACCEPTED = 'challenge_accepted',
+    REJECTED = 'challenge_rejected',
+    EXPIRED = 'challenge_expired'
+}

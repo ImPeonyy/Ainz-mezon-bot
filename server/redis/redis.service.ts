@@ -35,7 +35,7 @@ export async function hasActiveBattleLog(user: User): Promise<number | null> {
     return ttl > 0 ? ttl : null;
 }
 
-export async function logChallengeWithExpire(user: User, expireInSeconds): Promise<void> {
+export async function logChallengeWithExpire(user: User, expireInSeconds=TTL): Promise<void> {
     const key = `challenge:${user.username}-${user.id}:${Date.now()}`;
     await redis.set(key, '1', 'EX', expireInSeconds);
     console.log(`🏆 Logged challenge for user ${user.id} with TTL ${expireInSeconds}s`);

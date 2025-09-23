@@ -1,5 +1,5 @@
 import { createProfileCard, expToUserLevel, getUserLevelFromExp, textMessage } from '@/utils';
-import { createLeaderBoard, createTeam, createUser, getTodayUserDailyActivity, getUser, sendDMToUser, updateUser, uploadImageToCloudinary } from '@/services';
+import { createLeaderBoard, createTeam, createUser, getTodayUserDailyActivity, getUserWithTeam, sendDMToUser, updateUser, uploadImageToCloudinary } from '@/services';
 
 import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER, MAX_USER_NAME_LENGTH } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
@@ -66,7 +66,7 @@ export const createUserController = async (
         const messageReply = await message.reply(textMessage('Initializing user...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
-        const existingUser = await getUser(mezon_id);
+        const existingUser = await getUserWithTeam(mezon_id);
 
         if (existingUser) {
             await messageFetch.update(textMessage('User already exists'));

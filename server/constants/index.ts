@@ -17,10 +17,12 @@ import {
     RARITY_CP_MULTIPLIERS,
     UPDATE_LEADERBOARD_CRON_SCHEDULE,
     MAX_TEAM_NAME_LENGTH,
-    MAX_USER_NAME_LENGTH
+    MAX_USER_NAME_LENGTH,
+    BOT_ID
+
 } from './Constant';
-import { EActionType, ERarityColor, ERarityEmoji } from './Enum';
-import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard } from './Type';
+import { EActionType, ERarityColor, ERarityEmoji, EChallengeStatus } from './Enum';
+import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard, ICloudinaryImage } from './Type';
 
 export {
     ACTIONS,
@@ -29,6 +31,7 @@ export {
     EActionType,
     ERarityColor,
     ERarityEmoji,
+    EChallengeStatus,
     IBattle,
     IBPet,
     IActionGif,
@@ -37,6 +40,7 @@ export {
     IMeme,
     ParsedAction,
     IMyLeaderBoard,
+    ICloudinaryImage,
     CLOUDINARY_PROFILE_FOLDER,
     BATTLE_CARD_HEIGHT,
     BATTLE_CARD_WIDTH,
@@ -53,5 +57,6 @@ export {
     RARITY_CP_MULTIPLIERS,
     UPDATE_LEADERBOARD_CRON_SCHEDULE,
     MAX_TEAM_NAME_LENGTH,
-    MAX_USER_NAME_LENGTH
+    MAX_USER_NAME_LENGTH,
+    BOT_ID
 };

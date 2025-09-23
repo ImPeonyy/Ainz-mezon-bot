@@ -1,7 +1,22 @@
-import { ACTIONS, AINZ_THUMBNAIL, FAV_COLOR, IBattle } from '@/constants';
-import { ChannelMessageContent, EmojiOnMessage, IInteractiveMessageProps } from 'mezon-sdk';
+import { ACTIONS, AINZ_THUMBNAIL, EChallengeStatus, FAV_COLOR, IBattle } from '@/constants';
+import {
+    ButtonComponent,
+    ChannelMessageContent,
+    EButtonMessageStyle,
+    EMessageComponentType,
+    EmojiOnMessage,
+    IInteractiveMessageProps,
+    IMessageActionRow
+} from 'mezon-sdk';
 import { ERarity, Prisma, User } from '@prisma/client';
-import { expToPetLevel, getAdditionalStats, getPetLevelFromExp, getRandomPastelHexColor, getRarityColor, getUrlEmoji } from '@/utils';
+import {
+    expToPetLevel,
+    getAdditionalStats,
+    getPetLevelFromExp,
+    getRandomPastelHexColor,
+    getRarityColor,
+    getUrlEmoji
+} from '@/utils';
 
 export const textMessage = (message: string) => {
     const messagePayload: ChannelMessageContent = {
@@ -160,7 +175,7 @@ export const getBagMessageByRarity = (
 };
 
 export const teamInfoMessage = (
-    team: Prisma.TeamGetPayload<{ include: { members: { include: { userPet: { include: { pet: true } } } } } }>,
+    team: Prisma.TeamGetPayload<{ include: { members: { include: { userPet: { include: { pet: true } } } } } }>
 ) => {
     let messagePayload: ChannelMessageContent = {
         t: `Your team "${team.name}" contains the following pets:\nCombat Power: ${team.combat_power}\n`,
@@ -232,7 +247,9 @@ export const getDexMessage = (
     return embedMessage({
         color: getRarityColor(statistic.rarity),
         title: `${pet.name} Information 🔍`,
-        description: `${pet?.description}\n${pet?.autoAttack?.name}: ${pet?.autoAttack?.description}\n${pet?.activeSkill?.name}: ${pet?.activeSkill?.description}` || 'Coming soon',
+        description:
+            `${pet?.description}\n${pet?.autoAttack?.name}: ${pet?.autoAttack?.description}\n${pet?.activeSkill?.name}: ${pet?.activeSkill?.description}` ||
+            'Coming soon',
         thumbnail: { url: AINZ_THUMBNAIL },
         fields: messageContent,
         image: {
@@ -278,19 +295,41 @@ export const getMyDexMessage = (
             { name: '💎 Rarity', value: statistic.rarity, inline: true },
             { name: '🎭 Role', value: statistic.role, inline: true },
             { name: '⚔️ Attack type', value: statistic.scaling_type, inline: true },
-            { name: '❤️', value: (statistic.hp + getAdditionalStats(statistic.hp_per_level, currentLevel)).toString(), inline: true },
-            { name: '🗡️', value: (statistic.ad + getAdditionalStats(statistic.ad_per_level, currentLevel)).toString(), inline: true },
-            { name: '🛡️', value: (statistic.ar + getAdditionalStats(statistic.ar_per_level, currentLevel)).toString(), inline: true },
-            { name: '💧', value: (statistic.mana).toString(), inline: true },
-            { name: '💫', value: (statistic.ap + getAdditionalStats(statistic.ap_per_level, currentLevel)).toString(), inline: true },
-            { name: '⛊', value: (statistic.mr + getAdditionalStats(statistic.mr_per_level, currentLevel)).toString(), inline: true }
+            {
+                name: '❤️',
+                value: (statistic.hp + getAdditionalStats(statistic.hp_per_level, currentLevel)).toString(),
+                inline: true
+            },
+            {
+                name: '🗡️',
+                value: (statistic.ad + getAdditionalStats(statistic.ad_per_level, currentLevel)).toString(),
+                inline: true
+            },
+            {
+                name: '🛡️',
+                value: (statistic.ar + getAdditionalStats(statistic.ar_per_level, currentLevel)).toString(),
+                inline: true
+            },
+            { name: '💧', value: statistic.mana.toString(), inline: true },
+            {
+                name: '💫',
+                value: (statistic.ap + getAdditionalStats(statistic.ap_per_level, currentLevel)).toString(),
+                inline: true
+            },
+            {
+                name: '⛊',
+                value: (statistic.mr + getAdditionalStats(statistic.mr_per_level, currentLevel)).toString(),
+                inline: true
+            }
         );
     }
 
     const embedConfig: IInteractiveMessageProps = {
         color: getRarityColor(statistic.rarity),
         title: `${userPet.pet.name} Information 🔍`,
-        description: `${userPet.pet?.description}\n${userPet.pet?.autoAttack?.name}: ${userPet.pet?.autoAttack?.description}\n${userPet.pet?.activeSkill?.name}: ${userPet.pet?.activeSkill?.description}` || 'Coming soon',
+        description:
+            `${userPet.pet?.description}\n${userPet.pet?.autoAttack?.name}: ${userPet.pet?.autoAttack?.description}\n${userPet.pet?.activeSkill?.name}: ${userPet.pet?.activeSkill?.description}` ||
+            'Coming soon',
         thumbnail: {
             url: userAvatar
         },
@@ -351,6 +390,124 @@ export const getBattleMessage = (user: User, battle: IBattle, image: string, foo
                 }
             }
         ]
+    };
+
+    return messagePayload;
+};
+
+export const getChallengeMessage = (
+    challenger: User,
+    opponent: User,
+    bet: number,
+    battle: IBattle,
+    image: string,
+    footerMsg: string
+) => {
+    const messagePayload: ChannelMessageContent = {
+        embed: [
+            {
+                color: getRandomPastelHexColor(),
+                title: `⚔️ "${challenger.username}" is challenging "${opponent.username}"! 💰 ${bet}₫`,
+                thumbnail: { url: challenger.avatar },
+                fields: [
+                    {
+                        name: `${battle.teamAName}`,
+                        value: `Lv. ${battle.teamA[1].info.level} - ${battle.teamA[1].info.petName}`,
+                        inline: true
+                    },
+                    {
+                        name: '----------',
+                        value: `Lv. ${battle.teamA[3].info.level} - ${battle.teamA[3].info.petName}`,
+                        inline: true
+                    },
+                    {
+                        name: '----------',
+                        value: `Lv. ${battle.teamA[5].info.level} - ${battle.teamA[5].info.petName}`,
+                        inline: true
+                    },
+                    {
+                        name: `${battle.teamBName}`,
+                        value: `Lv. ${battle.teamB[2].info.level} - ${battle.teamB[2].info.petName}`,
+                        inline: true
+                    },
+                    {
+                        name: '----------',
+                        value: `Lv. ${battle.teamB[4].info.level} - ${battle.teamB[4].info.petName}`,
+                        inline: true
+                    },
+                    {
+                        name: '----------',
+                        value: `Lv. ${battle.teamB[6].info.level} - ${battle.teamB[6].info.petName}`,
+                        inline: true
+                    }
+                ],
+                image: { url: image },
+                footer: {
+                    text: footerMsg
+                }
+            }
+        ]
+    };
+
+    return messagePayload;
+};
+
+export const getChallengeRequestMessage = (
+    challenger: Prisma.UserGetPayload<{ include: { team: true } }>,
+    opponent: Prisma.UserGetPayload<{ include: { team: true } }>,
+    challengePreview: string,
+    bet: number
+) => {
+    const acceptButton: ButtonComponent = {
+        id: EChallengeStatus.ACCEPTED,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: 'Accept',
+            style: EButtonMessageStyle.SUCCESS
+        }
+    };
+    const rejectButton: ButtonComponent = {
+        id: EChallengeStatus.REJECTED,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: 'Reject',
+            style: EButtonMessageStyle.DANGER
+        }
+    };
+    const messageActionRow: IMessageActionRow = {
+        components: [acceptButton, rejectButton]
+    };
+
+    const embedConfig: IInteractiveMessageProps = {
+        color: getRandomPastelHexColor(),
+        title: `⚔️ "${challenger.username}" has challenged "${opponent.username}" to a duel!\n💰 ${bet}₫`,
+        thumbnail: { url: AINZ_THUMBNAIL },
+        fields: [
+            {
+                name: challenger.team?.name || challenger.username,
+                value: `CP: ${challenger.team?.combat_power}`,
+                inline: true
+            },
+            {
+                name: '-----VS-----',
+                value: '-----⚔️-----',
+                inline: true
+            },
+            {
+                name: opponent.team?.name || opponent.username,
+                value: `CP: ${opponent.team?.combat_power}`,
+                inline: true
+            }
+        ],
+        image: { url: challengePreview },
+        footer: {
+            text: `👑 Ainz Mezon Bot • Challenge will expire at ${new Date(Date.now() + 60000).toLocaleTimeString('vi-VN')}`
+        }
+    };
+
+    const messagePayload: ChannelMessageContent = {
+        embed: [embedConfig],
+        components: [messageActionRow]
     };
 
     return messagePayload;

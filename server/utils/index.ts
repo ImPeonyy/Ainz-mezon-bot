@@ -10,7 +10,9 @@ import {
     getHuntMessage,
     getMyDexMessage,
     teamInfoMessage,
-    textMessage
+    textMessage,
+    getChallengeMessage,
+    getChallengeRequestMessage
 } from './message.util';
 import {
     expToPetLevel,
@@ -28,7 +30,8 @@ import {
     getRandomPastelHexColor,
     formatSecondsToMinutes,
     getAdditionalStats,
-    geLBtNextUpdate
+    geLBtNextUpdate,
+    parseChallengeCommand
 } from './misc.util';
 import {
     getAttackPosition,
@@ -92,6 +95,7 @@ export {
     createProfileCard,
     processEffects,
     parseActionCommandTeam,
+    parseChallengeCommand,
     getBagMessageByRarity,
     getMyDexMessage,
     teamInfoMessage,
@@ -106,5 +110,7 @@ export {
     winsLeaderBoard,
     lossesLeaderBoard,
     calculateTeamCP,
-    geLBtNextUpdate
+    geLBtNextUpdate,
+    getChallengeMessage,
+    getChallengeRequestMessage
 };

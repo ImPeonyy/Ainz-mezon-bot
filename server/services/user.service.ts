@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 
-export const getUser = async (mezon_id: string) => {
+export const getUserWithTeam = async (mezon_id: string) => {
     try {
         return await prisma.user.findUnique({
             where: {
@@ -10,6 +10,19 @@ export const getUser = async (mezon_id: string) => {
             },
             include: {
                 team: true
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user with team:', error);
+        throw error;
+    }
+};
+
+export const getUser = async (mezon_id: string) => {
+    try {
+        return await prisma.user.findUnique({
+            where: {
+                id: mezon_id
             }
         });
     } catch (error) {
@@ -44,6 +57,24 @@ export const updateUser = async (
         });
     } catch (error) {
         console.error('Error updating user:', error);
+        throw error;
+    }
+};
+
+export const upsertUser = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    where: Prisma.UserWhereUniqueInput,
+    updateData: Prisma.UserUpdateInput,
+    createData: Prisma.UserCreateInput
+) => {
+    try {
+        return await prismaClient.user.upsert({
+            where,
+            update: updateData,
+            create: createData
+        });
+    } catch (error) {
+        console.error('Error upserting user:', error);
         throw error;
     }
 };

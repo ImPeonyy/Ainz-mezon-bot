@@ -34,6 +34,11 @@ export const getHelpMessage = () => {
                 name: '⚔️ Battle',
                 value: 'battle | battle "@user"',
                 inline: false
+            },
+            {
+                name: '💰 Challenge',
+                value: 'vs [bet] [@user] | reply user with *ainz vs [bet]',
+                inline: false
             }
         ],
         color: getRandomPastelHexColor(),
