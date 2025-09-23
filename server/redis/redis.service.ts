@@ -35,7 +35,15 @@ export async function hasActiveBattleLog(user: User): Promise<number | null> {
     return ttl > 0 ? ttl : null;
 }
 
-export async function logChallengeWithExpire(user: User, expireInSeconds=TTL): Promise<void> {
+export async function removeBattleLog(user: User): Promise<void> {
+    const keys = await getBattlesLogByUser(user);
+    if (keys.length > 0) {
+        await redis.del(...keys);
+        console.log(`🗑️ Removed ${keys.length} battle logs for user ${user.id}`);
+    }
+}
+
+export async function logChallengeWithExpire(user: User, expireInSeconds=TTL*3): Promise<void> {
     const key = `challenge:${user.username}-${user.id}:${Date.now()}`;
     await redis.set(key, '1', 'EX', expireInSeconds);
     console.log(`🏆 Logged challenge for user ${user.id} with TTL ${expireInSeconds}s`);

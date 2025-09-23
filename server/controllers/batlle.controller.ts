@@ -40,7 +40,7 @@ import {
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { Prisma, User } from '@prisma/client';
 import { prisma } from '@/lib/db';
-import { hasActiveBattleLog, hasActiveChallengeLog, logBattleWithExpire, logChallengeWithExpire, removeChallengeLog } from '@/redis';
+import { hasActiveBattleLog, hasActiveChallengeLog, logBattleWithExpire, logChallengeWithExpire, removeBattleLog, removeChallengeLog } from '@/redis';
 import { MezonClient } from 'mezon-sdk';
 
 export const battleController = async (currentUser: User, targetId: string, channel: any, message: Message) => {
@@ -64,6 +64,8 @@ export const battleController = async (currentUser: User, targetId: string, chan
             return;
         }
 
+        await logBattleWithExpire(currentUser);
+
         const todayActivity = await getTodayUserDailyActivity(currentUser.id);
         if (todayActivity && todayActivity.battle >= USE_DAILY_ACTIVITY.BATTLE.BATTLE_PER_DAY) {
             await messageFetch.update(
@@ -71,6 +73,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
                     `🚨 You’ve reached today’s battle limit (${todayActivity.battle}/${USE_DAILY_ACTIVITY.BATTLE.BATTLE_PER_DAY}). Please try again tomorrow!`
                 )
             );
+            await removeBattleLog(currentUser);
             return;
         }
 
@@ -80,6 +83,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
             await messageFetch.update(
                 textMessage("🚨 You don't have a team. \nPlz create one first!\n→ Usage: *ainz team create [team name]")
             );
+            await removeBattleLog(currentUser);
             return;
         }
 
@@ -89,6 +93,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
                     '🚨 Your team is not ready!\nAdd 3 pets to your team first!\n→ Usage: *ainz team add [position] [pet name]'
                 )
             );
+            await removeBattleLog(currentUser);
             return;
         }
 
@@ -102,6 +107,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
                 await messageFetch.update(
                     textMessage('🚨 Target Opponent not found!\nPlz search for another opponent!')
                 );
+                await removeBattleLog(currentUser);
                 return;
             }
             targetTeam = await getTeamForBattle(targetId);
@@ -110,12 +116,14 @@ export const battleController = async (currentUser: User, targetId: string, chan
                 await messageFetch.update(
                     textMessage('🚨 Target Opponent team not found!\nPlz search for another opponent!')
                 );
+                await removeBattleLog(currentUser);
                 return;
             }
             if (targetTeam.members.length !== 3) {
                 await messageFetch.update(
                     textMessage("🙀 Oops! Your rival's team isn't ready yet.\nPlz search for another opponent!")
                 );
+                await removeBattleLog(currentUser);
                 return;
             }
         } else {
@@ -123,11 +131,10 @@ export const battleController = async (currentUser: User, targetId: string, chan
 
             if (!targetTeam) {
                 await messageFetch.update(textMessage('🚨 Random Opponent team not found!\nPlz try again later!'));
+                await removeBattleLog(currentUser);
                 return;
             }
         }
-
-        await logBattleWithExpire(currentUser);
 
         const processedTeamA: IBPet[] = processTeam(currentUserTeam.members, 1);
         const processedTeamB: IBPet[] = processTeam(targetTeam.members, 2);
@@ -307,6 +314,7 @@ export const battleController = async (currentUser: User, targetId: string, chan
             }
         }
     } catch (error) {
+        await removeBattleLog(currentUser);
         console.error('Error in battleController:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
@@ -325,7 +333,7 @@ export const challengeController = async (
     message: Message,
     client: MezonClient
 ) => {
-    const renderCycle: number = parseInt(process.env.RENDER_CYCLE || DEFAULT_RENDER_CYCLE);
+    const renderCycle: number = 6;
     let messageFetch: any;
     try {
         const challengeMessage = await message.reply(textMessage('🛠️ Setup for challenge...'));
@@ -347,6 +355,7 @@ export const challengeController = async (
             await messageFetch.update(
                 textMessage("🚨 You don't have a team. \nPlz create one first!\n→ Usage: *ainz team create [team name]")
             );
+            await removeChallengeLog(challenger);
             return;
         }
 
@@ -356,6 +365,7 @@ export const challengeController = async (
                     '🚨 Your team is not ready!\nAdd 3 pets to your team first!\n→ Usage: *ainz team add [position] [pet name]'
                 )
             );
+            await removeChallengeLog(challenger);
             return;
         }
 
@@ -369,12 +379,14 @@ export const challengeController = async (
             await messageFetch.update(
                 textMessage('🚨 Target Opponent team not found!\nPlz search for another opponent!')
             );
+            await removeChallengeLog(challenger);
             return;
         }
         if (opponentTeam.members.length !== 3) {
             await messageFetch.update(
                 textMessage("🙀 Oops! Your rival's team isn't ready yet.\nPlz search for another opponent!")
             );
+            await removeChallengeLog(challenger);
             return;
         }
 
@@ -429,12 +441,14 @@ export const challengeController = async (
         await deleteImageFromCloudinary(challengePreview.public_id);
         if (challengeStatus === EChallengeStatus.EXPIRED) {
             await messageFetch.update(textMessage('⏱️ Challenge expired! No response received. Plz try again!'));
+            await removeChallengeLog(challenger);
             return;
         }
         if (challengeStatus === EChallengeStatus.REJECTED) {
             await messageFetch.update(
                 textMessage(`🚨 "${opponent.username}" has rejected the challenge from "${challenger.username}"!`)
             );
+            await removeChallengeLog(challenger);
             return;
         }
         if (challengeStatus === EChallengeStatus.ACCEPTED) {
@@ -598,6 +612,7 @@ export const challengeController = async (
             }
         }
     } catch (error) {
+        await removeChallengeLog(challenger);
         console.error('Error in challengeController:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));

@@ -16,6 +16,11 @@ export const getHelpMessage = () => {
                 inline: false
             },
             {
+                name: '💸 Wallet',
+                value: 'balance | wd [amount]',
+                inline: false
+            },
+            {
                 name: '🏆 Leaderboard',
                 value: 'lb | lb level | lb cp | lb wins | lb losses',
                 inline: false
