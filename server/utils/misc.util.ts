@@ -47,6 +47,13 @@ export const parseRenameCommand = (content: string) => {
     };
 };
 
+export const parseChallengeCommand = (content: string) => {
+    const parts = content.trim().split(/\s+/);
+    const bet = parseInt(parts[0], 10);
+    const target = parts[1];
+    return { bet: isValidNumber(bet) ? bet : null, target };
+};
+
 export const getActorName = (display_name: string, clan_nick: string) => {
     if (clan_nick !== '') {
         return clan_nick;
@@ -150,4 +157,8 @@ export const isValidImageExtension = (filename: string): boolean => {
         filename.toLowerCase().endsWith('.jpg') ||
         filename.toLowerCase().endsWith('.jpeg')
     );
+};
+
+export const isValidNumber = (value: any): boolean => {
+    return !isNaN(Number(value));
 };

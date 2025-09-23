@@ -1,7 +1,9 @@
 import { ACTIONS, COMMANDS, EActionType } from '@/constants';
 import {
     addPetToTeamController,
+    balanceController,
     battleController,
+    challengeController,
     createUserController,
     dailyController,
     dexController,
@@ -13,7 +15,8 @@ import {
     renamePetController,
     swapPetInTeamController,
     updateTeamController,
-    updateUserController
+    updateUserController,
+    withdrawController
 } from '@/controllers';
 import {
     embedMessage,
@@ -28,12 +31,21 @@ import {
     getRandomPastelHexColor,
     getForFunHelpMessage
 } from '@/utils';
-import { getActionGif, getMeme, getPets, getPetsByRarity, getUser, getUserPets, getUserPetsByRarity } from '@/services';
+import {
+    getActionGif,
+    getMeme,
+    getPets,
+    getPetsByRarity,
+    getUserWithTeam,
+    getUserPets,
+    getUserPetsByRarity
+} from '@/services';
 
 import { ERarity } from '@prisma/client';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { prisma } from '@/lib/db';
 import { MezonClient } from 'mezon-sdk';
+import { isValidNumber, parseChallengeCommand } from '@/utils/misc.util';
 
 export const getActionController = async (
     event: any,
@@ -52,7 +64,15 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.init) {
-                const createUserPayload = await createUserController(display_name, username, sender_id, avatar, message, channel, client);
+                const createUserPayload = await createUserController(
+                    display_name,
+                    username,
+                    sender_id,
+                    avatar,
+                    message,
+                    channel,
+                    client
+                );
                 return createUserPayload;
             }
 
@@ -87,13 +107,13 @@ export const getActionController = async (
                 const helpPayload = await getHelpController(targetRaw);
                 return helpPayload;
             }
-            
+
             if (action === COMMANDS.leaderboard) {
                 const leaderBoardPayload = await leaderBoardController(message, channel, sender_id, targetRaw);
                 return leaderBoardPayload;
             }
 
-            const existingUser = await getUser(sender_id);
+            const existingUser = await getUserWithTeam(sender_id);
 
             if (!existingUser) {
                 return textMessage('🚨 User not found!\nPlz initialize your user first!\n→ Usage: *ainz init');
@@ -210,6 +230,68 @@ export const getActionController = async (
                 await renamePetController(petName, nickname, sender_id, message, channel);
                 return;
             }
+
+            if (action === COMMANDS.withdraw) {
+                if (!targetRaw) {
+                    return textMessage('🚨 Missing amount!\nUsage: *ainz wd [Amount]');
+                }
+                if (!isValidNumber(targetRaw)) {
+                    return textMessage('🚨 Amount must be a number!\nUsage: *ainz wd [Amount]');
+                }
+                const amount = Number(targetRaw);
+                if (amount <= 0) {
+                    return textMessage('🚨 Amount must be greater than 0!');
+                }
+                if (amount > existingUser.mezon_token) {
+                    return textMessage(`🚨 Insufficient balance!\nYou have [ ${existingUser.mezon_token}₫ ] 💰!`);
+                }
+                await withdrawController(existingUser, amount, client, message, channel);
+                return;
+            }
+
+            if (action === COMMANDS.balance) {
+                const balancePayload = await balanceController(existingUser);
+                return balancePayload;
+            }
+
+            if (action === COMMANDS.challenge) {
+                const targetId = mentions[0]?.user_id || references[0]?.message_sender_id;
+                if (!targetId) {
+                    return textMessage('🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
+                }
+                if (existingUser.id === targetId) {
+                    await message.reply(textMessage('🚨 You cannot challenge yourself!'));
+                    return;
+                }
+                const opponent = await getUserWithTeam(targetId);
+                if (!opponent) {
+                    return textMessage('🚨 Target Opponent not found!\nPlz search for another opponent!');
+                }
+                if (!targetRaw) {
+                    return textMessage('🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
+                }
+                const {bet, target} = parseChallengeCommand(targetRaw);
+                if (bet === null || !target) {
+                    return textMessage('🚨 Wrong format!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
+                }
+                if (bet <= 0) {
+                    return textMessage('🚨 Bet must be greater than 0!');
+                }
+                if (bet > existingUser.mezon_token) {
+                    return textMessage(`🚨 Insufficient balance!\nYou have [ ${existingUser.mezon_token}₫ ] 💰!`);
+                }
+                if (opponent.mezon_token < bet) {
+                    return textMessage(`🚨 ${opponent.username} has insufficient balance.💰!`);
+                }
+                if (target && !targetId) {
+                    return textMessage(
+                        '🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]'
+                    );
+                }
+                
+                const challengePayload = await challengeController(existingUser, opponent, bet, channel, message, client);
+                return challengePayload;
+            }
         }
 
         return textMessage('❌ Invalid command');
@@ -232,7 +314,7 @@ export const getMemeController = async () => {
         return embedMessage({
             color: getRandomPastelHexColor(),
             title: title,
-            image: { url: url },
+            image: { url: url, width: '200', height: '50' },
             url: postLink,
             fields: [
                 {
@@ -317,12 +399,13 @@ export const getActionGifController = async (actor: string, actionType: string, 
 export const getHelpController = (targetRaw?: string | null) => {
     try {
         if (!targetRaw) return getHelpMessage();
-        if (targetRaw === "ff") {
+        if (targetRaw === 'ff') {
             return getForFunHelpMessage();
         } else {
-            return textMessage('❌ Invalid help command \n → *ainz help - bot guide help \n → *ainz help ff - for fun help');
+            return textMessage(
+                '❌ Invalid help command \n → *ainz help - bot guide help \n → *ainz help ff - for fun help'
+            );
         }
-       
     } catch (error) {
         console.error('Error getting help message:', error);
         return textMessage('❌ Internal server error');

@@ -65,6 +65,9 @@ export const leaderBoardController = async (
                     }
                     leaderBoardPayload = await lossesLeaderBoard(topLosses);
                     break;
+                default:
+                    await messageFetch.update(textMessage('❌ Invalid leaderboard type!'));
+                    return;
             }
             await messageFetch.update(leaderBoardPayload);
             return;

@@ -5,7 +5,8 @@ import cors from 'cors';
 
 import { extractFirstTokenWithAsterisk, parseActionCommand } from '@/utils';
 
-import { getActionController } from '@/controllers';
+import { depositController, getActionController } from '@/controllers';
+import { BOT_ID } from '@/constants';
 
 dotenv.config();
 
@@ -29,32 +30,37 @@ async function main() {
 
     client.onChannelMessage(async (event: any) => {
         try {
-            if (event.sender_id === client.clientId) {
-                return;
-            }
+            if (event.sender_id !== BOT_ID) {
+                const trigger = extractFirstTokenWithAsterisk(event?.content?.t)?.toLowerCase();
+                if (trigger === '*ainz' || trigger === '*a') {
+                    const channelFetch = await client.channels.fetch(event.channel_id);
+                    const messageFetch = await channelFetch.messages.fetch(event.message_id);
 
-            const trigger = extractFirstTokenWithAsterisk(event?.content?.t)?.toLowerCase();
-            if (trigger === '*ainz' || trigger === '*a') {
-                const channelFetch = await client.channels.fetch(event.channel_id);
-                const messageFetch = await channelFetch.messages.fetch(event.message_id);
+                    const { action, targetRaw } = parseActionCommand(event?.content?.t);
 
-                const { action, targetRaw } = parseActionCommand(event?.content?.t);
+                    const messagePayload = await getActionController(
+                        event,
+                        action || 'invalid command',
+                        channelFetch,
+                        messageFetch,
+                        client,
+                        targetRaw
+                    );
 
-                const messagePayload = await getActionController(
-                    event,
-                    action || 'invalid command',
-                    channelFetch,
-                    messageFetch,
-                    client,
-                    targetRaw
-                );
-
-                if (messagePayload) {
-                    await messageFetch.reply(messagePayload);
+                    if (messagePayload) {
+                        await messageFetch.reply(messagePayload);
+                    }
                 }
             }
         } catch (error) {
             console.error('Error in channel message handler:', error);
+        }
+    });
+
+    client.onTokenSend(async (event: any) => {
+        const { sender_id, amount, sender_name } = event;
+        if (sender_id !== BOT_ID) {
+            await depositController(sender_id, sender_name, amount, client);
         }
     });
 }

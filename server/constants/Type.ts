@@ -115,3 +115,8 @@ export interface IMyLeaderBoard {
         value: number;
     };
 }
+
+export interface ICloudinaryImage {
+    public_id: string;
+    secure_url: string;
+}
