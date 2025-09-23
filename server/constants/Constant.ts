@@ -48,6 +48,7 @@ export const BATTLE = {
 };
 export const FAV_COLOR = '#F3AAB5';
 export const CLOUDINARY_BATTLE_FOLDER = 'Battle';
+export const CLOUDINARY_CHALLENGE_FOLDER = 'Challenge';
 export const CLOUDINARY_PROFILE_FOLDER = 'Profile';
 export const BATTLE_CARD_HEIGHT = 460;
 export const BATTLE_CARD_WIDTH = 800;

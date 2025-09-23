@@ -179,7 +179,7 @@ export const addPetToTeamController = async (
             );
             const currentTeam = await getTeamForCalcCP(userId);
             if (currentTeam) {
-                await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
+                await updateTeamCombatPower(prisma, currentTeam.id, calculateTeamCP(currentTeam));
             }
             return;
         }
@@ -188,7 +188,7 @@ export const addPetToTeamController = async (
         await messageFetch.update(textMessage(`✅ Successfully added pet "${capitalizedPetName}" to your team!`));
         const currentTeam = await getTeamForCalcCP(userId);
         if (currentTeam) {
-            await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
+            await updateTeamCombatPower(prisma, currentTeam.id, calculateTeamCP(currentTeam));
         }
     } catch (error) {
         console.error('Error adding pet to team:', error);

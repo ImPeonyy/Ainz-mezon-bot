@@ -18,8 +18,8 @@ import {
     UPDATE_LEADERBOARD_CRON_SCHEDULE,
     MAX_TEAM_NAME_LENGTH,
     MAX_USER_NAME_LENGTH,
-    BOT_ID
-
+    BOT_ID,
+    CLOUDINARY_CHALLENGE_FOLDER
 } from './Constant';
 import { EActionType, ERarityColor, ERarityEmoji, EChallengeStatus } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard, ICloudinaryImage } from './Type';
@@ -58,5 +58,6 @@ export {
     UPDATE_LEADERBOARD_CRON_SCHEDULE,
     MAX_TEAM_NAME_LENGTH,
     MAX_USER_NAME_LENGTH,
-    BOT_ID
+    BOT_ID,
+    CLOUDINARY_CHALLENGE_FOLDER
 };

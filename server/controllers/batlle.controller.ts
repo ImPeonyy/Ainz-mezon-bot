@@ -6,7 +6,8 @@ import {
     DEFAULT_RENDER_CYCLE,
     USE_DAILY_ACTIVITY,
     EChallengeStatus,
-    BOT_ID
+    BOT_ID,
+    CLOUDINARY_CHALLENGE_FOLDER
 } from '@/constants';
 import {
     createBattleImage,
@@ -421,7 +422,7 @@ export const challengeController = async (
             [battle.teamAName, battle.teamBName],
             [battle.teamACP, battle.teamBCP]
         );
-        const challengePreview = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
+        const challengePreview = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_CHALLENGE_FOLDER);
 
         await messageFetch.update(getChallengeRequestMessage(challenger, opponent, challengePreview.secure_url, bet));
 
@@ -461,7 +462,7 @@ export const challengeController = async (
                         [battle.teamAName, battle.teamBName],
                         [battle.teamACP, battle.teamBCP]
                     );
-                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
+                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_CHALLENGE_FOLDER);
                     imageQueue.push(image);
                     await messageFetch.update(
                         getChallengeMessage(challenger, opponent, bet, battle, image.secure_url, `Battle start!`)
@@ -480,7 +481,7 @@ export const challengeController = async (
                         [battle.teamAName, battle.teamBName],
                         [battle.teamACP, battle.teamBCP]
                     );
-                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
+                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_CHALLENGE_FOLDER);
                     imageQueue.push(image);
                     await messageFetch.update(
                         getChallengeMessage(
@@ -500,7 +501,7 @@ export const challengeController = async (
                         [battle.teamAName, battle.teamBName],
                         [battle.teamACP, battle.teamBCP]
                     );
-                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
+                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_CHALLENGE_FOLDER);
                     imageQueue.push(image);
                     const msg =
                         teamATurnQueue.length === 0
