@@ -14,7 +14,7 @@ import {
     getMemeController
 } from './misc.controller';
 
-import { battleController } from './batlle.controller';
+import { battleController, challengeController } from './batlle.controller';
 import { dailyController } from './userDailyActivity.controller';
 import { leaderBoardController } from './leaderBoard.controller';
 import { depositController, withdrawController, balanceController } from './mezonTransaction.controller';
@@ -41,5 +41,6 @@ export {
     leaderBoardController,
     depositController,
     withdrawController,
-    balanceController
+    balanceController,
+    challengeController
 };

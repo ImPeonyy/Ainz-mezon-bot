@@ -17,6 +17,7 @@ export const COMMANDS = {
     leaderboard: 'lb',
     withdraw: 'wd',
     balance: 'balance',
+    challenge: 'vs',
 };
 
 export const ACTIONS = {

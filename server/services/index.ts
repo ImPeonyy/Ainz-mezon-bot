@@ -29,7 +29,7 @@ import {
     updateUserPet,
     upsertUserPetCount
 } from '@/services/userPet.service';
-import { deleteImagesFromCloudinary, uploadImageToCloudinary } from '@/services/cloudinary.service';
+import { deleteImagesFromCloudinary, uploadImageToCloudinary, deleteImageFromCloudinary } from '@/services/cloudinary.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
 import { getPet, getPetDetail, getPets, getPetsByRarity } from '@/services/pet.service';
 import { getRarities } from '@/services/rarity.service';
@@ -97,5 +97,6 @@ export {
     getTeamForCalcCP,
     updateTeamCombatPower,
     sendDMToUser,
-    sendTokenToUser
+    sendTokenToUser,
+    deleteImageFromCloudinary
 };

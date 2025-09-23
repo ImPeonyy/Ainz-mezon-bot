@@ -17,9 +17,18 @@ export const uploadImageToCloudinary = async (buffer, folder) => {
     }
 };
 
+export const deleteImageFromCloudinary = async (publicId) => {
+    try {
+        const results = await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+        return results;
+    } catch (err) {
+        throw err;
+    }
+};
+
 export const deleteImagesFromCloudinary = async (publicIds) => {
     try {
-        const results = Promise.all(publicIds.map((id) => cloudinary.uploader.destroy(id, { resource_type: 'image' })));
+        const results = await Promise.all(publicIds.map((id) => cloudinary.uploader.destroy(id, { resource_type: 'image' })));
         return results;
     } catch (err) {
         throw err;

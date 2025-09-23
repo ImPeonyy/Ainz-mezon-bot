@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
+import { PrismaClient } from '@prisma/client/extension';
 
 export const getTeam = async (userId: string) => {
     try {
@@ -249,9 +250,13 @@ export const getTeamForCalcCP = async (userId: string) => {
     }
 };
 
-export const updateTeamCombatPower = async (teamId: number, combatPower: number) => {
+export const updateTeamCombatPower = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    teamId: number,
+    combatPower: number
+) => {
     try {
-        return prisma.team.update({
+        return prismaClient.team.update({
             where: { id: teamId },
             data: { combat_power: combatPower }
         });

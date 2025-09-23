@@ -83,3 +83,4 @@ export const RARITY_CP_MULTIPLIERS: Record<ERarity, number> = {
 
 export const MAX_TEAM_NAME_LENGTH = 31;
 export const MAX_USER_NAME_LENGTH = 27;
+export const BOT_ID = process.env.BOT_ID || '';

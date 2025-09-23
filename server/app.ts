@@ -6,6 +6,7 @@ import cors from 'cors';
 import { extractFirstTokenWithAsterisk, parseActionCommand } from '@/utils';
 
 import { depositController, getActionController } from '@/controllers';
+import { BOT_ID } from '@/constants';
 
 dotenv.config();
 
@@ -29,7 +30,7 @@ async function main() {
 
     client.onChannelMessage(async (event: any) => {
         try {
-            if (event.sender_id !== process.env.BOT_ID) {
+            if (event.sender_id !== BOT_ID) {
                 const trigger = extractFirstTokenWithAsterisk(event?.content?.t)?.toLowerCase();
                 if (trigger === '*ainz' || trigger === '*a') {
                     const channelFetch = await client.channels.fetch(event.channel_id);
@@ -58,7 +59,7 @@ async function main() {
 
     client.onTokenSend(async (event: any) => {
         const { sender_id, amount, sender_name } = event;
-        if (sender_id !== process.env.BOT_ID) {
+        if (sender_id !== BOT_ID) {
             await depositController(sender_id, sender_name, amount, client);
         }
     });

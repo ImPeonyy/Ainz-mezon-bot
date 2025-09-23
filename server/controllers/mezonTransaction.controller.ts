@@ -4,8 +4,7 @@ import { prisma } from '@/lib/db';
 import { MezonClient } from 'mezon-sdk';
 import { User } from '@prisma/client';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-
-const BotId = process.env.BOT_ID || '';
+import { BOT_ID } from '@/constants';
 
 export const depositController = async (mezon_id: string, username: string, amount: number, client: MezonClient) => {
     try {
@@ -19,9 +18,9 @@ export const depositController = async (mezon_id: string, username: string, amou
 
             await upsertUser(
                 tx,
-                { id: BotId },
+                { id: BOT_ID },
                 { mezon_token: { increment: amount } },
-                { id: BotId, username: 'Ainz Bot', mezon_token: amount }
+                { id: BOT_ID, username: 'Ainz Bot', mezon_token: amount }
             );
         });
         await sendDMToUser(client, mezon_id, textMessage(`🎉 You have deposited [ ${amount}₫ ] 💰!`));
@@ -48,7 +47,7 @@ export const withdrawController = async (
         messageFetch = await channel.messages.fetch(messageReply.message_id);
         await prisma.$transaction(async (tx) => {
             await updateUser(tx, { id: user.id }, { mezon_token: { decrement: amount } });
-            await updateUser(tx, { id: BotId }, { mezon_token: { decrement: amount } });
+            await updateUser(tx, { id: BOT_ID }, { mezon_token: { decrement: amount } });
         });
         await sendTokenToUser(client, user.id, amount);
         await messageFetch.update(textMessage(`🎉 You have withdrawn [ ${amount}₫ ] 💰!`));

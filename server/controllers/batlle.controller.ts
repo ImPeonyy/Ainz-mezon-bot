@@ -4,7 +4,9 @@ import {
     IBattle,
     BATTLE,
     DEFAULT_RENDER_CYCLE,
-    USE_DAILY_ACTIVITY
+    USE_DAILY_ACTIVITY,
+    EChallengeStatus,
+    BOT_ID
 } from '@/constants';
 import {
     createBattleImage,
@@ -13,7 +15,9 @@ import {
     processTurn,
     textMessage,
     formatSecondsToMinutes,
-    calculateTeamCP
+    calculateTeamCP,
+    getChallengeMessage,
+    getChallengeRequestMessage
 } from '@/utils';
 import {
     createUserDailyActivity,
@@ -28,13 +32,16 @@ import {
     uploadImageToCloudinary,
     upsertLeaderBoard,
     getTeamForCalcCP,
-    updateTeamCombatPower
+    updateTeamCombatPower,
+    getUserWithTeam,
+    deleteImageFromCloudinary
 } from '@/services';
 
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { prisma } from '@/lib/db';
-import { hasActiveBattleLog, logBattleWithExpire } from '@/redis';
+import { hasActiveBattleLog, hasActiveChallengeLog, logBattleWithExpire, logChallengeWithExpire, removeChallengeLog } from '@/redis';
+import { MezonClient } from 'mezon-sdk';
 
 export const battleController = async (currentUser: User, targetId: string, channel: any, message: Message) => {
     const renderCycle: number = parseInt(process.env.RENDER_CYCLE || DEFAULT_RENDER_CYCLE);
@@ -296,11 +303,302 @@ export const battleController = async (currentUser: User, targetId: string, chan
             }
             const currentTeam = await getTeamForCalcCP(currentUser.id);
             if (currentTeam) {
-                await updateTeamCombatPower(currentTeam.id, calculateTeamCP(currentTeam));
+                await updateTeamCombatPower(prisma, currentTeam.id, calculateTeamCP(currentTeam));
             }
         }
     } catch (error) {
         console.error('Error in battleController:', error);
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
+    }
+};
+
+export const challengeController = async (
+    challenger: Prisma.UserGetPayload<{ include: { team: true } }>,
+    opponent: Prisma.UserGetPayload<{ include: { team: true } }>,
+    bet: number,
+    channel: any,
+    message: Message,
+    client: MezonClient
+) => {
+    const renderCycle: number = parseInt(process.env.RENDER_CYCLE || DEFAULT_RENDER_CYCLE);
+    let messageFetch: any;
+    try {
+        const challengeMessage = await message.reply(textMessage('🛠️ Setup for challenge...'));
+        messageFetch = await channel.messages.fetch(challengeMessage.message_id);
+
+        const activeLog = await hasActiveChallengeLog(challenger);
+        if (activeLog) {
+            await messageFetch.update(
+                textMessage(`🚨 Your are currently in a challenge! Plz wait for the challenge to end!`)
+            );
+            return;
+        }
+
+        await logChallengeWithExpire(challenger);
+
+        const challengerTeam = await getTeamForBattle(challenger.id);
+
+        if (!challengerTeam) {
+            await messageFetch.update(
+                textMessage("🚨 You don't have a team. \nPlz create one first!\n→ Usage: *ainz team create [team name]")
+            );
+            return;
+        }
+
+        if (challengerTeam.members.length !== 3) {
+            await messageFetch.update(
+                textMessage(
+                    '🚨 Your team is not ready!\nAdd 3 pets to your team first!\n→ Usage: *ainz team add [position] [pet name]'
+                )
+            );
+            return;
+        }
+
+        await messageFetch.update(textMessage('🔍 Searching for a opponent...'));
+
+        let opponentTeam;
+
+        opponentTeam = await getTeamForBattle(opponent.id);
+
+        if (!opponentTeam) {
+            await messageFetch.update(
+                textMessage('🚨 Target Opponent team not found!\nPlz search for another opponent!')
+            );
+            return;
+        }
+        if (opponentTeam.members.length !== 3) {
+            await messageFetch.update(
+                textMessage("🙀 Oops! Your rival's team isn't ready yet.\nPlz search for another opponent!")
+            );
+            return;
+        }
+
+        const processedTeamA: IBPet[] = processTeam(challengerTeam.members, 1);
+        const processedTeamB: IBPet[] = processTeam(opponentTeam.members, 2);
+
+        let teamATurnQueue: number[] = [1, 3, 5];
+        let teamBTurnQueue: number[] = [2, 4, 6];
+        const imageQueue: { public_id: string; secure_url: string }[] = [];
+
+        const battle: IBattle = {
+            turn: 0,
+            teamAName: challengerTeam.name,
+            teamBName: opponentTeam.name,
+            teamACP: challengerTeam.combat_power,
+            teamBCP: opponentTeam.combat_power,
+            teamA: {
+                1: processedTeamA[0],
+                3: processedTeamA[1],
+                5: processedTeamA[2]
+            },
+            teamB: {
+                2: processedTeamB[0],
+                4: processedTeamB[1],
+                6: processedTeamB[2]
+            }
+        };
+
+        const imageBuffer = await createBattleImage(
+            [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
+            [battle.teamB[2], battle.teamB[4], battle.teamB[6]],
+            [battle.teamAName, battle.teamBName],
+            [battle.teamACP, battle.teamBCP]
+        );
+        const challengePreview = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
+
+        await messageFetch.update(getChallengeRequestMessage(challenger, opponent, challengePreview.secure_url, bet));
+
+        const challengeStatus = await new Promise((resolve) => {
+            const timeout = setTimeout(() => {
+                resolve(EChallengeStatus.EXPIRED);
+            }, 60000);
+
+            client.onMessageButtonClicked((event: any) => {
+                const { sender_id, user_id, button_id } = event;
+                if (sender_id === BOT_ID && user_id === opponent.id) {
+                    clearTimeout(timeout);
+                    resolve(button_id);
+                }
+            });
+        });
+        await deleteImageFromCloudinary(challengePreview.public_id);
+        if (challengeStatus === EChallengeStatus.EXPIRED) {
+            await messageFetch.update(textMessage('⏱️ Challenge expired! No response received. Plz try again!'));
+            return;
+        }
+        if (challengeStatus === EChallengeStatus.REJECTED) {
+            await messageFetch.update(
+                textMessage(`🚨 "${opponent.username}" has rejected the challenge from "${challenger.username}"!`)
+            );
+            return;
+        }
+        if (challengeStatus === EChallengeStatus.ACCEPTED) {
+            await messageFetch.update(textMessage('🔍 Starting challenge...'));
+            while (teamATurnQueue.length > 0 && teamBTurnQueue.length > 0) {
+                if (battle.turn === 0) {
+                    const imageBuffer = await createBattleImage(
+                        [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
+                        [battle.teamB[2], battle.teamB[4], battle.teamB[6]],
+                        [battle.teamAName, battle.teamBName],
+                        [battle.teamACP, battle.teamBCP]
+                    );
+                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
+                    imageQueue.push(image);
+                    await messageFetch.update(
+                        getChallengeMessage(challenger, opponent, bet, battle, image.secure_url, `Battle start!`)
+                    );
+                }
+                battle.turn++;
+                if (battle.turn % 2 !== 0) {
+                    processTurn(teamATurnQueue, battle.teamA, teamBTurnQueue, battle.teamB, [2, 4, 6]);
+                } else {
+                    processTurn(teamBTurnQueue, battle.teamB, teamATurnQueue, battle.teamA, [1, 3, 5]);
+                }
+                if (battle.turn % renderCycle === 0) {
+                    const imageBuffer = await createBattleImage(
+                        [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
+                        [battle.teamB[2], battle.teamB[4], battle.teamB[6]],
+                        [battle.teamAName, battle.teamBName],
+                        [battle.teamACP, battle.teamBCP]
+                    );
+                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
+                    imageQueue.push(image);
+                    await messageFetch.update(
+                        getChallengeMessage(
+                            challenger,
+                            opponent,
+                            bet,
+                            battle,
+                            image.secure_url,
+                            `Battle in progress! - Turn ${battle.turn}`
+                        )
+                    );
+                }
+                if (teamATurnQueue.length === 0 || teamBTurnQueue.length === 0) {
+                    const imageBuffer = await createBattleImage(
+                        [battle.teamA[1], battle.teamA[3], battle.teamA[5]],
+                        [battle.teamB[2], battle.teamB[4], battle.teamB[6]],
+                        [battle.teamAName, battle.teamBName],
+                        [battle.teamACP, battle.teamBCP]
+                    );
+                    const image = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_BATTLE_FOLDER);
+                    imageQueue.push(image);
+                    const msg =
+                        teamATurnQueue.length === 0
+                            ? `🎉 "${opponent.username}" has defeated "${challenger.username}" in ${battle.turn} turns!\n🏆 "${opponent.username}" gained ${bet}₫ 💰`
+                            : `🎉 "${challenger.username}" has defeated "${opponent.username}" in ${battle.turn} turns!\n🏆 "${challenger.username}" gained ${bet}₫ 💰`;
+                    await messageFetch.update(
+                        getChallengeMessage(challenger, opponent, bet, battle, image.secure_url, msg)
+                    );
+                }
+            }
+
+            const result = {
+                isOver: teamATurnQueue.length === 0 || teamBTurnQueue.length === 0,
+                winner: teamATurnQueue.length === 0 ? 'Team B' : 'Team A',
+                imageQueue: imageQueue
+            };
+
+            if (result.isOver) {
+                try {
+                    await deleteImagesFromCloudinary(imageQueue.slice(0, -1).map((image) => image.public_id));
+                } catch (err) {
+                    console.error('Error deleting images from Cloudinary:', err);
+                }
+
+                let winner;
+                let loser;
+
+                if (result.winner === 'Team A') {
+                    winner = challenger;
+                    loser = opponent;
+                } else {
+                    winner = opponent;
+                    loser = challenger;
+                }
+
+                await prisma.$transaction(async (tx) => {
+                    await updateUser(
+                        tx,
+                        {
+                            id: winner.id
+                        },
+                        {
+                            exp: {
+                                increment: BATTLE.USER.WIN_EXP
+                            }
+                        }
+                    );
+
+                    await updateUser(
+                        tx,
+                        {
+                            id: loser.id
+                        },
+                        {
+                            exp: {
+                                increment: BATTLE.USER.LOSE_EXP
+                            }
+                        }
+                    );
+                });
+
+                await prisma.$transaction(async (tx) => {
+                    await Promise.all(
+                        processedTeamA.map((pet) => {
+                            return updateUserPet(
+                                tx,
+                                { id: pet.id },
+                                {
+                                    exp: {
+                                        increment: result.winner === 'Team A' ? BATTLE.PET.WIN_EXP : BATTLE.PET.LOSE_EXP
+                                    }
+                                }
+                            );
+                        })
+                    );
+
+                    await Promise.all(
+                        processedTeamB.map((pet) => {
+                            return updateUserPet(
+                                tx,
+                                { id: pet.id },
+                                {
+                                    exp: {
+                                        increment: result.winner === 'Team B' ? BATTLE.PET.WIN_EXP : BATTLE.PET.LOSE_EXP
+                                    }
+                                }
+                            );
+                        })
+                    );
+                });
+
+                await prisma.$transaction(async (tx) => {
+                    await upsertLeaderBoard(tx, winner, true);
+                    await upsertLeaderBoard(tx, loser, false);
+                    await updateUser(tx, { id: winner.id }, { mezon_token: { increment: bet } });
+                    await updateUser(tx, { id: loser.id }, { mezon_token: { decrement: bet } });
+                });
+
+                const winnerTeam = await getTeamForCalcCP(winner.id);
+                const loserTeam = await getTeamForCalcCP(loser.id);
+
+                if (winnerTeam && loserTeam) {
+                    await prisma.$transaction(async (tx) => {
+                        await updateTeamCombatPower(tx, winnerTeam.id, calculateTeamCP(winnerTeam));
+                        await updateTeamCombatPower(tx, loserTeam.id, calculateTeamCP(loserTeam));
+                    });
+                }
+                await removeChallengeLog(challenger);
+            }
+        }
+    } catch (error) {
+        console.error('Error in challengeController:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {
