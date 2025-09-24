@@ -42,7 +42,7 @@ export const getHelpMessage = () => {
             },
             {
                 name: '💰 Challenge',
-                value: 'vs [bet] [@user] | reply user with *ainz vs [bet]',
+                value: 'solo [bet] [@user] | reply user with *ainz solo [bet]',
                 inline: false
             }
         ],

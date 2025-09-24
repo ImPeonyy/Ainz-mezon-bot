@@ -271,7 +271,7 @@ export const getActionController = async (
                     return textMessage('🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
                 }
                 const {bet, target} = parseChallengeCommand(targetRaw);
-                if (bet === null || !target) {
+                if (bet === null) {
                     return textMessage('🚨 Wrong format!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
                 }
                 if (bet <= 0) {
