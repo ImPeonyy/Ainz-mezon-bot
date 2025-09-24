@@ -6,7 +6,7 @@ import cors from 'cors';
 import { extractFirstTokenWithAsterisk, parseActionCommand } from '@/utils';
 
 import { depositController, getActionController } from '@/controllers';
-import { BOT_ID } from '@/constants';
+import { BOT_ID, IGNORED_CHANNELS } from '@/constants';
 
 dotenv.config();
 
@@ -30,7 +30,7 @@ async function main() {
 
     client.onChannelMessage(async (event: any) => {
         try {
-            if (event.sender_id !== BOT_ID) {
+            if (event.sender_id !== BOT_ID && !IGNORED_CHANNELS.includes(event.channel_id)) {
                 const trigger = extractFirstTokenWithAsterisk(event?.content?.t)?.toLowerCase();
                 if (trigger === '*ainz' || trigger === '*a') {
                     const channelFetch = await client.channels.fetch(event.channel_id);

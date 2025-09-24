@@ -19,7 +19,8 @@ import {
     MAX_TEAM_NAME_LENGTH,
     MAX_USER_NAME_LENGTH,
     BOT_ID,
-    CLOUDINARY_CHALLENGE_FOLDER
+    CLOUDINARY_CHALLENGE_FOLDER,
+    IGNORED_CHANNELS
 } from './Constant';
 import { EActionType, ERarityColor, ERarityEmoji, EChallengeStatus } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard, ICloudinaryImage } from './Type';
@@ -59,5 +60,6 @@ export {
     MAX_TEAM_NAME_LENGTH,
     MAX_USER_NAME_LENGTH,
     BOT_ID,
-    CLOUDINARY_CHALLENGE_FOLDER
+    CLOUDINARY_CHALLENGE_FOLDER,
+    IGNORED_CHANNELS
 };
