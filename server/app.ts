@@ -3,7 +3,7 @@ import { MezonClient } from 'mezon-sdk';
 import express from 'express';
 import cors from 'cors';
 
-import { extractFirstTokenWithAsterisk, parseActionCommand } from '@/utils';
+import { embedMessage, extractFirstTokenWithAsterisk, getRandomPastelHexColor, parseActionCommand, textMessage } from '@/utils';
 
 import { depositController, getActionController } from '@/controllers';
 import { BOT_ID, IGNORED_CHANNELS } from '@/constants';
@@ -50,6 +50,18 @@ async function main() {
                     if (messagePayload) {
                         await messageFetch.reply(messagePayload);
                     }
+                }
+                if (event.content.t === '*tamdao') {
+                    const channelFetch = await client.channels.fetch(event.channel_id);
+                    const messageFetch = await channelFetch.messages.fetch(event.message_id);
+                    const embedConfig = {
+                        color: getRandomPastelHexColor(),
+                        title: '💪 TamDao đang khoe cơ trước mặt bạn!',
+                        url: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1758720175/snapedit_1758720146192_hsbr11.jpg',
+                        description: '🤌 Hãy thưởng thức cơ bắp của anh ấy!',
+                        image: { url: 'https://res.cloudinary.com/do2rk0jz8/image/upload/v1758720175/snapedit_1758720146192_hsbr11.jpg' }
+                    };
+                    await messageFetch.reply(embedMessage(embedConfig));
                 }
             }
         } catch (error) {
