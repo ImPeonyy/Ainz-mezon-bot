@@ -29,3 +29,13 @@ export enum EChallengeStatus {
     REJECTED = 'challenge_rejected',
     EXPIRED = 'challenge_expired'
 }
+
+export enum EShopStatus {
+    EXCHANGE = 'shop_exchange',
+    CANCEL = 'shop_cancel',
+    EXPIRED = 'shop_expired'
+}
+
+export enum EShopExchange {
+    MEZON_TOKEN = 'mezon_token_value'
+}

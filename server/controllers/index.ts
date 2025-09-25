@@ -18,6 +18,7 @@ import { battleController, challengeController } from './batlle.controller';
 import { dailyController } from './userDailyActivity.controller';
 import { leaderBoardController } from './leaderBoard.controller';
 import { depositController, withdrawController, balanceController } from './mezonTransaction.controller';
+import { shopExchangeController, shopPetController, shopItemController, exchangeController } from './shop.controller';
 
 export {
     getActionController,
@@ -42,5 +43,9 @@ export {
     depositController,
     withdrawController,
     balanceController,
-    challengeController
+    challengeController,
+    shopExchangeController,
+    shopPetController,
+    shopItemController,
+    exchangeController
 };

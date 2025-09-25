@@ -475,7 +475,7 @@ export const getChallengeRequestMessage = (
         }
     };
     const messageActionRow: IMessageActionRow = {
-        components: [acceptButton, rejectButton]
+        components: [rejectButton, acceptButton]
     };
 
     const embedConfig: IInteractiveMessageProps = {

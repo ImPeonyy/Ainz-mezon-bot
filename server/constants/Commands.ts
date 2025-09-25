@@ -18,6 +18,7 @@ export const COMMANDS = {
     withdraw: 'wd',
     balance: 'balance',
     challenge: 'solo',
+    exchange: 'trade',
 };
 
 export const ACTIONS = {
@@ -66,7 +67,7 @@ export const ACTIONS = {
     // INTERACTIVE ACTIONS
     baka: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) => `${user} đang chửi ${target} là m ngu !`
+        getMessage: (user: string, target?: string) => `${user} đang chửi ${target} là đồ ngốc !`
     },
     laugh: {
         type: EActionType.INTERACTIVE,
@@ -158,7 +159,7 @@ export const ACTIONS = {
     },
     shoot: {
         type: EActionType.INTERACTIVE,
-        getMessage: (user: string, target?: string) => `${user} đã bắn vào mặt ${target}!`
+        getMessage: (user: string, target?: string) => `${user} đã bắn ${target}!`
     },
     slap: {
         type: EActionType.INTERACTIVE,
