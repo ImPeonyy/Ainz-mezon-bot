@@ -20,9 +20,10 @@ import {
     MAX_USER_NAME_LENGTH,
     BOT_ID,
     CLOUDINARY_CHALLENGE_FOLDER,
-    IGNORED_CHANNELS
+    IGNORED_CHANNELS,
+    SHOP_EXCHANGE_RATE
 } from './Constant';
-import { EActionType, ERarityColor, ERarityEmoji, EChallengeStatus } from './Enum';
+import { EActionType, ERarityColor, ERarityEmoji, EChallengeStatus, EShopExchange, EShopStatus } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard, ICloudinaryImage } from './Type';
 
 export {
@@ -33,6 +34,7 @@ export {
     ERarityColor,
     ERarityEmoji,
     EChallengeStatus,
+    EShopStatus,
     IBattle,
     IBPet,
     IActionGif,
@@ -61,5 +63,7 @@ export {
     MAX_USER_NAME_LENGTH,
     BOT_ID,
     CLOUDINARY_CHALLENGE_FOLDER,
-    IGNORED_CHANNELS
+    IGNORED_CHANNELS,
+    EShopExchange,
+    SHOP_EXCHANGE_RATE,
 };

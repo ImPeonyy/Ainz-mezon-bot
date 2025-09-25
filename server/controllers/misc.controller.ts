@@ -13,6 +13,7 @@ import {
     leaderBoardController,
     myDexController,
     renamePetController,
+    exchangeController,
     swapPetInTeamController,
     updateTeamController,
     updateUserController,
@@ -291,6 +292,11 @@ export const getActionController = async (
                 
                 const challengePayload = await challengeController(existingUser, opponent, bet, channel, message, client);
                 return challengePayload;
+            }
+
+            if (action === COMMANDS.exchange) {
+                const shopPayload = await exchangeController(existingUser, message, channel, client);
+                return shopPayload;
             }
         }
 

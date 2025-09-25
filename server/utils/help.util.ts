@@ -44,6 +44,11 @@ export const getHelpMessage = () => {
                 name: '💰 Challenge',
                 value: 'solo [bet] [@user] | reply user with *ainz solo [bet]',
                 inline: false
+            },
+            {
+                name: '🛒 Shop',
+                value: 'trade',
+                inline: false
             }
         ],
         color: getRandomPastelHexColor(),

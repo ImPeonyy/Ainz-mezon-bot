@@ -51,6 +51,7 @@ import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
 import { getHelpMessage, getForFunHelpMessage } from './help.util';
 import { isValidPosition, calculateTeamCP } from './team.util';
 import { myLeaderBoard, levelLeaderBoard, combatPowerLeaderBoard, winsLeaderBoard, lossesLeaderBoard } from './leaderBoard.util';
+import { getShopExchangeMessage, getZCoinAfterExchange } from './shop.util';
 
 
 export {
@@ -112,5 +113,7 @@ export {
     calculateTeamCP,
     geLBtNextUpdate,
     getChallengeMessage,
-    getChallengeRequestMessage
+    getChallengeRequestMessage,
+    getShopExchangeMessage,
+    getZCoinAfterExchange
 };
