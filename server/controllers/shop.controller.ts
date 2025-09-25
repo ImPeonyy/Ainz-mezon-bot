@@ -107,6 +107,12 @@ export const exchangeController = async (existingUser: User, message: Message, c
                         );
                         return;
                     }
+                    if (!Number.isInteger(amount)) {
+                        await messageFetch.update(
+                            getShopExchangeMessage(existingUser, amount, 'The amount must be an integer!')
+                        );
+                        return;
+                    }
                     if (amount > existingUser.mezon_token) {
                         await messageFetch.update(
                             getShopExchangeMessage(existingUser, amount, 'You do not have enough mezon token!')
