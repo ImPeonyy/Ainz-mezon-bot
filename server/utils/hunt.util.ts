@@ -1,4 +1,4 @@
-import { Pet, Rarity, User, UserDailyActivities } from '@prisma/client';
+import { Pet, Prisma, Rarity, User, UserDailyActivities } from '@prisma/client';
 import { getRandomPet, getRarityPets } from '@/utils';
 
 import { USE_DAILY_ACTIVITY } from '@/constants';
@@ -12,7 +12,7 @@ export const shuffleRarities = (rarities: Rarity[]) => {
     return arr;
 };
 
-export const huntPet = (rarities: Rarity[], pets: Pet[]) => {
+export const huntPet = (rarities: Rarity[], pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[]) => {
     const shuffledRarities = shuffleRarities(rarities);
     const totalCatchRate = shuffledRarities.reduce((acc, rarity) => acc + rarity.catch_rate, 0);
     const r = Math.random() * totalCatchRate;

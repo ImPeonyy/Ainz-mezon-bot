@@ -8,6 +8,9 @@ export const getUserPets = async (prismaClient: PrismaClient | Prisma.Transactio
             where: { user_id: user_id },
             include: {
                 pet: true
+            },
+            orderBy: {
+                exp: 'desc'
             }
         });
     } catch (error) {
