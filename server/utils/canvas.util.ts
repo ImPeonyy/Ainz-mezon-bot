@@ -287,6 +287,7 @@ interface ProfileData {
     level: number;
     z_coin: number;
     combat_power: number;
+    currentLevelXP: number;
     currentXP: number;
     nextLevelXP: number;
     avatar: string;
@@ -430,7 +431,7 @@ const renderProfileCanvas = async (profileData: ProfileData): Promise<Buffer> =>
     ctx.strokeRect(barX, barY, barWidth, barHeight);
 
     // Fill của progress bar
-    const progressPercent = profileData.currentXP / profileData.nextLevelXP;
+    const progressPercent = (profileData.currentXP - profileData.currentLevelXP) / (profileData.nextLevelXP - profileData.currentLevelXP);
     const fillWidth = barWidth * progressPercent;
 
     ctx.fillStyle = '#ffffff';
