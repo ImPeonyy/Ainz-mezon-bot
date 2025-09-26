@@ -47,7 +47,7 @@ export const getHelpMessage = () => {
             },
             {
                 name: '🛒 Shop',
-                value: 'trade',
+                value: 'trade | uplv',
                 inline: false
             }
         ],
