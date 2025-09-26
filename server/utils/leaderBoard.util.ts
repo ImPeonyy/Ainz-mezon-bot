@@ -13,7 +13,7 @@ export const myLeaderBoard = (myData: IMyLeaderBoard) => {
     const embedConfig = {
         color: getRandomPastelHexColor(),
         title: `🏆 Rank of ${myData.user.username}`,
-        description: geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE).msg + '\n',
+        description: geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE) + '\n',
         thumbnail: { url: myData.user.avatar },
         fields: [
             { name: '📊 Level', value: `${getRank(myData.level.rank)} | Lv.${myData.level.value}`, inline: false },
@@ -39,7 +39,7 @@ export const levelLeaderBoard = (topLevels: Prisma.LeaderBoardGetPayload<{ inclu
     const embedConfig = {
         color: getRandomPastelHexColor(),
         title: '🏆 Top Level Leaderboard',
-        description: `${geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE).msg}\n\n${leaderboardText}\n\n`,
+        description: `${geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE)}\n\n${leaderboardText}\n\n`,
         thumbnail: { url: AINZ_THUMBNAIL },
         footer: {
             text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
@@ -59,7 +59,7 @@ export const combatPowerLeaderBoard = (topCP: Prisma.LeaderBoardGetPayload<{ inc
     const embedConfig = {
         color: getRandomPastelHexColor(),
         title: '⚔️ Top Combat Power Leaderboard',
-        description: `${geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE).msg}\n\n${leaderboardText}\n\n`,
+        description: `${geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE)}\n\n${leaderboardText}\n\n`,
         thumbnail: { url: AINZ_THUMBNAIL },
         footer: {
             text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
@@ -79,7 +79,7 @@ export const winsLeaderBoard = (topWins: Prisma.LeaderBoardGetPayload<{ include:
     const embedConfig = {
         color: getRandomPastelHexColor(),
         title: '✅ Top Wins Leaderboard',
-        description: `${geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE).msg}\n\n${leaderboardText}\n\n`,
+        description: `${geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE)}\n\n${leaderboardText}\n\n`,
         thumbnail: { url: AINZ_THUMBNAIL },
         footer: {
             text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
@@ -99,7 +99,7 @@ export const lossesLeaderBoard = (topLosses: Prisma.LeaderBoardGetPayload<{ incl
     const embedConfig = {
         color: getRandomPastelHexColor(),
         title: '❌ Top Losses Leaderboard',
-        description: `${geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE).msg}\n\n${leaderboardText}\n\n`,
+        description: `${geLBtNextUpdate(UPDATE_LEADERBOARD_CRON_SCHEDULE)}\n\n${leaderboardText}\n\n`,
         thumbnail: { url: AINZ_THUMBNAIL },
         footer: {
             text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`

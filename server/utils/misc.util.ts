@@ -131,25 +131,24 @@ export const getAdditionalStats = (statPerLevel: number, level: number) => {
     return statPerLevel * level;
 };
 
-export const geLBtNextUpdate = (hours: number[], now: Date = new Date()) => {
-    const sorted = [...hours].sort((a, b) => a - b);
-    const cur = now.getHours() + now.getMinutes() / 60;
+export const geLBtNextUpdate = (hours: number[]) => {
+    const now = new Date();
+    const vnStr = now.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' });
+    const vnNow = new Date(vnStr);
+    const curHour = vnNow.getHours();
 
-    const nextHour = sorted.find((h) => h > cur) ?? sorted[0];
-    const next = new Date(now);
+    let nextHour = hours.find((h) => h > curHour) ?? hours[0];
 
-    if (nextHour <= cur) next.setDate(next.getDate() + 1);
-    next.setHours(nextHour, 0, 0, 0);
+    const nextTime = new Date(vnNow);
+    nextTime.setHours(nextHour, 0, 0, 0);
+    if (nextHour <= curHour) nextTime.setDate(nextTime.getDate() + 1);
 
-    const diffMs = next.getTime() - now.getTime();
-
+    const diffMs = nextTime.getTime() - vnNow.getTime();
     const totalMinutes = Math.floor(diffMs / 60000);
 
-    const diffHour = Math.floor(totalMinutes / 60);
-    const diffMin = totalMinutes % 60;
-    const msg = `Next update is in ${diffHour} hours and ${diffMin} minutes`;
+    const msg = `Next update is in ${Math.floor(totalMinutes / 60)} hours and ${totalMinutes % 60} minutes`;
 
-    return { next, msg };
+    return msg;
 };
 
 export const isValidImageExtension = (filename: string): boolean => {

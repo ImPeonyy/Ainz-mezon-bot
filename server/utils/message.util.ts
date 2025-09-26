@@ -501,7 +501,7 @@ export const getChallengeRequestMessage = (
         ],
         image: { url: challengePreview },
         footer: {
-            text: `👑 Ainz Mezon Bot • Challenge will expire at ${new Date(Date.now() + 60000).toLocaleTimeString('vi-VN')}`
+            text: `👑 Ainz Mezon Bot • Challenge will expire at ${new Date(Date.now() + 60000).toLocaleTimeString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}`
         }
     };
 

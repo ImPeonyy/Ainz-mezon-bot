@@ -41,7 +41,14 @@ import {
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { Prisma, User } from '@prisma/client';
 import { prisma } from '@/lib/db';
-import { hasActiveBattleLog, hasActiveChallengeLog, logBattleWithExpire, logChallengeWithExpire, removeBattleLog, removeChallengeLog } from '@/redis';
+import {
+    hasActiveBattleLog,
+    hasActiveChallengeLog,
+    logBattleWithExpire,
+    logChallengeWithExpire,
+    removeBattleLog,
+    removeChallengeLog
+} from '@/redis';
 import { MezonClient } from 'mezon-sdk';
 
 export const battleController = async (currentUser: User, targetId: string, channel: any, message: Message) => {
@@ -425,7 +432,7 @@ export const challengeController = async (
         const challengePreview = await uploadImageToCloudinary(imageBuffer, CLOUDINARY_CHALLENGE_FOLDER);
 
         await messageFetch.update(getChallengeRequestMessage(challenger, opponent, challengePreview.secure_url, bet));
-
+        let clicked_user_id;
         const challengeStatus = await new Promise((resolve) => {
             const timeout = setTimeout(() => {
                 resolve(EChallengeStatus.EXPIRED);
@@ -433,7 +440,14 @@ export const challengeController = async (
 
             client.onMessageButtonClicked((event: any) => {
                 const { sender_id, user_id, button_id } = event;
-                if (sender_id === BOT_ID && user_id === opponent.id) {
+                clicked_user_id = user_id;
+                if (sender_id !== BOT_ID) return;
+
+                if (
+                    (button_id === EChallengeStatus.REJECTED &&
+                        (user_id === challenger.id || user_id === opponent.id)) ||
+                    (button_id === EChallengeStatus.ACCEPTED && user_id === opponent.id)
+                ) {
                     clearTimeout(timeout);
                     resolve(button_id);
                 }
@@ -446,9 +460,11 @@ export const challengeController = async (
             return;
         }
         if (challengeStatus === EChallengeStatus.REJECTED) {
-            await messageFetch.update(
-                textMessage(`🚨 "${opponent.username}" has rejected the challenge from "${challenger.username}"!`)
-            );
+            const msg =
+                clicked_user_id === challenger.id
+                    ? `🚨 "${challenger.username}" has cancelled the challenge!"`
+                    : `🚨 "${opponent.username}" has rejected the challenge from "${challenger.username}"!`;
+            await messageFetch.update(textMessage(msg));
             await removeChallengeLog(challenger);
             return;
         }
