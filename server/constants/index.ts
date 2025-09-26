@@ -23,7 +23,7 @@ import {
     IGNORED_CHANNELS,
     SHOP_EXCHANGE_RATE
 } from './Constant';
-import { EActionType, ERarityColor, ERarityEmoji, EChallengeStatus, EShopExchange, EShopStatus } from './Enum';
+import { EActionType, ERarityColor, ERarityEmoji, EChallengeStatus, EShopExchange, EShopExchangeStatus, EShopUpLevelPetStatus, EShopUpLevelPet } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard, ICloudinaryImage } from './Type';
 
 export {
@@ -34,7 +34,9 @@ export {
     ERarityColor,
     ERarityEmoji,
     EChallengeStatus,
-    EShopStatus,
+    EShopExchangeStatus,
+    EShopUpLevelPetStatus,
+    EShopUpLevelPet,
     IBattle,
     IBPet,
     IActionGif,

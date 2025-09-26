@@ -1,14 +1,20 @@
-import { EShopStatus, EShopExchange, SHOP_EXCHANGE_RATE } from '@/constants';
+import {
+    EShopExchangeStatus,
+    EShopUpLevelPetStatus,
+    EShopExchange,
+    SHOP_EXCHANGE_RATE,
+    EShopUpLevelPet
+} from '@/constants';
 import {
     ButtonComponent,
     ChannelMessageContent,
     EButtonMessageStyle,
     EMessageComponentType,
     IInteractiveMessageProps,
-    IMessageActionRow
+    IMessageActionRow,
 } from 'mezon-sdk/dist/cjs/interfaces/client';
-import { getRandomPastelHexColor } from '@/utils';
-import { User } from '@prisma/client';
+import { getPetLevelFromExp, getRandomPastelHexColor } from '@/utils';
+import { Prisma, User } from '@prisma/client';
 
 export const getZCoinAfterExchange = (amount: number) => {
     return Math.round(amount * SHOP_EXCHANGE_RATE);
@@ -16,7 +22,7 @@ export const getZCoinAfterExchange = (amount: number) => {
 
 export const getShopExchangeMessage = (user: User, value: number = 1000, message: string = 'Exchange') => {
     const exchangeButton: ButtonComponent = {
-        id: EShopStatus.EXCHANGE,
+        id: EShopExchangeStatus.EXCHANGE,
         type: EMessageComponentType.BUTTON,
         component: {
             label: 'Exchange',
@@ -24,7 +30,7 @@ export const getShopExchangeMessage = (user: User, value: number = 1000, message
         }
     };
     const cancelButton: ButtonComponent = {
-        id: EShopStatus.CANCEL,
+        id: EShopExchangeStatus.CANCEL,
         type: EMessageComponentType.BUTTON,
         component: {
             label: 'Cancel',
@@ -56,7 +62,7 @@ export const getShopExchangeMessage = (user: User, value: number = 1000, message
             },
             {
                 name: message,
-                value: '',
+                value: ''
             }
         ],
         footer: {
@@ -67,6 +73,82 @@ export const getShopExchangeMessage = (user: User, value: number = 1000, message
     const messagePayload: ChannelMessageContent = {
         embed: [embedConfig],
         components: [messageActionRow]
+    };
+
+    return messagePayload;
+};
+
+export const getShopUpLevelPetMessage = (
+    user: User,
+    userPet: Prisma.UserPetGetPayload<{
+        include: {
+            pet: true;
+        };
+    }>[],
+    message: string = 'Level Up',
+    isLoading: boolean = false
+) => {
+    const upLevelButton: ButtonComponent = {
+        id: EShopUpLevelPetStatus.UP_LEVEL,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: 'Up Level',
+            style: EButtonMessageStyle.SUCCESS
+        }
+    };
+    const cancelButton: ButtonComponent = {
+        id: EShopUpLevelPetStatus.CANCEL,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: 'Cancel',
+            style: EButtonMessageStyle.SECONDARY
+        }
+    };
+    const messageActionRow: IMessageActionRow = {
+        components: [cancelButton, upLevelButton]
+    };
+
+    const listPet = userPet.map((userPet) => {
+        const petLevel = getPetLevelFromExp(userPet.exp);
+        return {
+            label:
+                userPet.pet.name === userPet.nickname
+                    ? `Lv.${petLevel}: ${userPet.pet.name}`
+                    : `Lv.${petLevel}: ${userPet.pet.name} (${userPet.nickname})`,
+            value: userPet.id
+        };
+    });
+
+    const embedConfig: IInteractiveMessageProps = {
+        color: getRandomPastelHexColor(),
+        title: `🎁 Special Offer`,
+        description:
+            '⏳ Limited time – don’t miss out!\n✨ 1000 Z Coin per Level for pet under Lv.25!\n✨ 2000 Z Coin per Level for pet Lv.25-50!\n✨ 3000 Z Coin per Level for pet Lv.50-75!\n✨ 5000 Z Coin per Level for pet Lv.75+!',
+        fields: [
+            {
+                name: 'Select Pet:',
+                value: `💰 Your balance: ${user.z_coin.toString()} Z Coin`,
+                inputs: {
+                    id: EShopUpLevelPet.USER_PET_ID,
+                    type: EMessageComponentType.SELECT,
+                    component: {
+                        options: listPet
+                    }
+                }
+            },
+            {
+                name: message,
+                value: ''
+            }
+        ],
+        footer: {
+            text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
+        }
+    };
+
+    const messagePayload: ChannelMessageContent = {
+        embed: [embedConfig],
+        components: isLoading ? [] : [messageActionRow]
     };
 
     return messagePayload;

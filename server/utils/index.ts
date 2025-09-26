@@ -31,7 +31,8 @@ import {
     formatSecondsToMinutes,
     getAdditionalStats,
     geLBtNextUpdate,
-    parseChallengeCommand
+    parseChallengeCommand,
+    isValidNumber
 } from './misc.util';
 import {
     getAttackPosition,
@@ -50,9 +51,14 @@ import { getRandomPet, getRarityPets } from './pet.util';
 import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
 import { getHelpMessage, getForFunHelpMessage } from './help.util';
 import { isValidPosition, calculateTeamCP } from './team.util';
-import { myLeaderBoard, levelLeaderBoard, combatPowerLeaderBoard, winsLeaderBoard, lossesLeaderBoard } from './leaderBoard.util';
-import { getShopExchangeMessage, getZCoinAfterExchange } from './shop.util';
-
+import {
+    myLeaderBoard,
+    levelLeaderBoard,
+    combatPowerLeaderBoard,
+    winsLeaderBoard,
+    lossesLeaderBoard
+} from './leaderBoard.util';
+import { getShopExchangeMessage, getZCoinAfterExchange, getShopUpLevelPetMessage } from './shop.util';
 
 export {
     getActorName,
@@ -115,5 +121,7 @@ export {
     getChallengeMessage,
     getChallengeRequestMessage,
     getShopExchangeMessage,
-    getZCoinAfterExchange
+    getZCoinAfterExchange,
+    getShopUpLevelPetMessage,
+    isValidNumber
 };
