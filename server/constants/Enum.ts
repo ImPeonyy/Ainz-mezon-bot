@@ -30,12 +30,33 @@ export enum EChallengeStatus {
     EXPIRED = 'challenge_expired'
 }
 
-export enum EShopStatus {
+export enum EShopExchangeStatus {
     EXCHANGE = 'shop_exchange',
     CANCEL = 'shop_cancel',
     EXPIRED = 'shop_expired'
 }
 
+export enum EShopUpLevelPetStatus {
+    UP_LEVEL = 'shop_up_level',
+    CANCEL = 'shop_cancel',
+    EXPIRED = 'shop_expired'
+}
+
+export enum EShopUpLevelPet {
+    USER_PET_ID = 'user_pet_id'
+}
+
 export enum EShopExchange {
     MEZON_TOKEN = 'mezon_token_value'
 }
+
+export enum EPriceByRarity {
+    COMMON = 1000,
+    UNCOMMON = 2000,
+    RARE = 3000,
+    EPIC = 4000,
+    LEGENDARY = 5000,
+    MYTHIC = 6000,
+    LIMITED = 7000
+}
+
