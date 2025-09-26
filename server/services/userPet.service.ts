@@ -240,3 +240,14 @@ export const getUserPetByPetName = async (userId: string, name: string) => {
         throw error;
     }
 };
+
+export const getUserPetById = async (userPetId: number) => {
+    try {
+        return await prisma.userPet.findFirst({
+            where: { id: userPetId }
+        });
+    } catch (error) {
+        console.error('Error getting user pet by id:', error);
+        throw error;
+    }
+};

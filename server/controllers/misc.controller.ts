@@ -17,7 +17,8 @@ import {
     swapPetInTeamController,
     updateTeamController,
     updateUserController,
-    withdrawController
+    withdrawController,
+    upLevelPetController
 } from '@/controllers';
 import {
     embedMessage,
@@ -296,6 +297,11 @@ export const getActionController = async (
 
             if (action === COMMANDS.exchange) {
                 const shopPayload = await exchangeController(existingUser, message, channel, client);
+                return shopPayload;
+            }
+
+            if (action === COMMANDS.uplevel) {
+                const shopPayload = await upLevelPetController(existingUser, message, channel, client);
                 return shopPayload;
             }
         }

@@ -27,7 +27,8 @@ import {
     getUserPets,
     getUserPetsByRarity,
     updateUserPet,
-    upsertUserPetCount
+    upsertUserPetCount,
+    getUserPetById
 } from '@/services/userPet.service';
 import { deleteImagesFromCloudinary, uploadImageToCloudinary, deleteImageFromCloudinary } from '@/services/cloudinary.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
@@ -98,5 +99,6 @@ export {
     updateTeamCombatPower,
     sendDMToUser,
     sendTokenToUser,
-    deleteImageFromCloudinary
+    deleteImageFromCloudinary,
+    getUserPetById
 };

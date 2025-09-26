@@ -19,6 +19,7 @@ export const COMMANDS = {
     balance: 'balance',
     challenge: 'solo',
     exchange: 'trade',
+    uplevel: 'uplv',
 };
 
 export const ACTIONS = {
