@@ -1,4 +1,4 @@
-import { ACTIONS, COMMANDS, EActionType } from '@/constants';
+import { ACTIONS, COMMANDS, EActionType, WORLD_ANNOUNCEMENTS_CHANNEL_ID } from '@/constants';
 import {
     addPetToTeamController,
     balanceController,
@@ -31,7 +31,8 @@ import {
     parseRenameCommand,
     textMessage,
     getRandomPastelHexColor,
-    getForFunHelpMessage
+    getForFunHelpMessage,
+    getRarePetWAMessage
 } from '@/utils';
 import {
     getActionGif,
@@ -43,7 +44,7 @@ import {
     getUserPetsByRarity
 } from '@/services';
 
-import { ERarity } from '@prisma/client';
+import { ERarity, Prisma, User } from '@prisma/client';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { prisma } from '@/lib/db';
 import { MezonClient } from 'mezon-sdk';
@@ -145,7 +146,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.hunt) {
-                const huntPetPayload = await huntPetController(sender_id, message, channel);
+                const huntPetPayload = await huntPetController(sender_id, message, channel, client);
                 return huntPetPayload;
             }
 
@@ -460,5 +461,19 @@ export const getBagController = async (
             await message.reply(textMessage('❌ Internal server error'));
         }
         return;
+    }
+};
+
+export const worldAnnouncementController = async (user: User, pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[], client: MezonClient) => {
+    try {
+        const channel = await client.channels.fetch(WORLD_ANNOUNCEMENTS_CHANNEL_ID);
+        for (const pet of pets) {
+            const worldAnnouncement = await getRarePetWAMessage(user, pet);
+            await channel.send(worldAnnouncement);
+        }
+        return;
+    } catch (error) {
+        console.error('Error getting world announcement:', error);
+        return textMessage('❌ Internal server error');
     }
 };

@@ -512,3 +512,19 @@ export const getChallengeRequestMessage = (
 
     return messagePayload;
 };
+
+export const getRarePetWAMessage = (user: User, pet: Prisma.PetGetPayload<{ include: { rarity: true } }>) => {
+    const messagePayload: ChannelMessageContent = {
+        t: `🌍📢 [WA] ⚔️ Player **${user.username}** has caught the ${pet.rarity?.name} Pet: `,
+        ej: []
+    };
+
+    let emoji = {
+        emojiid: pet.mezon_emoji_id,
+        s: messagePayload.t?.length || 0,
+        e: messagePayload.t?.length || 0 + 1
+    };
+    messagePayload.ej?.push(emoji);
+    messagePayload.t += ` ${pet.name}! 🎉`;
+    return messagePayload;
+};

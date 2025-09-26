@@ -11,7 +11,8 @@ import {
     getActionGifController,
     getBagController,
     getHelpController,
-    getMemeController
+    getMemeController,
+    worldAnnouncementController
 } from './misc.controller';
 
 import { battleController, challengeController } from './batlle.controller';
@@ -23,6 +24,7 @@ import { shopExchangeController, shopPetController, shopItemController, exchange
 export {
     getActionController,
     getMemeController,
+    worldAnnouncementController,
     getUserController,
     huntPetController,
     createUserController,

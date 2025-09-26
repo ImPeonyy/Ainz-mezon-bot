@@ -21,7 +21,8 @@ import {
     BOT_ID,
     CLOUDINARY_CHALLENGE_FOLDER,
     IGNORED_CHANNELS,
-    SHOP_EXCHANGE_RATE
+    SHOP_EXCHANGE_RATE,
+    WORLD_ANNOUNCEMENTS_CHANNEL_ID
 } from './Constant';
 import { EActionType, ERarityColor, ERarityEmoji, EChallengeStatus, EShopExchange, EShopExchangeStatus, EShopUpLevelPetStatus, EShopUpLevelPet } from './Enum';
 import { IBattle, IBPet, IActionGif, IBEffect, IBStats, IMeme, ParsedAction, IMyLeaderBoard, ICloudinaryImage } from './Type';
@@ -68,4 +69,5 @@ export {
     IGNORED_CHANNELS,
     EShopExchange,
     SHOP_EXCHANGE_RATE,
+    WORLD_ANNOUNCEMENTS_CHANNEL_ID
 };

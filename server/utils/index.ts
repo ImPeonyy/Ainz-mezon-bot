@@ -12,7 +12,8 @@ import {
     teamInfoMessage,
     textMessage,
     getChallengeMessage,
-    getChallengeRequestMessage
+    getChallengeRequestMessage,
+    getRarePetWAMessage
 } from './message.util';
 import {
     expToPetLevel,
@@ -32,7 +33,8 @@ import {
     getAdditionalStats,
     geLBtNextUpdate,
     parseChallengeCommand,
-    isValidNumber
+    isValidNumber,
+    getRarePetForAnnouncement
 } from './misc.util';
 import {
     getAttackPosition,
@@ -123,5 +125,7 @@ export {
     getShopExchangeMessage,
     getZCoinAfterExchange,
     getShopUpLevelPetMessage,
-    isValidNumber
+    isValidNumber,
+    getRarePetWAMessage,
+    getRarePetForAnnouncement
 };

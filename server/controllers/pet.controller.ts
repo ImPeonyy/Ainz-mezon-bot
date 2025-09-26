@@ -13,13 +13,15 @@ import {
     updateUserPet,
     upsertUserPetCount
 } from '@/services';
-import { getDexMessage, getHuntMessage, getMyDexMessage, huntCheck, huntPet, textMessage } from '@/utils';
+import { getDexMessage, getHuntMessage, getMyDexMessage, getRarePetForAnnouncement, huntCheck, huntPet, textMessage } from '@/utils';
 
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
-import { Pet } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
+import { MezonClient } from 'mezon-sdk';
+import { worldAnnouncementController } from './misc.controller';
 
-export const huntPetController = async (mezon_id: string, message: Message, channel: any) => {
+export const huntPetController = async (mezon_id: string, message: Message, channel: any, client: MezonClient) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('🎯 Hunting pets...'));
@@ -34,7 +36,7 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
         const todayActivity = await getTodayUserDailyActivity(user.id);
         const rarities = await getRarities();
         const pets = await getPets();
-        let yourPets: Pet[] = [];
+        let yourPets: Prisma.PetGetPayload<{ include: { rarity: true } }>[] = [];
         for (let i = 0; i < LIMIT_PET_PER_HUNT; i++) {
             const pet = await huntPet(rarities, pets);
             if (pet) {
@@ -44,6 +46,8 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                 return;
             }
         }
+
+        const rarePets = getRarePetForAnnouncement(yourPets);
 
         if (!todayActivity) {
             try {
@@ -74,6 +78,9 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                         }))
                     )
                 );
+                if (rarePets.length > 0) {
+                    await worldAnnouncementController(user, rarePets, client);
+                }
                 return;
             } catch (error) {
                 console.error('Error hunting pet:', error);
@@ -124,6 +131,9 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                             }))
                         )
                     );
+                    if (rarePets.length > 0) {
+                        await worldAnnouncementController(user, rarePets, client);
+                    }
                     return;
                 } catch (error) {
                     console.error('Error hunting pet:', error);
@@ -167,6 +177,9 @@ export const huntPetController = async (mezon_id: string, message: Message, chan
                             }))
                         )
                     );
+                    if (rarePets.length > 0) {
+                        await worldAnnouncementController(user, rarePets, client);
+                    }
                     return;
                 } catch (error) {
                     console.error('Error hunting pet:', error);

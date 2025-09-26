@@ -1,4 +1,5 @@
 import { ERarityColor, ParsedAction } from '@/constants';
+import { ERarity, Prisma } from '@prisma/client';
 
 export const extractFirstTokenWithAsterisk = (content: string): string | null => {
     if (!content) return null;
@@ -161,4 +162,10 @@ export const isValidImageExtension = (filename: string): boolean => {
 
 export const isValidNumber = (value: any): boolean => {
     return !isNaN(Number(value));
+};
+
+export const getRarePetForAnnouncement = (pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[]) => {
+    const rarities: ERarity[] = [ERarity.Epic, ERarity.Legendary, ERarity.Mythic, ERarity.Limited];
+    const rarePet = pets.filter((pet) => rarities.includes(pet.rarity.type));
+    return rarePet || [];
 };

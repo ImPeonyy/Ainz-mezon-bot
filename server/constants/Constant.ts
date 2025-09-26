@@ -91,3 +91,4 @@ export const IGNORED_CHANNELS = [
 ];
 
 export const SHOP_EXCHANGE_RATE = 3333 / 10000;
+export const WORLD_ANNOUNCEMENTS_CHANNEL_ID = process.env.WORLD_ANNOUNCEMENTS_CHANNEL_ID || '';
