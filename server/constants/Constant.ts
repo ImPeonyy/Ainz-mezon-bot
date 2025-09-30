@@ -7,12 +7,12 @@ export const USE_DAILY_ACTIVITY = {
         DAILY_PER_DAY: 1,
         REWARD: {
             Z_COIN: {
-                MIN: 400,
-                MAX: 600
+                MIN: 1000,
+                MAX: 1500
             },
             EXP: {
-                MIN: 50,
-                MAX: 150
+                MIN: 100,
+                MAX: 200
             }
         }
     },

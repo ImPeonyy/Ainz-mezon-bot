@@ -31,7 +31,7 @@ export const leaderBoardController = async (
         if (targetRaw) {
             let leaderBoardPayload;
             switch (targetRaw) {
-                case 'level':
+                case 'lv':
                     const topLevels = await getLevelLeaderBoard();
                     if (topLevels.length === 0) {
                         await messageFetch.update(textMessage('❌ No data in Leader Board!'));

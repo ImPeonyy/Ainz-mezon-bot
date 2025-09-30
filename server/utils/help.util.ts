@@ -22,7 +22,7 @@ export const getHelpMessage = () => {
             },
             {
                 name: '🏆 Leaderboard',
-                value: 'lb | lb level | lb cp | lb wins | lb losses',
+                value: 'lb | lb lv | lb cp | lb wins | lb losses',
                 inline: false
             },
             {
