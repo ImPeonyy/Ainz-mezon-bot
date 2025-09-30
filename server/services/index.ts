@@ -9,7 +9,8 @@ import {
     updateTeamMember,
     updateTeamName,
     getTeamForCalcCP,
-    updateTeamCombatPower
+    updateTeamCombatPower,
+    fillTeamMembers
 } from '@/services/team.service';
 import { createUser, getUserWithTeam, updateUser, getUser, upsertUser } from '@/services/user.service';
 import {
@@ -28,7 +29,8 @@ import {
     getUserPetsByRarity,
     updateUserPet,
     upsertUserPetCount,
-    getUserPetById
+    getUserPetById,
+    getUserPetsByRarityAndLevel
 } from '@/services/userPet.service';
 import { deleteImagesFromCloudinary, uploadImageToCloudinary, deleteImageFromCloudinary } from '@/services/cloudinary.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
@@ -100,5 +102,7 @@ export {
     sendDMToUser,
     sendTokenToUser,
     deleteImageFromCloudinary,
-    getUserPetById
+    getUserPetById,
+    getUserPetsByRarityAndLevel,
+    fillTeamMembers
 };

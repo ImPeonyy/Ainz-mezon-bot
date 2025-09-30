@@ -254,3 +254,34 @@ export const getUserPetById = async (userPetId: number) => {
         throw error;
     }
 };
+
+export const getUserPetsByRarityAndLevel = async (user_id: string) => {
+    try {
+        return await prisma.userPet.findMany({
+            where: { user_id: user_id },
+            include: {
+                pet: {
+                    include: {
+                        rarity: true
+                    }
+                }
+            },
+            orderBy: [
+                {
+                    pet: {
+                        rarity: {
+                            type: 'desc'
+                        }
+                    }
+                },
+                {
+                    exp: 'desc'
+                }
+            ],
+            take: 3
+        });
+    } catch (error) {
+        console.error('Error getting user pets by rarity and level:', error);
+        throw error;
+    }
+};
