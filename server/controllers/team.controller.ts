@@ -1,10 +1,12 @@
 import { MAX_TEAM_NAME_LENGTH } from '@/constants';
 import {
     addPetToTeam,
+    fillTeamMembers,
     getPet,
     getTeam,
     getTeamForCalcCP,
     getUserPetByPetName,
+    getUserPetsByRarityAndLevel,
     updatePetPosition,
     updateTeamCombatPower,
     updateTeamMember,
@@ -274,6 +276,35 @@ export const swapPetInTeamController = async (
         );
     } catch (error) {
         console.error('Error swapping pet in team:', error);
+        if (messageFetch) {
+            await messageFetch.update(textMessage('❌ Internal server error'));
+        } else {
+            await message.reply(textMessage('❌ Internal server error'));
+        }
+        return;
+    }
+};
+
+export const fillTeamController = async (userId: string, message: Message, channel: any) => {
+    let messageFetch: any;
+    try {
+        const messageReply = await message.reply(textMessage('🔍 Filling your team...'));
+        messageFetch = await channel.messages.fetch(messageReply.message_id);
+        const userPets = await getUserPetsByRarityAndLevel(userId);
+        const team = await getTeam(userId);
+        if (!team) {
+            await messageFetch.update(textMessage('🚨 You don\'t have a team.'));
+            return;
+        }
+        const filledTeam = await fillTeamMembers(prisma, team.id, userPets.map((pet) => pet.id));
+        console.log(filledTeam);
+        await messageFetch.update(teamInfoMessage(filledTeam));
+        const currentTeam = await getTeamForCalcCP(userId);
+        if (currentTeam) {
+            await updateTeamCombatPower(prisma, currentTeam.id, calculateTeamCP(currentTeam));
+        }
+    } catch (error) {
+        console.error('Error filling team:', error);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {

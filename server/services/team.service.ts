@@ -265,3 +265,73 @@ export const updateTeamCombatPower = async (
         throw error;
     }
 };
+
+export const fillTeamMembers = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    teamId: number,
+    userPetIds: number[]
+) => {
+    try {
+        return await prismaClient.$transaction(async (tx) => {
+            const currentMembers = await tx.teamMember.findMany({
+                where: { team_id: teamId },
+                select: { position: true, user_pet_id: true }
+            });
+
+            const occupiedPositions = currentMembers.map((m) => m.position);
+            const existingPetIds = currentMembers.map((m) => m.user_pet_id);
+
+            const allPositions = [1, 2, 3];
+            const missingPositions = allPositions.filter((pos) => !occupiedPositions.includes(pos));
+
+            if (missingPositions.length === 0) {
+                await tx.teamMember.findMany({
+                    where: { team_id: teamId },
+                    include: {
+                        userPet: {
+                            include: { pet: true }
+                        }
+                    },
+                    orderBy: { position: 'asc' }
+                });
+            }
+
+            const validPetIds = userPetIds.filter((id) => !existingPetIds.includes(id));
+
+            const membersToAdd: Prisma.TeamMemberCreateManyInput[] = [];
+            for (let i = 0; i < Math.min(missingPositions.length, validPetIds.length); i++) {
+                const member = {
+                    team_id: teamId,
+                    user_pet_id: validPetIds[i],
+                    position: missingPositions[i]
+                };
+                membersToAdd.push(member);
+            }
+
+            if (membersToAdd.length > 0) {
+                await tx.teamMember.createMany({ data: membersToAdd });
+            }
+
+            const updatedTeam = await tx.team.findUnique({
+                where: { id: teamId },
+                include: {
+                    members: {
+                        include: {
+                            userPet: {
+                                include: {
+                                    pet: true
+                                }
+                            }
+                        },
+                        orderBy: { position: 'asc' }
+                    }
+                }
+            });
+
+            return updatedTeam;
+        });
+    } catch (error) {
+        console.error('❌ Error filling team members:', error);
+        throw error;
+    }
+};

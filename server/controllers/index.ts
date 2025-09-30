@@ -2,7 +2,8 @@ import {
     addPetToTeamController,
     getTeamController,
     swapPetInTeamController,
-    updateTeamController
+    updateTeamController,
+    fillTeamController
 } from './team.controller';
 import { createUserController, getUserController, updateUserController } from './user.controller';
 import { dexController, huntPetController, myDexController, renamePetController } from './pet.controller';
@@ -37,6 +38,7 @@ export {
     updateTeamController,
     addPetToTeamController,
     swapPetInTeamController,
+    fillTeamController,
     renamePetController,
     myDexController,
     getBagController,

@@ -554,66 +554,10 @@ export const challengeController = async (
                 }
 
                 await prisma.$transaction(async (tx) => {
-                    await updateUser(
-                        tx,
-                        {
-                            id: winner.id
-                        },
-                        {
-                            exp: {
-                                increment: BATTLE.USER.WIN_EXP
-                            }
-                        }
-                    );
-
-                    await updateUser(
-                        tx,
-                        {
-                            id: loser.id
-                        },
-                        {
-                            exp: {
-                                increment: BATTLE.USER.LOSE_EXP
-                            }
-                        }
-                    );
-                });
-
-                await prisma.$transaction(async (tx) => {
-                    await Promise.all(
-                        processedTeamA.map((pet) => {
-                            return updateUserPet(
-                                tx,
-                                { id: pet.id },
-                                {
-                                    exp: {
-                                        increment: result.winner === 'Team A' ? BATTLE.PET.WIN_EXP : BATTLE.PET.LOSE_EXP
-                                    }
-                                }
-                            );
-                        })
-                    );
-
-                    await Promise.all(
-                        processedTeamB.map((pet) => {
-                            return updateUserPet(
-                                tx,
-                                { id: pet.id },
-                                {
-                                    exp: {
-                                        increment: result.winner === 'Team B' ? BATTLE.PET.WIN_EXP : BATTLE.PET.LOSE_EXP
-                                    }
-                                }
-                            );
-                        })
-                    );
-                });
-
-                await prisma.$transaction(async (tx) => {
                     await upsertLeaderBoard(tx, winner, true);
                     await upsertLeaderBoard(tx, loser, false);
-                    await updateUser(tx, { id: winner.id }, { mezon_token: { increment: bet } });
-                    await updateUser(tx, { id: loser.id }, { mezon_token: { decrement: bet } });
+                    await updateUser(tx, { id: winner.id }, { mezon_token: { increment: bet }, z_coin: { increment: 500 } });
+                    await updateUser(tx, { id: loser.id }, { mezon_token: { decrement: bet }, z_coin: { decrement: 300 } });
                 });
 
                 const winnerTeam = await getTeamForCalcCP(winner.id);

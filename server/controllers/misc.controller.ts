@@ -18,7 +18,8 @@ import {
     updateTeamController,
     updateUserController,
     withdrawController,
-    upLevelPetController
+    upLevelPetController,
+    fillTeamController
 } from '@/controllers';
 import {
     embedMessage,
@@ -212,6 +213,9 @@ export const getActionController = async (
                             channel
                         );
                         return swapPetInTeamPayload;
+                    case 'fill':
+                        const fillTeamPayload = await fillTeamController(sender_id, message, channel);
+                        return fillTeamPayload;
                     default:
                         return textMessage('❌ Invalid Team command');
                 }
@@ -277,8 +281,8 @@ export const getActionController = async (
                 if (bet === null) {
                     return textMessage('🚨 Wrong format!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
                 }
-                if (bet <= 0) {
-                    return textMessage('🚨 Bet must be greater than 0!');
+                if (bet < 1000) {
+                    return textMessage('🚨 Bet must be greater than 1000!');
                 }
                 if (bet > existingUser.mezon_token) {
                     return textMessage(`🚨 Insufficient balance!\nYou have [ ${existingUser.mezon_token}₫ ] 💰!`);
