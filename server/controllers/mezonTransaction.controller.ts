@@ -43,7 +43,8 @@ export const withdrawController = async (
 ) => {
     let messageFetch: any;
     try {
-        const messageReply = await message.reply(textMessage('Withdrawing...'));
+        const messageReply = await message.reply(textMessage('Withdraw is not available yet!'));
+        return;
         messageFetch = await channel.messages.fetch(messageReply.message_id);
         await prisma.$transaction(async (tx) => {
             await updateUser(tx, { id: user.id }, { mezon_token: { decrement: amount } });
