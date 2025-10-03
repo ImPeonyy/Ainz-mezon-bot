@@ -13,6 +13,7 @@ import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { BOT_ID, EShopExchangeStatus, EShopUpLevelPetStatus } from '@/constants';
 import { getUser, getUserPetById, getUserPets, updateUser, updateUserPet } from '@/services';
 import { prisma } from '@/lib/db';
+import { getZCoinCost } from '@/utils/shop.util';
 
 type ShopStatus = {
     button_id: EShopExchangeStatus;
@@ -206,60 +207,25 @@ export const upLevelPetController = async (existingUser: User, message: Message,
                             await messageFetch.update(textMessage('🚨 User pet not found!'));
                             return;
                         }
-                        const userPetLevel = getPetLevelFromExp(userPet.exp);
-                        if (userPetLevel < 25 && currentUser.z_coin < 1000) {
+                        const userPetLevel = getPetLevelFromExp(userPet.exp);;
+                        const zCoinCost = getZCoinCost(userPetLevel);
+                        if (currentUser.z_coin < zCoinCost) {
                             await messageFetch.update(
-                                getShopUpLevelPetMessage(
-                                    currentUser,
-                                    currentUserPet,
-                                    '🚨 You do not have enough Z Coin!'
-                                )
+                              getShopUpLevelPetMessage(
+                                currentUser,
+                                currentUserPet,
+                                '🚨 You do not have enough Z Coin!'
+                              )
                             );
                             return;
-                        }
-
-                        if (userPetLevel >= 25 && userPetLevel < 50 && currentUser.z_coin < 2000) {
-                            await messageFetch.update(
-                                getShopUpLevelPetMessage(
-                                    currentUser,
-                                    currentUserPet,
-                                    '🚨 You do not have enough Z Coin!'
-                                )
-                            );
-                            return;
-                        }
-
-                        if (userPetLevel >= 50 && userPetLevel < 75 && currentUser.z_coin < 3000) {
-                            await messageFetch.update(
-                                getShopUpLevelPetMessage(
-                                    currentUser,
-                                    currentUserPet,
-                                    '🚨 You do not have enough Z Coin!'
-                                )
-                            );
-                            return;
-                        }
-
-                        if (userPetLevel >= 75 && currentUser.z_coin < 5000) {
-                            await messageFetch.update(
-                                getShopUpLevelPetMessage(
-                                    currentUser,
-                                    currentUserPet,
-                                    '🚨 You do not have enough Z Coin!'
-                                )
-                            );
-                            return;
-                        }
-
-                        const zCoin =
-                            userPetLevel < 25 ? 1000 : userPetLevel < 50 ? 2000 : userPetLevel < 75 ? 3000 : 5000;
+                          }
 
                         const exp = expToPetLevel(userPetLevel + 1) - expToPetLevel(userPetLevel);
                         await messageFetch.update(
                             getShopUpLevelPetMessage(currentUser, currentUserPet, '🔄 Processing...', true)
                         );
                         await prisma.$transaction(async (tx) => {
-                            await updateUser(tx, { id: existingUser.id }, { z_coin: { decrement: zCoin } });
+                            await updateUser(tx, { id: existingUser.id }, { z_coin: { decrement: zCoinCost } });
                             await updateUserPet(tx, { id: userPet.id }, { exp: { increment: exp } });
                         });
 

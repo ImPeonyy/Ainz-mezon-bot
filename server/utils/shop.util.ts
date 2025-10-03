@@ -3,7 +3,9 @@ import {
     EShopUpLevelPetStatus,
     EShopExchange,
     SHOP_EXCHANGE_RATE,
-    EShopUpLevelPet
+    EShopUpLevelPet,
+    LEVEL_COSTS,
+    EXCHANGE_RATE
 } from '@/constants';
 import {
     ButtonComponent,
@@ -11,13 +13,18 @@ import {
     EButtonMessageStyle,
     EMessageComponentType,
     IInteractiveMessageProps,
-    IMessageActionRow,
+    IMessageActionRow
 } from 'mezon-sdk/dist/cjs/interfaces/client';
 import { getPetLevelFromExp, getRandomPastelHexColor } from '@/utils';
 import { Prisma, User } from '@prisma/client';
 
 export const getZCoinAfterExchange = (amount: number) => {
     return Math.round(amount * SHOP_EXCHANGE_RATE);
+};
+
+export const getZCoinCost = (level: number): number => {
+    const rule = LEVEL_COSTS.find((r) => level < r.maxLevel);
+    return rule ? rule.cost : 0;
 };
 
 export const getShopExchangeMessage = (user: User, value: number = 1000, message: string = 'Exchange') => {
@@ -44,7 +51,7 @@ export const getShopExchangeMessage = (user: User, value: number = 1000, message
     const embedConfig: IInteractiveMessageProps = {
         color: getRandomPastelHexColor(),
         title: `🛒 Shop Exchange`,
-        description: '💱 Exchange Rate: 10000₫ = 3333 Z Coin',
+        description: `💱 Exchange Rate: 10000₫ = ${EXCHANGE_RATE} Z Coin`,
         fields: [
             {
                 name: 'Mezon Token:',
@@ -122,8 +129,7 @@ export const getShopUpLevelPetMessage = (
     const embedConfig: IInteractiveMessageProps = {
         color: getRandomPastelHexColor(),
         title: `🎁 Special Offer`,
-        description:
-            '⏳ Limited time – don’t miss out!\n✨ 1000 Z Coin per Level for pet under Lv.25!\n✨ 2000 Z Coin per Level for pet Lv.25-50!\n✨ 3000 Z Coin per Level for pet Lv.50-75!\n✨ 5000 Z Coin per Level for pet Lv.75+!',
+        description: `⏳ Limited time – don’t miss out!\n✨ ${LEVEL_COSTS[0].cost} Z Coin per Level for pet under Lv.25!\n✨ ${LEVEL_COSTS[1].cost} Z Coin per Level for pet Lv.25-50!\n✨ ${LEVEL_COSTS[2].cost} Z Coin per Level for pet Lv.50-75!\n✨ ${LEVEL_COSTS[3].cost} Z Coin per Level for pet Lv.75+!`,
         fields: [
             {
                 name: 'Select Pet:',

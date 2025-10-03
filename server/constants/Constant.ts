@@ -90,5 +90,13 @@ export const IGNORED_CHANNELS = [
     '1969618936873881600'
 ];
 
-export const SHOP_EXCHANGE_RATE = 3333 / 10000;
+export const EXCHANGE_RATE = 5555;
+export const SHOP_EXCHANGE_RATE = EXCHANGE_RATE / 10000;
 export const WORLD_ANNOUNCEMENTS_CHANNEL_ID = process.env.WORLD_ANNOUNCEMENTS_CHANNEL_ID || '1971607537249685504';
+
+export const LEVEL_COSTS = [
+    { maxLevel: 25, cost: 500 },
+    { maxLevel: 50, cost: 1000 },
+    { maxLevel: 75, cost: 2000 },
+    { maxLevel: Infinity, cost: 3000 },
+  ];

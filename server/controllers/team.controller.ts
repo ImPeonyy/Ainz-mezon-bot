@@ -300,7 +300,6 @@ export const fillTeamController = async (userId: string, message: Message, chann
             team.id,
             userPets.map((pet) => pet.id)
         );
-        console.log(filledTeam);
         await messageFetch.update(teamInfoMessage(filledTeam));
         const currentTeam = await getTeamForCalcCP(userId);
         if (currentTeam) {
