@@ -1,8 +1,8 @@
 import { MAX_TEAM_NAME_LENGTH } from '@/constants';
+import { prisma } from '@/lib/db';
 import {
     addPetToTeam,
     fillTeamMembers,
-    getPet,
     getTeam,
     getTeamForCalcCP,
     getUserPetByPetName,
@@ -13,7 +13,6 @@ import {
     updateTeamName
 } from '@/services';
 import { calculateTeamCP, isValidPosition, teamInfoMessage, textMessage } from '@/utils';
-
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 
 export const getTeamController = async (userId: string, message: Message, channel: any) => {
@@ -293,10 +292,14 @@ export const fillTeamController = async (userId: string, message: Message, chann
         const userPets = await getUserPetsByRarityAndLevel(userId);
         const team = await getTeam(userId);
         if (!team) {
-            await messageFetch.update(textMessage('🚨 You don\'t have a team.'));
+            await messageFetch.update(textMessage("🚨 You don't have a team."));
             return;
         }
-        const filledTeam = await fillTeamMembers(prisma, team.id, userPets.map((pet) => pet.id));
+        const filledTeam = await fillTeamMembers(
+            prisma,
+            team.id,
+            userPets.map((pet) => pet.id)
+        );
         console.log(filledTeam);
         await messageFetch.update(teamInfoMessage(filledTeam));
         const currentTeam = await getTeamForCalcCP(userId);
