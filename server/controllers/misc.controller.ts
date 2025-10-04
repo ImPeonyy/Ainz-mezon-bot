@@ -60,7 +60,7 @@ export const getActionController = async (
     targetRaw?: string | null
 ) => {
     try {
-        const { sender_id, username, display_name, avatar, clan_nick, references, mentions } = event;
+        const { sender_id, username, display_name, avatar, clan_nick, references, mentions, channel_id } = event;
 
         if (Object.values(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (!display_name || !sender_id) {
@@ -147,7 +147,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.hunt) {
-                const huntPetPayload = await huntPetController(sender_id, message, channel, client);
+                const huntPetPayload = await huntPetController(sender_id, message, channel, client, channel_id);
                 return huntPetPayload;
             }
 
@@ -469,15 +469,15 @@ export const getBagController = async (
 };
 
 export const worldAnnouncementController = async (user: User, pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[], client: MezonClient) => {
-    try {
-        const channel = await client.channels.fetch(WORLD_ANNOUNCEMENTS_CHANNEL_ID);
-        for (const pet of pets) {
-            const worldAnnouncement = await getRarePetWAMessage(user, pet);
-            await channel.send(worldAnnouncement);
-        }
-        return;
-    } catch (error) {
-        console.error('Error getting world announcement:', error);
-        return textMessage('❌ Internal server error');
-    }
+    // try {
+    //     const channel = await client.channels.fetch(WORLD_ANNOUNCEMENTS_CHANNEL_ID);
+    //     for (const pet of pets) {
+    //         const worldAnnouncement = await getRarePetWAMessage(user, pet);
+    //         await channel.send(worldAnnouncement);
+    //     }
+    //     return;
+    // } catch (error) {
+    //     console.error('Error getting world announcement:', error);
+    //     return textMessage('❌ Internal server error');
+    // }
 };
