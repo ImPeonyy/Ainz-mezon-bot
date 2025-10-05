@@ -469,15 +469,15 @@ export const getBagController = async (
 };
 
 export const worldAnnouncementController = async (user: User, pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[], client: MezonClient) => {
-    // try {
-    //     const channel = await client.channels.fetch(WORLD_ANNOUNCEMENTS_CHANNEL_ID);
-    //     for (const pet of pets) {
-    //         const worldAnnouncement = await getRarePetWAMessage(user, pet);
-    //         await channel.send(worldAnnouncement);
-    //     }
-    //     return;
-    // } catch (error) {
-    //     console.error('Error getting world announcement:', error);
-    //     return textMessage('❌ Internal server error');
-    // }
+    try {
+        const channel = await client.channels.fetch(WORLD_ANNOUNCEMENTS_CHANNEL_ID);
+        for (const pet of pets) {
+            const worldAnnouncement = await getRarePetWAMessage(user, pet);
+            await channel.send(worldAnnouncement);
+        }
+        return;
+    } catch (error) {
+        console.error('Error getting world announcement:', error);
+        return textMessage('❌ Internal server error');
+    }
 };
