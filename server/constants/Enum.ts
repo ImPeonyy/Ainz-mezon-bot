@@ -60,3 +60,8 @@ export enum EPriceByRarity {
     LIMITED = 7000
 }
 
+export enum EGachaCountType {
+    NORMAL = 'normal',
+    MID_AUTUMN_2025 = 'mid_autumn_2025'
+}
+

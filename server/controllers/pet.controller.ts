@@ -1,5 +1,6 @@
-import { LIMIT_PET_PER_HUNT, USE_DAILY_ACTIVITY } from '@/constants';
+import { EGachaCountType, LIMIT_PET_PER_HUNT, USE_DAILY_ACTIVITY } from '@/constants';
 import {
+    clearGachaCount,
     createUserDailyActivity,
     getPetDetail,
     getPets,
@@ -11,6 +12,7 @@ import {
     updateUser,
     updateUserDailyActivity,
     updateUserPet,
+    upserGachaCount,
     upsertUserPetCount
 } from '@/services';
 import {
@@ -27,7 +29,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { MezonClient } from 'mezon-sdk';
 import { worldAnnouncementController } from './misc.controller';
-import { huntLimitedMidAutumnEvent } from '@/events/mid-autumn-2025';
+import { FOUR_SYMBOLS, huntLimitedMidAutumnEvent } from '@/events/mid-autumn-2025';
 
 export const huntPetController = async (
     mezon_id: string,
@@ -51,10 +53,20 @@ export const huntPetController = async (
         const rarities = await getRarities();
         const pets = await getPets();
         let yourPets: Prisma.PetGetPayload<{ include: { rarity: true } }>[] = [];
+
+        const symbol = Object.values(FOUR_SYMBOLS).find((s) => s.channel_id === channel_id);
+
+        let gachaCount = 0;
         for (let i = 0; i < LIMIT_PET_PER_HUNT; i++) {
-            const pet = await huntLimitedMidAutumnEvent(rarities, pets, channel_id);
-            if (pet) {
-                yourPets.push(pet);
+            const huntResult = await huntLimitedMidAutumnEvent(rarities, pets, symbol);
+            if (huntResult && huntResult.pet) {
+                yourPets.push(huntResult.pet);
+                if (huntResult.isRarePet) {
+                    gachaCount = 0;
+                    await clearGachaCount(prisma, user.id, huntResult.type);
+                } else {
+                    gachaCount++;
+                }
             } else {
                 await messageFetch.update(textMessage('Have error when hunting pet!'));
                 return;
@@ -78,6 +90,12 @@ export const huntPetController = async (
 
                         for (const pet of yourPets) {
                             await upsertUserPetCount(tx, user.id, pet);
+                        }
+
+                        if (symbol) {
+                            await upserGachaCount(tx, user.id, EGachaCountType.MID_AUTUMN_2025, gachaCount);
+                        } else {
+                            await upserGachaCount(tx, user.id, EGachaCountType.NORMAL, gachaCount);
                         }
                     },
                     {
@@ -132,6 +150,12 @@ export const huntPetController = async (
                             for (const pet of yourPets) {
                                 await upsertUserPetCount(tx, user.id, pet);
                             }
+
+                            if (symbol) {
+                                await upserGachaCount(tx, user.id, EGachaCountType.MID_AUTUMN_2025, gachaCount);
+                            } else {
+                                await upserGachaCount(tx, user.id, EGachaCountType.NORMAL, gachaCount);
+                            }
                         },
                         {
                             timeout: 10000
@@ -177,6 +201,12 @@ export const huntPetController = async (
 
                             for (const pet of yourPets) {
                                 await upsertUserPetCount(tx, user.id, pet);
+                            }
+
+                            if (symbol) {
+                                await upserGachaCount(tx, user.id, EGachaCountType.MID_AUTUMN_2025, gachaCount);
+                            } else {
+                                await upserGachaCount(tx, user.id, EGachaCountType.NORMAL, gachaCount);
                             }
                         },
                         {

@@ -20,6 +20,7 @@ export const COMMANDS = {
     challenge: 'solo',
     exchange: 'trade',
     uplevel: 'uplv',
+    gacha: 'gacha',
 };
 
 export const ACTIONS = {

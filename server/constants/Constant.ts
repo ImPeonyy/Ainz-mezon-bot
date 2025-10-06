@@ -1,4 +1,4 @@
-import { ERarity } from "@prisma/client";
+import { ERarity } from '@prisma/client';
 
 export const LIMIT_PET_PER_HUNT = 5;
 
@@ -39,11 +39,11 @@ export const BATTLE = {
     MANA_PER_HIT: 15,
     USER: {
         WIN_EXP: 100,
-        LOSE_EXP: 50,
+        LOSE_EXP: 50
     },
     PET: {
         WIN_EXP: 200,
-        LOSE_EXP: 50,
+        LOSE_EXP: 50
     }
 };
 export const FAV_COLOR = '#F3AAB5';
@@ -85,10 +85,7 @@ export const RARITY_CP_MULTIPLIERS: Record<ERarity, number> = {
 export const MAX_TEAM_NAME_LENGTH = 31;
 export const MAX_USER_NAME_LENGTH = 27;
 export const BOT_ID = process.env.BOT_ID || '';
-export const IGNORED_CHANNELS = [
-    '1950103202913325056',
-    '1969618936873881600'
-];
+export const IGNORED_CHANNELS = ['1950103202913325056', '1969618936873881600'];
 
 export const EXCHANGE_RATE = 5555;
 export const SHOP_EXCHANGE_RATE = EXCHANGE_RATE / 10000;
@@ -98,5 +95,9 @@ export const LEVEL_COSTS = [
     { maxLevel: 25, cost: 500 },
     { maxLevel: 50, cost: 1000 },
     { maxLevel: 75, cost: 2000 },
-    { maxLevel: Infinity, cost: 3000 },
-  ];
+    { maxLevel: Infinity, cost: 3000 }
+];
+
+export const GACHA_COUNT_LIMIT = {
+    MID_AUTUMN_2025: 800
+};

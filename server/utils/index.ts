@@ -13,7 +13,8 @@ import {
     textMessage,
     getChallengeMessage,
     getChallengeRequestMessage,
-    getRarePetWAMessage
+    getRarePetWAMessage,
+    getGachaMessage
 } from './message.util';
 import {
     expToPetLevel,
@@ -127,5 +128,6 @@ export {
     getShopUpLevelPetMessage,
     isValidNumber,
     getRarePetWAMessage,
-    getRarePetForAnnouncement
+    getRarePetForAnnouncement,
+    getGachaMessage
 };

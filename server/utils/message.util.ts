@@ -1,4 +1,4 @@
-import { ACTIONS, AINZ_THUMBNAIL, EChallengeStatus, FAV_COLOR, IBattle } from '@/constants';
+import { ACTIONS, AINZ_THUMBNAIL, EChallengeStatus, FAV_COLOR, GACHA_COUNT_LIMIT, IBattle } from '@/constants';
 import {
     ButtonComponent,
     ChannelMessageContent,
@@ -527,4 +527,18 @@ export const getRarePetWAMessage = (user: User, pet: Prisma.PetGetPayload<{ incl
     messagePayload.ej?.push(emoji);
     messagePayload.t += ` ${pet.name}! 🎉`;
     return messagePayload;
+};
+
+export const getGachaMessage = (gachaCount: Prisma.GachaCountGetPayload<{ include: { user: true } }>) => {
+    const embedConfig = {
+        color: getRandomPastelHexColor(),
+        title: `🎰 Gacha Count - ${gachaCount.user.username}`,
+        description: `Normal: ${gachaCount.normal} \nMid Autumn 2025: ${gachaCount.mid_autumn_2025} / ${GACHA_COUNT_LIMIT.MID_AUTUMN_2025}`,
+        thumbnail: { url: gachaCount.user.avatar },
+        footer: {
+            text: `👑 Ainz Mezon Bot • ${new Date().toLocaleDateString('vi-VN')}`
+        }
+    };
+
+    return embedMessage(embedConfig);
 };
