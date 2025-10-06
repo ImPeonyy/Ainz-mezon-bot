@@ -96,38 +96,6 @@ export const upsertUserPetCount = async (
     }
 };
 
-export const getRandomUserPets = async (prismaClient: PrismaClient | Prisma.TransactionClient, user_id: string) => {
-    try {
-        const userPets = await prismaClient.userPet.findMany({
-            include: {
-                pet: {
-                    include: {
-                        statistic: true,
-                        rarity: true,
-                        autoAttack: true,
-                        passiveSkill: { include: { effects: true } },
-                        activeSkill: { include: { effects: true } }
-                    }
-                }
-            },
-            where: {
-                teamMembers: {
-                    some: {
-                        team: {
-                            user_id: user_id
-                        }
-                    }
-                }
-            }
-        });
-
-        return userPets;
-    } catch (error) {
-        console.error('Error getting random user pets:', error);
-        throw error;
-    }
-};
-
 export const getUserPetByName = async (
     prismaClient: PrismaClient | Prisma.TransactionClient,
     userId: string,

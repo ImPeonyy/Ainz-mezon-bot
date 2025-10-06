@@ -21,7 +21,6 @@ import {
 import {
     createUserPet,
     createUserPets,
-    getRandomUserPets,
     getUserPetByName,
     getUserPetByPetName,
     getUserPetDetail,
@@ -93,7 +92,6 @@ export {
     getUserPetDetail,
     getUserPetsByRarity,
     getUserPetByName,
-    getRandomUserPets,
     getPet,
     getPetsByRarity,
     createLeaderBoard,
