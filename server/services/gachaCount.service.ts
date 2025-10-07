@@ -28,6 +28,17 @@ export const getGachaCount = async (prismaClient: PrismaClient | Prisma.Transact
     });
 };
 
+export const updateGachaCount = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    userId: string,
+    data: Prisma.GachaCountUpdateInput
+) => {
+    return await prismaClient.gachaCount.update({
+        where: { userId },
+        data
+    });
+};
+
 export const clearGachaCount = async (
     prismaClient: PrismaClient | Prisma.TransactionClient,
     userId: string,

@@ -36,7 +36,8 @@ import {
     EShopExchangeStatus,
     EShopUpLevelPetStatus,
     EShopUpLevelPet,
-    EGachaCountType
+    EGachaCountType,
+    EGachaStatus
 } from './Enum';
 import {
     IBattle,
@@ -96,5 +97,6 @@ export {
     WORLD_ANNOUNCEMENTS_CHANNEL_ID,
     LEVEL_COSTS,
     GACHA_COUNT_LIMIT,
-    EGachaCountType
+    EGachaCountType,
+    EGachaStatus
 };

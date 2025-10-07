@@ -52,7 +52,7 @@ export const getHelpMessage = () => {
             },
             {
                 name: '🎰 Gacha',
-                value: 'gacha',
+                value: 'gacha | gacha ma2025',
                 inline: false
             }
         ],

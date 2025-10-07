@@ -13,8 +13,7 @@ import {
     textMessage,
     getChallengeMessage,
     getChallengeRequestMessage,
-    getRarePetWAMessage,
-    getGachaMessage
+    getRarePetWAMessage
 } from './message.util';
 import {
     expToPetLevel,
@@ -62,6 +61,12 @@ import {
     lossesLeaderBoard
 } from './leaderBoard.util';
 import { getShopExchangeMessage, getZCoinAfterExchange, getShopUpLevelPetMessage } from './shop.util';
+import {
+    getGachaMessage,
+    getNormalGachaMessage,
+    getMidAutumn2025GachaMessage,
+    getGachaCountMessage
+} from './gacha.util';
 
 export {
     getActorName,
@@ -129,5 +134,8 @@ export {
     isValidNumber,
     getRarePetWAMessage,
     getRarePetForAnnouncement,
-    getGachaMessage
+    getGachaMessage,
+    getNormalGachaMessage,
+    getMidAutumn2025GachaMessage,
+    getGachaCountMessage
 };

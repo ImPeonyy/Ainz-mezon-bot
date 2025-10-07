@@ -65,3 +65,7 @@ export enum EGachaCountType {
     MID_AUTUMN_2025 = 'mid_autumn_2025'
 }
 
+export enum EGachaStatus {
+    GACHA = 'gacha',
+    CANCEL = 'cancel',
+}

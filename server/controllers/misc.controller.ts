@@ -19,7 +19,8 @@ import {
     updateUserController,
     withdrawController,
     upLevelPetController,
-    fillTeamController
+    fillTeamController,
+    gachaController
 } from '@/controllers';
 import {
     embedMessage,
@@ -313,7 +314,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.gacha) {
-                const gachaPayload = await gachaController(existingUser, message, channel, client);
+                const gachaPayload = await gachaController(existingUser, message, channel, client, targetRaw);
                 return gachaPayload;
             }
         }
@@ -486,28 +487,5 @@ export const worldAnnouncementController = async (user: User, pets: Prisma.PetGe
     } catch (error) {
         console.error('Error getting world announcement:', error);
         return textMessage('❌ Internal server error');
-    }
-};
-
-export const gachaController = async (user: User, message: Message, channel: any, client: MezonClient) => {
-    let messageFetch: any;
-    try {
-        const messageReply = await message.reply(textMessage('🔍 Getting your gacha count... Plz wait!'));
-        messageFetch = await channel.messages.fetch(messageReply.message_id);
-        const gachaCount = await getGachaCount(prisma, user.id);
-        if (!gachaCount) {
-            await messageFetch.update(textMessage('🚨 Gacha count not found!'));
-            return;
-        }
-        await messageFetch.update(getGachaMessage(gachaCount));
-        return;
-    } catch (error) {
-        console.error('Error getting gacha count:', error);
-        if (messageFetch) {
-            await messageFetch.update(textMessage('❌ Internal server error'));
-        } else {
-            await message.reply(textMessage('❌ Internal server error'));
-        }
-        return;
     }
 };

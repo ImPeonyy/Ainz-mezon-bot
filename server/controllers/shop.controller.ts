@@ -15,11 +15,6 @@ import { getUser, getUserPetById, getUserPets, updateUser, updateUserPet } from 
 import { prisma } from '@/lib/db';
 import { getZCoinCost } from '@/utils/shop.util';
 
-type ShopStatus = {
-    button_id: EShopExchangeStatus;
-    extra_data: any;
-};
-
 const activeShops = new Map<
     string,
     {
@@ -39,12 +34,10 @@ const closeShop = (userId: string) => {
     }
 };
 
-// Utility function để kiểm tra xem user có shop active không
 export const hasActiveShop = (userId: string): boolean => {
     return activeShops.has(userId);
 };
 
-// Utility function để force close shop của user (có thể dùng cho admin)
 export const forceCloseUserShop = async (userId: string): Promise<boolean> => {
     const activeShop = activeShops.get(userId);
     if (activeShop) {
@@ -60,7 +53,6 @@ export const forceCloseUserShop = async (userId: string): Promise<boolean> => {
 };
 
 export const exchangeController = async (existingUser: User, message: Message, channel: any, client: MezonClient) => {
-    // Kiểm tra xem user đã có shop active chưa
     if (activeShops.has(existingUser.id)) {
         await message.reply(
             textMessage('❌ You already have an active shop! Please close the current shop before opening a new one.')
@@ -73,7 +65,6 @@ export const exchangeController = async (existingUser: User, message: Message, c
         const messageReply = await message.reply(getShopExchangeMessage(existingUser));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
-        // Tạo timer để tự động đóng shop sau 5 phút
         const expireTimer = setTimeout(
             () => {
                 closeShop(existingUser.id);
@@ -84,7 +75,6 @@ export const exchangeController = async (existingUser: User, message: Message, c
             3 * 60 * 1000
         ); // 3 phút
 
-        // Lưu shop vào activeShops
         activeShops.set(existingUser.id, {
             userId: existingUser.id,
             messageFetch,
@@ -154,7 +144,6 @@ export const exchangeController = async (existingUser: User, message: Message, c
 };
 
 export const upLevelPetController = async (existingUser: User, message: Message, channel: any, client: MezonClient) => {
-    // Kiểm tra xem user đã có shop active chưa
     if (activeShops.has(existingUser.id)) {
         await message.reply(
             textMessage(
@@ -171,7 +160,6 @@ export const upLevelPetController = async (existingUser: User, message: Message,
         const userPet = await getUserPets(prisma, existingUser.id);
         await messageFetch.update(getShopUpLevelPetMessage(existingUser, userPet));
 
-        // Tạo timer để tự động đóng shop sau 5 phút
         const expireTimer = setTimeout(
             () => {
                 closeShop(existingUser.id);
@@ -180,9 +168,8 @@ export const upLevelPetController = async (existingUser: User, message: Message,
                 }
             },
             3 * 60 * 1000
-        ); // 3 phút
+        );
 
-        // Lưu shop vào activeShops
         activeShops.set(existingUser.id, {
             userId: existingUser.id,
             messageFetch,
@@ -229,7 +216,6 @@ export const upLevelPetController = async (existingUser: User, message: Message,
                             await updateUserPet(tx, { id: userPet.id }, { exp: { increment: exp } });
                         });
 
-                        // Sau 2 giây, fetch lại data mới và refresh shop để tiếp tục
                         setTimeout(async () => {
                             try {
                                 const updatedUser = await getUser(currentUser.id);

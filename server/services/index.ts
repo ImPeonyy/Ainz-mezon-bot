@@ -55,7 +55,8 @@ import { sendDMToUser, sendTokenToUser } from '@/services/mezon.service';
 import {
     upserGachaCount,
     getGachaCount,
-    clearGachaCount
+    clearGachaCount,
+    updateGachaCount
 } from '@/services/gachaCount.service';
 
 export {
@@ -114,5 +115,6 @@ export {
     fillTeamMembers,
     upserGachaCount,
     getGachaCount,
-    clearGachaCount
+    clearGachaCount,
+    updateGachaCount
 };
