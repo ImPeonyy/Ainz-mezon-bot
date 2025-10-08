@@ -80,7 +80,7 @@ export const getMidAutumn2025GachaMessage = (
     const embedConfig = {
         color: getRandomPastelHexColor(),
         title: `🎰 Mid-Autumn 2025 Gacha`,
-        description: `Gacha Points: ${gachaCount.mid_autumn_2025}`,
+        description: `Gacha Points: ${gachaCount.mid_autumn_2025} / ${GACHA_COUNT_LIMIT.MID_AUTUMN_2025}`,
         thumbnail: { url: gachaCount.user.avatar },
         fields: [
             {
