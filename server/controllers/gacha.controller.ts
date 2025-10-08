@@ -12,6 +12,7 @@ import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { prisma } from '@/lib/db';
 import { MezonClient } from 'mezon-sdk';
 import { BOT_ID, EGachaStatus, GACHA_COUNT_LIMIT } from '@/constants';
+import { worldAnnouncementController } from './misc.controller';
 
 const activeGachas = new Map<
     string,
@@ -248,6 +249,7 @@ export const midAutumn2025GachaController = async (
                         await upsertUserPetCount(tx, existingUser.id, randomLimitedPet);
                     });
                     await messageFetch.update(getGachaMessage(randomLimitedPet));
+                    await worldAnnouncementController(existingUser, [randomLimitedPet], client);
                     closeGacha(existingUser.id);
                 }
             }
