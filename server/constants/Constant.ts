@@ -23,11 +23,10 @@ export const USE_DAILY_ACTIVITY = {
                 Z_COIN: 300
             }
         },
-        PRIORITY: {
-            1: 'Hunt with Create',
-            2: 'Hunt with Update',
-            3: 'Hunt with Z-Coin',
-            4: "Can't hunt"
+        HUNT_BREAKPOINT: {
+            x1: 1,
+            x5: 5,
+            x30: 30
         }
     },
     BATTLE: {

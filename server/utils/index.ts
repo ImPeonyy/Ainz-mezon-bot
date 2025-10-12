@@ -7,7 +7,7 @@ import {
     getBagMessageByRarity,
     getBattleMessage,
     getDexMessage,
-    getHuntMessage,
+    getHuntResultMessage,
     getMyDexMessage,
     teamInfoMessage,
     textMessage,
@@ -50,7 +50,7 @@ import {
 } from './battle.util';
 import { getDailyReward, getMidnightRemainingTime, getRandomInt } from './daily.util';
 import { getRandomPet, getRarityPets } from './pet.util';
-import { huntCheck, huntPet, shuffleRarities } from './hunt.util';
+import { huntPet, shuffleRarities, getHuntMenuMessage } from './hunt.util';
 import { getHelpMessage, getForFunHelpMessage } from './help.util';
 import { isValidPosition, calculateTeamCP } from './team.util';
 import {
@@ -71,9 +71,8 @@ import {
 export {
     getActorName,
     getTargetFromMention,
-    getHuntMessage,
+    getHuntResultMessage,
     textMessage,
-    huntCheck,
     huntPet,
     getRandomPet,
     getRarityPets,
@@ -137,5 +136,6 @@ export {
     getGachaMessage,
     getNormalGachaMessage,
     getMidAutumn2025GachaMessage,
-    getGachaCountMessage
+    getGachaCountMessage,
+    getHuntMenuMessage
 };

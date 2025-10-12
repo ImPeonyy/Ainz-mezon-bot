@@ -1,7 +1,14 @@
 import { Pet, Prisma, Rarity, User, UserDailyActivities } from '@prisma/client';
-import { getRandomPet, getRarityPets } from '@/utils';
+import { getRandomPastelHexColor, getRandomPet, getRarityPets } from '@/utils';
 
-import { USE_DAILY_ACTIVITY } from '@/constants';
+import { EHuntMenuStatus, USE_DAILY_ACTIVITY } from '@/constants';
+import {
+    ButtonComponent,
+    ChannelMessageContent,
+    EButtonMessageStyle,
+    EMessageComponentType,
+    IMessageActionRow
+} from 'mezon-sdk';
 
 export const shuffleRarities = (rarities: Rarity[]) => {
     const arr = [...rarities];
@@ -29,12 +36,85 @@ export const huntPet = (rarities: Rarity[], pets: Prisma.PetGetPayload<{ include
     }
 };
 
-export const huntCheck = (user: User, todayActivity: UserDailyActivities) => {
-    if (todayActivity && todayActivity.hunt === 0) {
-        return USE_DAILY_ACTIVITY.HUNT.PRIORITY[2];
+export const getHuntMenuMessage = (
+    user: User,
+    isFreeHunt: boolean,
+    maxHunt: number,
+    isLoading: boolean = false,
+    message: string = 'Hunt',
+    resultMessage: ChannelMessageContent = {
+        t: '',
+        ej: []
     }
-    if (todayActivity && todayActivity.hunt === 1 && user.z_coin >= USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN) {
-        return USE_DAILY_ACTIVITY.HUNT.PRIORITY[3];
-    }
-    return USE_DAILY_ACTIVITY.HUNT.PRIORITY[4];
+) => {
+    const cancelButton: ButtonComponent = {
+        id: EHuntMenuStatus.CANCEL,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: 'Cancel',
+            style: EButtonMessageStyle.DANGER
+        }
+    };
+    const huntX1Button: ButtonComponent = {
+        id: EHuntMenuStatus.HUNT_X1,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: 'Hunt x1',
+            style: EButtonMessageStyle.SECONDARY
+        }
+    };
+    const huntX5Button: ButtonComponent = {
+        id: EHuntMenuStatus.HUNT_X5,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: 'Hunt x5',
+            style: EButtonMessageStyle.PRIMARY
+        }
+    };
+    const huntX30Button: ButtonComponent = {
+        id: EHuntMenuStatus.HUNT_X30,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: `Hunt x30`,
+            style: EButtonMessageStyle.SUCCESS
+        }
+    };
+    const freeHuntButton: ButtonComponent = {
+        id: EHuntMenuStatus.FREE_HUNT,
+        type: EMessageComponentType.BUTTON,
+        component: {
+            label: 'Free Hunt',
+            style: EButtonMessageStyle.PRIMARY
+        }
+    };
+    const messageActionRow: IMessageActionRow = {
+        components: [
+            cancelButton,
+            ...(maxHunt > 0 ? [huntX1Button] : []),
+            ...(maxHunt >= 5 ? [huntX5Button] : []),
+            ...(maxHunt >= 30 ? [huntX30Button] : []),
+            ...(isFreeHunt ? [freeHuntButton] : [])
+        ]
+    };
+
+    const embedConfig = {
+        color: getRandomPastelHexColor(),
+        title: `🎯 Hunt Menu`,
+        description: `You have ${user.z_coin} Z Coins (Max hunt: ${maxHunt})`,
+        thumbnail: { url: user.avatar },
+        fields: [
+            {
+                name: message,
+                value: ''
+            }
+        ]
+    };
+    const messagePayload: ChannelMessageContent = {
+        t: resultMessage.t,
+        ej: resultMessage.ej,
+        embed: [embedConfig],
+        components: isLoading ? [] : [messageActionRow]
+    };
+
+    return messagePayload;
 };

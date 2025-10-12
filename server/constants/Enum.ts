@@ -69,3 +69,23 @@ export enum EGachaStatus {
     GACHA = 'gacha',
     CANCEL = 'cancel',
 }
+
+
+export enum EHuntMenuStatus {
+    CANCEL = 'cancel',
+    FREE_HUNT = 'free_hunt',
+    HUNT_X1 = 'hunt_x1',
+    HUNT_X5 = 'hunt_x5',
+    HUNT_X30 = 'hunt_x30',
+}
+
+export enum EInteractiveMessageType {
+    SHOP,
+    GACHA,
+    HUNTS
+}
+
+export enum EAsyncMutexMsgType {
+    HUNT,
+    UPLV
+}

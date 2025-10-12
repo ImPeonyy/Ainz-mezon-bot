@@ -41,9 +41,6 @@ export const huntLimitedMidAutumnEvent = (
                     };
                 }
             } else {
-                if (rarity.type === ERarity.Mythic) {
-                    isRarePet = true;
-                }
                 const rarityPets = getRarityPets(pets, rarity);
                 if (rarityPets.length > 0) {
                     return {

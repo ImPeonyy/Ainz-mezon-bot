@@ -37,7 +37,10 @@ import {
     EShopUpLevelPetStatus,
     EShopUpLevelPet,
     EGachaCountType,
-    EGachaStatus
+    EGachaStatus,
+    EInteractiveMessageType,
+    EHuntMenuStatus,
+    EAsyncMutexMsgType
 } from './Enum';
 import {
     IBattle,
@@ -98,5 +101,8 @@ export {
     LEVEL_COSTS,
     GACHA_COUNT_LIMIT,
     EGachaCountType,
-    EGachaStatus
+    EGachaStatus,
+    EInteractiveMessageType,
+    EHuntMenuStatus,
+    EAsyncMutexMsgType
 };
