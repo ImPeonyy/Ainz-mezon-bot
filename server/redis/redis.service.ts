@@ -7,7 +7,6 @@ const TTL = Number(process.env.DEFAULT_TTL) || DEFAULT_TTL;
 export async function logBattleWithExpire(user: User, expireInSeconds: number = TTL): Promise<void> {
     const key = `battle:${user.username}-${user.id}:${Date.now()}`;
     await redis.set(key, '1', 'EX', expireInSeconds);
-    console.log(`⚔️ Logged battle for user ${user.id} with TTL ${expireInSeconds}s`);
 }
 
 export async function getBattlesLogByUser(user: User): Promise<string[]> {
@@ -39,7 +38,6 @@ export async function removeBattleLog(user: User): Promise<void> {
     const keys = await getBattlesLogByUser(user);
     if (keys.length > 0) {
         await redis.del(...keys);
-        console.log(`🗑️ Removed ${keys.length} battle logs for user ${user.id}`);
     }
 }
 

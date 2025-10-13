@@ -7,7 +7,219 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ========================= ENUMS =========================
+model User {
+  id              String                @id
+  username        String                @unique
+  z_coin          Int                   @default(0)
+  mezon_token     Int                   @default(0)
+  exp             Int                   @default(0)
+  avatar          String                @default("https://res.cloudinary.com/do2rk0jz8/image/upload/v1757571181/download_ygjzey.jpg")
+  created_at      DateTime              @default(now())
+  updated_at      DateTime              @default(now()) @updatedAt
+  leaderBoard     LeaderBoard?
+  gachaCount      GachaCount?
+  team            Team?
+  dailyActivities UserDailyActivities[]
+  userPets        UserPet[]
+}
+
+model UserDailyActivities {
+  id         String   @id @default(uuid())
+  user_id    String
+  daily      Int      @default(0)
+  hunt       Int      @default(0)
+  battle     Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  user       User     @relation(fields: [user_id], references: [id])
+}
+
+model Rarity {
+  id             Int      @id @default(autoincrement())
+  name           String   @unique
+  mezon_emoji_id String   @unique
+  type           ERarity
+  catch_rate     Float
+  created_at     DateTime @default(now())
+  updated_at     DateTime @default(now()) @updatedAt
+  pets           Pet[]
+}
+
+model AutoAttack {
+  id              Int             @id @default(autoincrement())
+  pet_id          Int             @unique
+  name            String
+  description     String?
+  damage          Int
+  scaling_type    EScalingType
+  attack_position ETargetPosition
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @default(now()) @updatedAt
+  pet             Pet             @relation(fields: [pet_id], references: [id])
+}
+
+model PassiveSkill {
+  id          Int                  @id @default(autoincrement())
+  pet_id      Int                  @unique
+  name        String
+  description String?
+  created_at  DateTime             @default(now())
+  updated_at  DateTime             @default(now()) @updatedAt
+  pet         Pet                  @relation(fields: [pet_id], references: [id])
+  effects     PassiveSkillEffect[]
+}
+
+model ActiveSkill {
+  id              Int                 @id @default(autoincrement())
+  pet_id          Int                 @unique
+  name            String
+  description     String?
+  mana_cost       Int
+  scaling_type    EScalingType?
+  damage          Int?
+  attack_position ETargetPosition?
+  created_at      DateTime            @default(now())
+  updated_at      DateTime            @default(now()) @updatedAt
+  pet             Pet                 @relation(fields: [pet_id], references: [id])
+  effects         ActiveSkillEffect[]
+}
+
+model ActiveSkillEffect {
+  id                     Int             @id @default(autoincrement())
+  active_skill_id        Int
+  name                   String
+  description            String?
+  effect_target          EEffectTarget
+  effect_target_position ETargetPosition
+  effect                 EEffect
+  effect_stat            EStat?
+  scaling_type           EScalingType?
+  duration               Int             @default(1)
+  value                  Int             @default(0)
+  created_at             DateTime        @default(now())
+  updated_at             DateTime        @default(now()) @updatedAt
+  activeSkill            ActiveSkill     @relation(fields: [active_skill_id], references: [id])
+}
+
+model PassiveSkillEffect {
+  id                     Int             @id @default(autoincrement())
+  passive_skill_id       Int
+  name                   String
+  description            String?
+  effect_target          EEffectTarget
+  effect_target_position ETargetPosition
+  effect                 EEffect
+  effect_stat            EStat?
+  value                  Int             @default(0)
+  created_at             DateTime        @default(now())
+  updated_at             DateTime        @default(now()) @updatedAt
+  passiveSkill           PassiveSkill    @relation(fields: [passive_skill_id], references: [id])
+}
+
+model Statistics {
+  id           Int          @id @default(autoincrement())
+  name         String
+  scaling_type EScalingType
+  role         EPetRole
+  element_type EElemental?
+  rarity       ERarity
+  hp           Int
+  mana         Int
+  ad           Int
+  ap           Int
+  ar           Int
+  mr           Int
+  hp_per_level Int
+  ad_per_level Int
+  ap_per_level Int
+  ar_per_level Int
+  mr_per_level Int
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @default(now()) @updatedAt
+  pets         Pet[]
+}
+
+model Pet {
+  id             Int           @id @default(autoincrement())
+  name           String        @unique
+  mezon_emoji_id String        @unique
+  avatar         String
+  description    String?
+  statistic_id   Int
+  rarity_id      Int
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @default(now()) @updatedAt
+  activeSkill    ActiveSkill?
+  autoAttack     AutoAttack?
+  passiveSkill   PassiveSkill?
+  rarity         Rarity        @relation(fields: [rarity_id], references: [id])
+  statistic      Statistics    @relation(fields: [statistic_id], references: [id])
+  userPets       UserPet[]
+}
+
+model UserPet {
+  id          Int         @id @default(autoincrement())
+  user_id     String
+  pet_id      Int
+  nickname    String
+  exp         Int         @default(0)
+  count       Int         @default(1)
+  lock        Boolean     @default(false)
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @default(now()) @updatedAt
+  teamMembers TeamMember?
+  pet         Pet         @relation(fields: [pet_id], references: [id])
+  user        User        @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, pet_id])
+  @@unique([user_id, nickname])
+}
+
+model Team {
+  id           Int          @id @default(autoincrement())
+  user_id      String       @unique
+  name         String       @unique
+  combat_power Int          @default(0)
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @default(now()) @updatedAt
+  user         User         @relation(fields: [user_id], references: [id])
+  members      TeamMember[]
+}
+
+model TeamMember {
+  id          Int      @id @default(autoincrement())
+  team_id     Int
+  user_pet_id Int      @unique
+  position    Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+  team        Team     @relation(fields: [team_id], references: [id])
+  userPet     UserPet  @relation(fields: [user_pet_id], references: [id])
+
+  @@unique([team_id, position])
+}
+
+model LeaderBoard {
+  id           Int      @id @default(autoincrement())
+  userId       String   @unique
+  wins         Int      @default(0)
+  losses       Int      @default(0)
+  combat_power Int      @default(0)
+  level        Int      @default(0)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now()) @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model GachaCount {
+  id           Int      @id @default(autoincrement())
+  userId       String   @unique
+  normal       Int      @default(0)
+  mid_autumn_2025 Int   @default(0)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now()) @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
 
 enum EScalingType {
   Physical
@@ -74,223 +286,4 @@ enum EStat {
   Mana
   Atk
   Def
-}
-
-// ========================= TABLES =========================
-
-model User {
-  id              String                 @id
-  username        String                 @unique
-  z_coin          Int                    @default(0)
-  mezon_token     Int                    @default(0)
-  exp             Int                    @default(0)
-  avatar          String                 @default("https://res.cloudinary.com/do2rk0jz8/image/upload/v1757571181/download_ygjzey.jpg")
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  dailyActivities UserDailyActivities[]
-  userPets        UserPet[]
-  team            Team?
-  leaderBoard     LeaderBoard?
-}
-
-model UserDailyActivities {
-  id              String                 @id @default(uuid())
-  user_id         String
-  daily           Int                    @default(0)
-  hunt            Int                    @default(0)
-  battle          Int                    @default(0)
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  user            User                   @relation(fields: [user_id], references: [id])
-}
-
-model Rarity {
-  id              Int                    @id @default(autoincrement())
-  name            String                 @unique
-  mezon_emoji_id  String                 @unique
-  type            ERarity
-  catch_rate      Float
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  pets      Pet[]
-}
-
-model AutoAttack {
-  id              Int                    @id @default(autoincrement())
-  pet_id          Int                    @unique
-  name            String
-  description     String?
-  damage          Int
-  scaling_type    EScalingType
-  attack_position ETargetPosition
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  pet             Pet                    @relation(fields: [pet_id], references: [id])
-}
-
-model PassiveSkill {
-  id              Int                    @id @default(autoincrement())
-  pet_id          Int                    @unique
-  name            String
-  description     String?
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  effects         PassiveSkillEffect[]
-  pet             Pet                    @relation(fields: [pet_id], references: [id])
-}
-
-model ActiveSkill {
-  id                          Int                @id @default(autoincrement())
-  pet_id                      Int                @unique
-  name                        String
-  description                 String?
-  mana_cost                   Int
-  scaling_type                EScalingType?
-  damage                      Int?
-  attack_position             ETargetPosition?
-  created_at                  DateTime           @default(now())
-  updated_at                  DateTime           @default(now())          @updatedAt         
-
-  effects                     ActiveSkillEffect[]
-  pet                         Pet                @relation(fields: [pet_id], references: [id])
-}
-
-model ActiveSkillEffect {
-  id                          Int                @id @default(autoincrement())
-  active_skill_id             Int                
-  name                        String
-  description                 String?
-  effect_target               EEffectTarget
-  effect_target_position      ETargetPosition
-  effect                      EEffect
-  effect_stat                 EStat?
-  scaling_type                EScalingType?
-  duration                    Int                @default(1)
-  value                       Int                @default(0)
-  created_at                  DateTime           @default(now())
-  updated_at                  DateTime           @default(now())          @updatedAt     
-
-  activeSkill                 ActiveSkill        @relation(fields: [active_skill_id], references: [id])
-}
-
-model PassiveSkillEffect {
-  id                          Int                @id @default(autoincrement())
-  passive_skill_id            Int                
-  name                        String
-  description                 String?
-  effect_target               EEffectTarget
-  effect_target_position      ETargetPosition
-  effect                      EEffect
-  effect_stat                 EStat?
-  value                       Int                @default(0)
-  created_at                  DateTime           @default(now())
-  updated_at                  DateTime           @default(now())          @updatedAt
-
-  passiveSkill                PassiveSkill       @relation(fields: [passive_skill_id], references: [id])
-}
-
-model Statistics {
-  id              Int                    @id @default(autoincrement())
-  name            String
-  scaling_type    EScalingType
-  role            EPetRole
-  element_type    EElemental?
-  rarity          ERarity
-  hp              Int
-  mana            Int
-  ad              Int
-  ap              Int
-  ar              Int
-  mr              Int
-  hp_per_level    Int
-  ad_per_level    Int
-  ap_per_level    Int
-  ar_per_level    Int
-  mr_per_level    Int 
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  pets            Pet[]
-}
-
-model Pet {
-  id              Int                    @id @default(autoincrement())
-  name            String                 @unique
-  mezon_emoji_id  String                 @unique
-  avatar          String                
-  description     String?
-  statistic_id    Int
-  rarity_id       Int
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  userPets        UserPet[]
-  autoAttack      AutoAttack?
-  passiveSkill    PassiveSkill?
-  activeSkill     ActiveSkill?
-  statistic       Statistics             @relation(fields: [statistic_id], references: [id])
-  rarity          Rarity                 @relation(fields: [rarity_id], references: [id])
-}
-
-model UserPet {
-  id              Int                    @id @default(autoincrement())
-  user_id         String
-  pet_id          Int
-  nickname        String
-  exp             Int                    @default(0)
-  count           Int                    @default(1)
-  lock            Boolean                @default(false)
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  user            User                   @relation(fields: [user_id], references: [id])
-  pet             Pet                    @relation(fields: [pet_id], references: [id])
-  teamMembers     TeamMember[]
-
-  @@unique([user_id, pet_id])
-  @@unique([user_id, nickname])
-}
-
-model Team {
-  id              Int                    @id @default(autoincrement())
-  user_id         String                 @unique
-  name            String                 @unique
-  combat_power    Int                    @default(0)
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())          @updatedAt         
-
-  user            User                   @relation(fields: [user_id], references: [id])
-  members         TeamMember[]
-}
-
-model TeamMember {
-  id              Int                    @id @default(autoincrement())
-  team_id         Int
-  user_pet_id     Int                    @unique
-  position        Int
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())         @updatedAt         
-
-  team            Team                   @relation(fields: [team_id], references: [id])
-  userPet         UserPet                @relation(fields: [user_pet_id], references: [id])
-
-  @@unique([team_id, position])
-}
-
-model LeaderBoard {
-  id              Int                    @id @default(autoincrement())
-  userId          String                 @unique
-  wins            Int                    @default(0)
-  losses          Int                    @default(0)
-  combat_power    Int                    @default(0)
-  level           Int                    @default(0)
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @default(now())         @updatedAt
-
-  user            User                   @relation(fields: [userId], references: [id])
 }

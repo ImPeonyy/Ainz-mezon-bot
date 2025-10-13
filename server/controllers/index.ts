@@ -21,6 +21,7 @@ import { dailyController } from './userDailyActivity.controller';
 import { leaderBoardController } from './leaderBoard.controller';
 import { depositController, withdrawController, balanceController } from './mezonTransaction.controller';
 import { shopExchangeController, shopPetController, shopItemController, exchangeController, upLevelPetController } from './shop.controller';
+import { gachaController } from './gacha.controller';
 
 export {
     getActionController,
@@ -52,5 +53,6 @@ export {
     shopPetController,
     shopItemController,
     exchangeController,
-    upLevelPetController
+    upLevelPetController,
+    gachaController
 };

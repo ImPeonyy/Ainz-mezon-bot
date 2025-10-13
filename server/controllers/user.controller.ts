@@ -79,7 +79,7 @@ export const createUserController = async (
             await sendDMToUser(client, mezon_id, textMessage('❌ Invalid avatar extension! Please use PNG, JPG, or JPEG format.\nYour avatar will be set to default.'));
         }
 
-        const user = await createUser(prisma, { username: display_name, id: mezon_id, avatar, z_coin: 6666 });
+        const user = await createUser(prisma, { username: display_name || username, id: mezon_id, avatar, z_coin: 6666 });
         await createTeam(username.slice(0, MAX_USER_NAME_LENGTH), user.id);
         await createLeaderBoard(user.id);
 

@@ -19,7 +19,8 @@ import {
     updateUserController,
     withdrawController,
     upLevelPetController,
-    fillTeamController
+    fillTeamController,
+    gachaController
 } from '@/controllers';
 import {
     embedMessage,
@@ -33,7 +34,8 @@ import {
     textMessage,
     getRandomPastelHexColor,
     getForFunHelpMessage,
-    getRarePetWAMessage
+    getRarePetWAMessage,
+    getGachaMessage
 } from '@/utils';
 import {
     getActionGif,
@@ -42,7 +44,8 @@ import {
     getPetsByRarity,
     getUserWithTeam,
     getUserPets,
-    getUserPetsByRarity
+    getUserPetsByRarity,
+    getGachaCount
 } from '@/services';
 
 import { ERarity, Prisma, User } from '@prisma/client';
@@ -60,7 +63,7 @@ export const getActionController = async (
     targetRaw?: string | null
 ) => {
     try {
-        const { sender_id, username, display_name, avatar, clan_nick, references, mentions } = event;
+        const { sender_id, username, display_name, avatar, clan_nick, references, mentions, channel_id } = event;
 
         if (Object.values(COMMANDS).includes(action) || Object.keys(ACTIONS).includes(action)) {
             if (!display_name || !sender_id) {
@@ -147,7 +150,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.hunt) {
-                const huntPetPayload = await huntPetController(sender_id, message, channel, client);
+                const huntPetPayload = await huntPetController(existingUser, message, channel, client);
                 return huntPetPayload;
             }
 
@@ -308,6 +311,11 @@ export const getActionController = async (
             if (action === COMMANDS.uplevel) {
                 const shopPayload = await upLevelPetController(existingUser, message, channel, client);
                 return shopPayload;
+            }
+
+            if (action === COMMANDS.gacha) {
+                const gachaPayload = await gachaController(existingUser, message, channel, client, targetRaw);
+                return gachaPayload;
             }
         }
 

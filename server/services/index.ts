@@ -21,7 +21,6 @@ import {
 import {
     createUserPet,
     createUserPets,
-    getRandomUserPets,
     getUserPetByName,
     getUserPetByPetName,
     getUserPetDetail,
@@ -32,23 +31,33 @@ import {
     getUserPetById,
     getUserPetsByRarityAndLevel
 } from '@/services/userPet.service';
-import { deleteImagesFromCloudinary, uploadImageToCloudinary, deleteImageFromCloudinary } from '@/services/cloudinary.service';
+import {
+    deleteImagesFromCloudinary,
+    uploadImageToCloudinary,
+    deleteImageFromCloudinary
+} from '@/services/cloudinary.service';
 import { getActionGif, getMeme } from '@/services/misc.service';
 import { getPet, getPetDetail, getPets, getPetsByRarity } from '@/services/pet.service';
 import { getRarities } from '@/services/rarity.service';
-import { 
-    createLeaderBoard, 
-    getMyLeaderBoard, 
-    getLevelLeaderBoard, 
-    getCombatPowerLeaderBoard, 
-    getWinsLeaderBoard, 
-    getLossesLeaderBoard, 
+import {
+    createLeaderBoard,
+    getMyLeaderBoard,
+    getLevelLeaderBoard,
+    getCombatPowerLeaderBoard,
+    getWinsLeaderBoard,
+    getLossesLeaderBoard,
     getUserRank,
     autoUpdateLeaderBoard,
     upsertLeaderBoard
 } from '@/services/leaderBoard.service';
 import { scheduleUpdateLeaderBoard } from '@/services/schedule.service';
 import { sendDMToUser, sendTokenToUser } from '@/services/mezon.service';
+import {
+    upserGachaCount,
+    getGachaCount,
+    clearGachaCount,
+    updateGachaCount
+} from '@/services/gachaCount.service';
 
 export {
     getActionGif,
@@ -84,7 +93,6 @@ export {
     getUserPetDetail,
     getUserPetsByRarity,
     getUserPetByName,
-    getRandomUserPets,
     getPet,
     getPetsByRarity,
     createLeaderBoard,
@@ -104,5 +112,9 @@ export {
     deleteImageFromCloudinary,
     getUserPetById,
     getUserPetsByRarityAndLevel,
-    fillTeamMembers
+    fillTeamMembers,
+    upserGachaCount,
+    getGachaCount,
+    clearGachaCount,
+    updateGachaCount
 };

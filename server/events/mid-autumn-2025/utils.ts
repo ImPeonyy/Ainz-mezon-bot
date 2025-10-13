@@ -1,0 +1,56 @@
+import { getRandomPet, getRarityPets, shuffleRarities } from '@/utils';
+import { ERarity, Prisma, Rarity } from '@prisma/client';
+import { FOUR_SYMBOLS, ISymbol } from './constants';
+import { EGachaCountType } from '@/constants';
+
+export const getLimitedPetByChannelId = (
+    pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[],
+    symbol: ISymbol
+) => {
+    return pets.find((pet) => pet.id === symbol.id);
+};
+
+export const huntLimitedMidAutumnEvent = (
+    rarities: Rarity[],
+    pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[],
+    symbol?: ISymbol
+) => {
+    if (!symbol) {
+        const target = rarities.find((r) => r.type === ERarity.Limited);
+        if (target) {
+            target.catch_rate = 0;
+        }
+    }
+
+    const shuffledRarities = shuffleRarities(rarities);
+    const totalCatchRate = shuffledRarities.reduce((acc, rarity) => acc + rarity.catch_rate, 0);
+    const r = Math.random() * totalCatchRate;
+    let sum = 0;
+    let isRarePet = false;
+    for (const rarity of shuffledRarities) {
+        sum += rarity.catch_rate;
+        if (r < sum) {
+            if (rarity.type === ERarity.Limited && symbol) {
+                isRarePet = true;
+                const limitedPets = getRarityPets(pets, rarity);
+                if (limitedPets.length > 0) {
+                    return {
+                        isRarePet,
+                        type: EGachaCountType.MID_AUTUMN_2025,
+                        pet: getLimitedPetByChannelId(limitedPets, symbol),
+                    };
+                }
+            } else {
+                const rarityPets = getRarityPets(pets, rarity);
+                if (rarityPets.length > 0) {
+                    return {
+                        isRarePet,
+                        type: EGachaCountType.NORMAL,
+                        pet: getRandomPet(rarityPets),
+                    };
+                }
+            }
+            return null;
+        }
+    }
+};

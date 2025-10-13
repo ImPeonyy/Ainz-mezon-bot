@@ -1,4 +1,4 @@
-import { ACTIONS, AINZ_THUMBNAIL, EChallengeStatus, FAV_COLOR, IBattle } from '@/constants';
+import { ACTIONS, AINZ_THUMBNAIL, EChallengeStatus, IBattle } from '@/constants';
 import {
     ButtonComponent,
     ChannelMessageContent,
@@ -41,19 +41,33 @@ export const emojiMessage = (emoji: EmojiOnMessage[]) => {
     return messagePayload;
 };
 
-export const getHuntMessage = (emojis: EmojiOnMessage[]) => {
+export const getHuntResultMessage = (pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[]) => {
     let messagePayload: ChannelMessageContent = {
-        t: '🎯 Luck has smiled upon you! 5 pets have been captured:\n',
+        t: '🎯 Luck has smiled upon you! You’ve captured the following pets:\n',
         ej: []
     };
 
-    emojis.forEach((emoji) => {
+    const emojiCountMap = new Map<string, number>();
+    pets.sort((a, b) => a.rarity.id - b.rarity.id);
+    pets.forEach((pet) => {
+        if (pet.mezon_emoji_id) {
+            const count = emojiCountMap.get(pet.mezon_emoji_id) || 0;
+            emojiCountMap.set(pet.mezon_emoji_id, count + 1);
+        }
+    });
+
+    emojiCountMap.forEach((count, emojiId) => {
         messagePayload.ej?.push({
-            emojiid: emoji.emojiid,
+            emojiid: emojiId,
             s: messagePayload.t?.length || 0,
-            e: messagePayload.t?.length || 0 + 1
+            e: messagePayload.t?.length || 0
         });
-        messagePayload.t += `   `;
+        
+        if (count > 1) {
+            messagePayload.t += `(x${count})   `;
+        } else {
+            messagePayload.t += `   `;
+        }
     });
 
     return messagePayload;
@@ -158,14 +172,12 @@ export const getBagMessageByRarity = (
                 const count = petCountMap.get(pet.id) || 0;
                 const countStr = count === 0 ? '' : `    |    (${String(count).padStart(2, '0')})`;
 
-                // gắn emoji mapping
                 messagePayload.ej?.push({
                     emojiid: pet.mezon_emoji_id,
                     s: messagePayload.t?.length || 0,
                     e: (messagePayload.t?.length || 0) + 1
                 });
 
-                // format mới: emoji (00) - Name
                 messagePayload.t += ` - ${pet.name} ${countStr}\n`;
             });
         }

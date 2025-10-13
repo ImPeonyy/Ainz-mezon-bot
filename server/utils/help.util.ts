@@ -49,6 +49,11 @@ export const getHelpMessage = () => {
                 name: '🛒 Shop',
                 value: 'trade | uplv',
                 inline: false
+            },
+            {
+                name: '🎰 Gacha',
+                value: 'gacha',
+                inline: false
             }
         ],
         color: getRandomPastelHexColor(),

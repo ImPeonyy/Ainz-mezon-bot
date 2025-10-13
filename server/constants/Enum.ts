@@ -60,3 +60,34 @@ export enum EPriceByRarity {
     LIMITED = 7000
 }
 
+export enum EGachaCountType {
+    NORMAL = 'normal',
+    MID_AUTUMN_2025 = 'mid_autumn_2025'
+}
+
+export enum EGachaStatus {
+    GACHA = 'gacha',
+    CANCEL = 'cancel',
+}
+
+
+export enum EHuntMenuStatus {
+    CANCEL = 'cancel',
+    FREE_HUNT = 'free_hunt',
+    HUNT_X1 = 'hunt_x1',
+    HUNT_X5 = 'hunt_x5',
+    HUNT_X30 = 'hunt_x30',
+}
+
+export enum EInteractiveMessageType {
+    EXCHANGE,
+    UPLV,
+    GACHA,
+    HUNT
+}
+
+export enum EAsyncMutexMsgType {
+    HUNT,
+    UPLV,
+    EXCHANGE
+}

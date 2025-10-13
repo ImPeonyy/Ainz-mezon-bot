@@ -23,6 +23,7 @@ export const depositController = async (mezon_id: string, username: string, amou
                 { id: BOT_ID, username: 'Ainz Bot', mezon_token: amount }
             );
         });
+        console.log(`${username} has deposited [ ${amount}₫ ] 💰!`);
         await sendDMToUser(client, mezon_id, textMessage(`🎉 You have deposited [ ${amount}₫ ] 💰!`));
     } catch (error) {
         console.error('Error depositing:', error);
@@ -43,14 +44,14 @@ export const withdrawController = async (
 ) => {
     let messageFetch: any;
     try {
-        const messageReply = await message.reply(textMessage('Withdraw is not available yet!'));
-        return;
+        const messageReply = await message.reply(textMessage('Withdrawing...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
         await prisma.$transaction(async (tx) => {
             await updateUser(tx, { id: user.id }, { mezon_token: { decrement: amount } });
             await updateUser(tx, { id: BOT_ID }, { mezon_token: { decrement: amount } });
         });
         await sendTokenToUser(client, user.id, amount);
+        console.log(`${user.username} has withdrawn [ ${amount}₫ ] 💰!`);
         await messageFetch.update(textMessage(`🎉 You have withdrawn [ ${amount}₫ ] 💰!`));
     } catch (error) {
         console.error('Error withdrawing:', error);
