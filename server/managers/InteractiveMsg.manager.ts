@@ -10,7 +10,7 @@ export interface InteractiveMessage {
     type: EInteractiveMessageType;
 }
 
-export class InteractiveMessageManager {
+class InteractiveMessageManager {
     private activeMessages: Map<string, InteractiveMessage[]> = new Map();
 
     /** Lấy danh sách message của 1 user */
@@ -26,16 +26,14 @@ export class InteractiveMessageManager {
 
     /** Đăng ký message mới (tự đóng cái cũ nếu cùng loại) */
     public async register(msg: InteractiveMessage) {
-        const existing = this.getUserMessages(msg.userId);
-
         // 🔒 Nếu có cùng loại -> đóng cái cũ trước
-        const duplicate = existing.find((m) => m.type === msg.type);
+        const duplicate = this.has(msg.userId, msg.type);
         if (duplicate) {
             await this.forceClose(msg.userId, msg.type, '🔁 Previous interaction closed automatically.');
         }
 
         // Thêm message mới
-        this.activeMessages.set(msg.userId, [...existing, msg]);
+        this.activeMessages.set(msg.userId, [msg]);
     }
 
     /** Đóng message (có thể chỉ loại cụ thể hoặc tất cả) */
@@ -70,3 +68,5 @@ export class InteractiveMessageManager {
         this.activeMessages.clear();
     }
 }
+
+export const interactiveMsgManager = new InteractiveMessageManager();

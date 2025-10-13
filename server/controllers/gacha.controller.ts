@@ -73,9 +73,9 @@ export const gachaController = async (
                 // case 'normal':
                 //     await normalGachaController(user, message, channel, client, gachaCount);
                 //     return;
-                case 'ma2025':
-                    await midAutumn2025GachaController(user, messageFetch, channel, client, gachaCount);
-                    return;
+                // case 'ma2025':
+                //     await midAutumn2025GachaController(user, messageFetch, channel, client, gachaCount);
+                //     return;
                 default:
                     await messageFetch.update(textMessage('🚨 Invalid gacha type!'));
                     return;

@@ -150,7 +150,7 @@ export const getActionController = async (
             }
 
             if (action === COMMANDS.hunt) {
-                const huntPetPayload = await huntPetController(existingUser, message, channel, client, channel_id);
+                const huntPetPayload = await huntPetController(existingUser, message, channel, client);
                 return huntPetPayload;
             }
 

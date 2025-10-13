@@ -1,4 +1,4 @@
-import { InteractiveMessageManager } from './InteractiveMsg.manager';
+import { interactiveMsgManager } from './InteractiveMsg.manager';
 import { asyncMutexMsgManager } from './AsyncMutexMsg.manager';
 
-export { InteractiveMessageManager, asyncMutexMsgManager };
+export { interactiveMsgManager, asyncMutexMsgManager };

@@ -8,7 +8,6 @@ import {
     USE_DAILY_ACTIVITY
 } from '@/constants';
 import {
-    clearGachaCount,
     createUserDailyActivity,
     getPetDetail,
     getPets,
@@ -29,6 +28,7 @@ import {
     getHuntResultMessage,
     getMyDexMessage,
     getRarePetForAnnouncement,
+    huntPet,
     textMessage
 } from '@/utils';
 
@@ -37,31 +37,26 @@ import { Prisma, User, UserDailyActivities } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { MezonClient } from 'mezon-sdk';
 import { worldAnnouncementController } from './misc.controller';
-import { FOUR_SYMBOLS, huntLimitedMidAutumnEvent, ISymbol } from '@/events/mid-autumn-2025';
-import { InteractiveMessageManager, asyncMutexMsgManager } from '@/managers';
+import { interactiveMsgManager, asyncMutexMsgManager } from '@/managers';
 
-const processHunting = async (user: User, channel_id: string, huntCount: number = 1) => {
+const huntMenu = interactiveMsgManager;
+
+const processHunting = async (huntCount: number = 1) => {
     const rarities = await getRarities();
     const pets = await getPets();
     let yourPets: Prisma.PetGetPayload<{ include: { rarity: true } }>[] = [];
-    const symbol = Object.values(FOUR_SYMBOLS).find((s) => s.channel_id === channel_id);
     let gachaCount = 0;
 
     for (let i = 0; i < LIMIT_PET_PER_HUNT * huntCount; i++) {
-        const huntResult = await huntLimitedMidAutumnEvent(rarities, pets, symbol);
-        if (huntResult && huntResult.pet) {
-            yourPets.push(huntResult.pet);
-            if (huntResult.isRarePet) {
-                gachaCount = 0;
-                await clearGachaCount(prisma, user.id, huntResult.type);
-            } else {
-                gachaCount++;
-            }
+        const huntResult = await huntPet(rarities, pets);
+        if (huntResult) {
+            yourPets.push(huntResult);
+            gachaCount++;
         } else {
             throw new Error('Have error when hunting pet!');
         }
     }
-    return { yourPets, gachaCount, symbol: symbol ?? null };
+    return { yourPets, gachaCount };
 };
 
 const processAfterHunt = async (
@@ -69,7 +64,6 @@ const processAfterHunt = async (
     yourPets: Prisma.PetGetPayload<{ include: { rarity: true } }>[],
     huntCount: number,
     gachaCount: number,
-    symbol: ISymbol | null,
     client: MezonClient
 ) => {
     try {
@@ -91,11 +85,7 @@ const processAfterHunt = async (
                     await upsertUserPetCount(tx, user.id, pet);
                 }
 
-                if (symbol) {
-                    await upserGachaCount(tx, user.id, EGachaCountType.MID_AUTUMN_2025, gachaCount);
-                } else {
-                    await upserGachaCount(tx, user.id, EGachaCountType.NORMAL, gachaCount);
-                }
+                await upserGachaCount(tx, user.id, EGachaCountType.NORMAL, gachaCount);
             },
             {
                 timeout: 30000
@@ -117,7 +107,6 @@ const processAfterFreeHunt = async (
     yourPets: Prisma.PetGetPayload<{ include: { rarity: true } }>[],
     userDailyActivity: UserDailyActivities | null,
     gachaCount: number,
-    symbol: ISymbol | null,
     client: MezonClient
 ) => {
     try {
@@ -148,11 +137,7 @@ const processAfterFreeHunt = async (
                     await upsertUserPetCount(tx, user.id, pet);
                 }
 
-                if (symbol) {
-                    await upserGachaCount(tx, user.id, EGachaCountType.MID_AUTUMN_2025, gachaCount);
-                } else {
-                    await upserGachaCount(tx, user.id, EGachaCountType.NORMAL, gachaCount);
-                }
+                await upserGachaCount(tx, user.id, EGachaCountType.NORMAL, gachaCount);
             },
             {
                 timeout: 10000
@@ -169,14 +154,7 @@ const processAfterFreeHunt = async (
     }
 };
 
-export const huntPetController = async (
-    existingUser: User,
-    message: Message,
-    channel: any,
-    client: MezonClient,
-    channel_id: string
-) => {
-    const huntMenu = new InteractiveMessageManager();
+export const huntPetController = async (existingUser: User, message: Message, channel: any, client: MezonClient) => {
     let messageFetch: any;
     try {
         const messageReply = await message.reply(textMessage('🎯 Hunting pets...'));
@@ -189,7 +167,7 @@ export const huntPetController = async (
 
         const expireTimer = setTimeout(
             () => {
-                huntMenu.forceClose(existingUser.id);
+                huntMenu.forceClose(existingUser.id, EInteractiveMessageType.HUNT);
                 if (messageFetch) {
                     messageFetch.update(textMessage('⏰ Hunt has expired and has been closed automatically!'));
                 }
@@ -201,7 +179,7 @@ export const huntPetController = async (
             userId: existingUser.id,
             message: messageFetch,
             expireTimer,
-            type: EInteractiveMessageType.HUNTS
+            type: EInteractiveMessageType.HUNT
         });
 
         client.onMessageButtonClicked(async (event: any) => {
@@ -211,7 +189,7 @@ export const huntPetController = async (
                     sender_id === BOT_ID &&
                     user_id === existingUser.id &&
                     messageFetch.id === event.message_id &&
-                    huntMenu.has(existingUser.id, EInteractiveMessageType.HUNTS)
+                    huntMenu.has(existingUser.id, EInteractiveMessageType.HUNT)
                 ) {
                     const userFetch = await getUser(existingUser.id);
                     if (!userFetch) {
@@ -225,7 +203,7 @@ export const huntPetController = async (
                     if (userFetch.z_coin < USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN) {
                         huntMenu.forceClose(
                             userFetch.id,
-                            EInteractiveMessageType.HUNTS,
+                            EInteractiveMessageType.HUNT,
                             '🚨 You do not have enough Z Coins to hunt!'
                         );
                         return;
@@ -234,7 +212,7 @@ export const huntPetController = async (
                     if (button_id === EHuntMenuStatus.CANCEL) {
                         huntMenu.forceClose(
                             userFetch.id,
-                            EInteractiveMessageType.HUNTS,
+                            EInteractiveMessageType.HUNT,
                             '🚨 Hunt menu has been canceled!'
                         );
                         return;
@@ -245,8 +223,10 @@ export const huntPetController = async (
                         button_id === EHuntMenuStatus.HUNT_X30 ||
                         button_id === EHuntMenuStatus.FREE_HUNT
                     ) {
-                        if (asyncMutexMsgManager.isLocked({ userId: userFetch.id, type: EAsyncMutexMsgType.HUNT }))
+                        if (asyncMutexMsgManager.isLocked({ userId: userFetch.id, type: EAsyncMutexMsgType.HUNT })) {
+                            console.log('HUNT is locked');
                             return;
+                        }
 
                         await asyncMutexMsgManager.runExclusive(
                             { userId: userFetch.id, type: EAsyncMutexMsgType.HUNT },
@@ -255,13 +235,12 @@ export const huntPetController = async (
                                     await messageFetch.update(
                                         getHuntMenuMessage(userFetch, isFreeHunt, maxHunt, true, '🔄 Hunting pets...')
                                     );
-                                    const huntResult = await processHunting(userFetch, channel_id);
+                                    const huntResult = await processHunting(USE_DAILY_ACTIVITY.HUNT.HUNT_BREAKPOINT.x1);
                                     await processAfterHunt(
                                         userFetch,
                                         huntResult.yourPets,
                                         USE_DAILY_ACTIVITY.HUNT.HUNT_BREAKPOINT.x1,
                                         huntResult.gachaCount,
-                                        huntResult.symbol,
                                         client
                                     );
                                     const updatedUser = await getUser(userFetch.id);
@@ -272,29 +251,30 @@ export const huntPetController = async (
                                     const maxHuntUpdated = Math.floor(
                                         updatedUser.z_coin / USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
                                     );
-                                    await messageFetch.update(
-                                        getHuntMenuMessage(
-                                            updatedUser,
-                                            isFreeHunt,
-                                            maxHuntUpdated,
-                                            false,
-                                            '✅ Hunt x1 completed!',
-                                            getHuntResultMessage(huntResult.yourPets)
-                                        )
-                                    );
-                                    return;
+                                    setTimeout(async () => {
+                                        await messageFetch.update(
+                                            getHuntMenuMessage(
+                                                updatedUser,
+                                                isFreeHunt,
+                                                maxHuntUpdated,
+                                                false,
+                                                '✅ Hunt x1 completed!',
+                                                getHuntResultMessage(huntResult.yourPets)
+                                            )
+                                        );
+                                        return;
+                                    }, 1000);
                                 }
                                 if (button_id === EHuntMenuStatus.HUNT_X5) {
                                     await messageFetch.update(
                                         getHuntMenuMessage(userFetch, isFreeHunt, maxHunt, true, '🔄 Hunting pets...')
                                     );
-                                    const huntResult = await processHunting(userFetch, channel_id, 5);
+                                    const huntResult = await processHunting(USE_DAILY_ACTIVITY.HUNT.HUNT_BREAKPOINT.x5);
                                     await processAfterHunt(
                                         userFetch,
                                         huntResult.yourPets,
                                         USE_DAILY_ACTIVITY.HUNT.HUNT_BREAKPOINT.x5,
                                         huntResult.gachaCount,
-                                        huntResult.symbol,
                                         client
                                     );
                                     const updatedUser = await getUser(userFetch.id);
@@ -305,29 +285,32 @@ export const huntPetController = async (
                                     const maxHuntUpdated = Math.floor(
                                         updatedUser.z_coin / USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
                                     );
-                                    await messageFetch.update(
-                                        getHuntMenuMessage(
-                                            updatedUser,
-                                            isFreeHunt,
-                                            maxHuntUpdated,
-                                            false,
-                                            '✅ Hunt x5 completed!',
-                                            getHuntResultMessage(huntResult.yourPets)
-                                        )
-                                    );
-                                    return;
+                                    setTimeout(async () => {
+                                        await messageFetch.update(
+                                            getHuntMenuMessage(
+                                                updatedUser,
+                                                isFreeHunt,
+                                                maxHuntUpdated,
+                                                false,
+                                                '✅ Hunt x5 completed!',
+                                                getHuntResultMessage(huntResult.yourPets)
+                                            )
+                                        );
+                                        return;
+                                    }, 1000);
                                 }
                                 if (button_id === EHuntMenuStatus.HUNT_X30) {
                                     await messageFetch.update(
                                         getHuntMenuMessage(userFetch, isFreeHunt, maxHunt, true, '🔄 Hunting pets...')
                                     );
-                                    const huntResult = await processHunting(userFetch, channel_id, 30);
+                                    const huntResult = await processHunting(
+                                        USE_DAILY_ACTIVITY.HUNT.HUNT_BREAKPOINT.x30
+                                    );
                                     await processAfterHunt(
                                         userFetch,
                                         huntResult.yourPets,
                                         USE_DAILY_ACTIVITY.HUNT.HUNT_BREAKPOINT.x30,
                                         huntResult.gachaCount,
-                                        huntResult.symbol,
                                         client
                                     );
                                     const updatedUser = await getUser(userFetch.id);
@@ -338,29 +321,30 @@ export const huntPetController = async (
                                     const maxHuntUpdated = Math.floor(
                                         updatedUser.z_coin / USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
                                     );
-                                    await messageFetch.update(
-                                        getHuntMenuMessage(
-                                            updatedUser,
-                                            isFreeHunt,
-                                            maxHuntUpdated,
-                                            false,
-                                            `✅ Hunt x30 completed!`,
-                                            getHuntResultMessage(huntResult.yourPets)
-                                        )
-                                    );
-                                    return;
+                                    setTimeout(async () => {
+                                        await messageFetch.update(
+                                            getHuntMenuMessage(
+                                                updatedUser,
+                                                isFreeHunt,
+                                                maxHuntUpdated,
+                                                false,
+                                                `✅ Hunt x30 completed!`,
+                                                getHuntResultMessage(huntResult.yourPets)
+                                            )
+                                        );
+                                        return;
+                                    }, 1000);
                                 }
                                 if (button_id === EHuntMenuStatus.FREE_HUNT) {
                                     await messageFetch.update(
                                         getHuntMenuMessage(userFetch, isFreeHunt, maxHunt, true, '🔄 Hunting pets...')
                                     );
-                                    const huntResult = await processHunting(userFetch, channel_id);
+                                    const huntResult = await processHunting(USE_DAILY_ACTIVITY.HUNT.HUNT_BREAKPOINT.x1);
                                     await processAfterFreeHunt(
                                         userFetch,
                                         huntResult.yourPets,
                                         todayActivity,
                                         huntResult.gachaCount,
-                                        huntResult.symbol,
                                         client
                                     );
                                     const updatedUser = await getUser(userFetch.id);
@@ -373,17 +357,19 @@ export const huntPetController = async (
                                     const maxHuntUpdated = Math.floor(
                                         updatedUser.z_coin / USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN
                                     );
-                                    await messageFetch.update(
-                                        getHuntMenuMessage(
-                                            updatedUser,
-                                            isFreeHuntUpdated,
-                                            maxHuntUpdated,
-                                            false,
-                                            `✅ Hunt free completed!`,
-                                            getHuntResultMessage(huntResult.yourPets)
-                                        )
-                                    );
-                                    return;
+                                    setTimeout(async () => {
+                                        await messageFetch.update(
+                                            getHuntMenuMessage(
+                                                updatedUser,
+                                                isFreeHuntUpdated,
+                                                maxHuntUpdated,
+                                                false,
+                                                `✅ Hunt free completed!`,
+                                                getHuntResultMessage(huntResult.yourPets)
+                                            )
+                                        );
+                                        return;
+                                    }, 1000);
                                 }
                             }
                         );
@@ -391,6 +377,7 @@ export const huntPetController = async (
                 }
             } catch (error) {
                 console.error('Error hunting pet:', error);
+                huntMenu.forceClose(existingUser.id, EInteractiveMessageType.HUNT);
                 if (messageFetch) {
                     await messageFetch.update(textMessage('❌ Internal server error'));
                 } else {
@@ -401,6 +388,7 @@ export const huntPetController = async (
         });
     } catch (error) {
         console.error('Error setup hunt menu:', error);
+        huntMenu.forceClose(existingUser.id, EInteractiveMessageType.HUNT);
         if (messageFetch) {
             await messageFetch.update(textMessage('❌ Internal server error'));
         } else {

@@ -80,12 +80,14 @@ export enum EHuntMenuStatus {
 }
 
 export enum EInteractiveMessageType {
-    SHOP,
+    EXCHANGE,
+    UPLV,
     GACHA,
-    HUNTS
+    HUNT
 }
 
 export enum EAsyncMutexMsgType {
     HUNT,
-    UPLV
+    UPLV,
+    EXCHANGE
 }
