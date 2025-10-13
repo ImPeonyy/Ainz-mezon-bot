@@ -24,7 +24,10 @@ process.on('uncaughtException', (error) => {
 });
 
 async function main() {
-    const client = new MezonClient(process.env.BOT_TOKEN);
+    const client = new MezonClient({
+        token: process.env.BOT_TOKEN as string,
+        botId: process.env.BOT_ID as string,
+    });
 
     await client.login();
 
