@@ -32,10 +32,11 @@ export const exchangeController = async (existingUser: User, message: Message, c
 
         const expireTimer = setTimeout(
             () => {
-                shop.forceClose(existingUser.id, EInteractiveMessageType.EXCHANGE);
-                if (messageFetch) {
-                    messageFetch.update(textMessage('⏰ Shop has expired and has been closed automatically!'));
-                }
+                shop.forceClose(
+                    existingUser.id,
+                    EInteractiveMessageType.EXCHANGE,
+                    '⏰ Shop has expired and has been closed automatically!'
+                );
             },
             3 * 60 * 1000
         ); // 3 phút
@@ -56,8 +57,7 @@ export const exchangeController = async (existingUser: User, message: Message, c
                 shop.has(existingUser.id, EInteractiveMessageType.EXCHANGE)
             ) {
                 if (button_id === EShopExchangeStatus.CANCEL) {
-                    await messageFetch.update(textMessage('🚨 Shop has been canceled!'));
-                    shop.forceClose(existingUser.id, EInteractiveMessageType.EXCHANGE);
+                    shop.forceClose(existingUser.id, EInteractiveMessageType.EXCHANGE, '🚨 Shop has been canceled!');
                     return;
                 }
                 if (button_id === EShopExchangeStatus.EXCHANGE) {
@@ -108,10 +108,11 @@ export const exchangeController = async (existingUser: User, message: Message, c
                                 { id: existingUser.id },
                                 { mezon_token: { decrement: amount }, z_coin: { increment: zCoinAfterExchange } }
                             );
-                            await messageFetch.update(
-                                textMessage(`🎉 You have exchanged [ ${amount}₫ ] for [ ${zCoinAfterExchange}💰 ]!`)
+                            shop.forceClose(
+                                existingUser.id,
+                                EInteractiveMessageType.EXCHANGE,
+                                `🎉 You have exchanged [ ${amount}₫ ] for [ ${zCoinAfterExchange}💰 ]!`
                             );
-                            shop.forceClose(existingUser.id, EInteractiveMessageType.EXCHANGE);
                         }
                     );
                 }
@@ -119,12 +120,7 @@ export const exchangeController = async (existingUser: User, message: Message, c
         });
     } catch (error) {
         console.error('Error getting exchange shop:', error);
-        shop.forceClose(existingUser.id, EInteractiveMessageType.EXCHANGE);
-        if (messageFetch) {
-            await messageFetch.update(textMessage('❌ Internal server error'));
-        } else {
-            await message.reply(textMessage('❌ Internal server error'));
-        }
+        shop.forceClose(existingUser.id, EInteractiveMessageType.EXCHANGE, '❌ Internal server error');
         return;
     }
 };
@@ -139,10 +135,11 @@ export const upLevelPetController = async (existingUser: User, message: Message,
 
         const expireTimer = setTimeout(
             () => {
-                shop.forceClose(existingUser.id, EInteractiveMessageType.UPLV);
-                if (messageFetch) {
-                    messageFetch.update(textMessage('⏰ Shop has expired and has been closed automatically!'));
-                }
+                shop.forceClose(
+                    existingUser.id,
+                    EInteractiveMessageType.UPLV,
+                    '⏰ Shop has expired and has been closed automatically!'
+                );
             },
             3 * 60 * 1000
         );
@@ -166,15 +163,13 @@ export const upLevelPetController = async (existingUser: User, message: Message,
                 const currentUserPet = await getUserPets(prisma, existingUser.id);
                 if (currentUser && currentUserPet) {
                     if (button_id === EShopUpLevelPetStatus.CANCEL) {
-                        await messageFetch.update(textMessage('🚨 Shop has been canceled!'));
-                        shop.forceClose(currentUser.id, EInteractiveMessageType.UPLV);
+                        shop.forceClose(currentUser.id, EInteractiveMessageType.UPLV, '🚨 Shop has been canceled!');
                         return;
                     }
                     if (button_id === EShopUpLevelPetStatus.UP_LEVEL) {
-                        if (asyncMutexMsgManager.isLocked({ userId: existingUser.id, type: EAsyncMutexMsgType.UPLV })) {
-                            console.log('UPLV is locked');
+                        if (asyncMutexMsgManager.isLocked({ userId: existingUser.id, type: EAsyncMutexMsgType.UPLV }))
                             return;
-                        }
+
                         await asyncMutexMsgManager.runExclusive(
                             { userId: existingUser.id, type: EAsyncMutexMsgType.UPLV },
                             async () => {
@@ -231,12 +226,7 @@ export const upLevelPetController = async (existingUser: User, message: Message,
         });
     } catch (error) {
         console.error('Error getting exchange shop:', error);
-        shop.forceClose(existingUser.id, EInteractiveMessageType.UPLV);
-        if (messageFetch) {
-            await messageFetch.update(textMessage('❌ Internal server error'));
-        } else {
-            await message.reply(textMessage('❌ Internal server error'));
-        }
+        shop.forceClose(existingUser.id, EInteractiveMessageType.UPLV, '❌ Internal server error');
         return;
     }
 };

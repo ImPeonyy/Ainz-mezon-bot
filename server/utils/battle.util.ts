@@ -1,4 +1,4 @@
-import { BATTLE, IBPet } from '@/constants';
+import { BATTLE, EAttackType, IBPet } from '@/constants';
 import { EEffect, ERarity, EScalingType, EStat, ETargetPosition, Prisma } from '@prisma/client';
 import { getAdditionalStats, getPetLevelFromExp } from '@/utils';
 
@@ -25,47 +25,31 @@ export const manaAfterDealDamage = (hpBefore: number, hpAfter: number) => {
     }
 };
 
-export const hpAfterDealAADame = (currentPet: IBPet, targetPet: IBPet) => {
+export const hpAfterDealDamage = (currentPet: IBPet, targetPet: IBPet, type: EAttackType) => {
     const currentAttackType = currentPet.info.autoAttack.scalingType;
     const currentAd = currentPet.stats.currentStats.ad;
     const currentAp = currentPet.stats.currentStats.ap;
     const targetAr = targetPet.stats.currentStats.ar;
     const targetMr = targetPet.stats.currentStats.mr;
+    let totalDamage = 0;
+    let actualDamage = 0;
 
-    let totalDamage =
-        ((currentAttackType === EScalingType.Physical ? currentAd : currentAp) * currentPet.info.autoAttack.damage) /
-        100;
-
-    if (currentAttackType === EScalingType.Hybrid) {
-        totalDamage =
-            ((currentAd * currentPet.info.autoAttack.damage) / 100 +
-                (currentAp * currentPet.info.autoAttack.damage) / 100) /
-            2;
+    switch (currentAttackType) {
+        case EScalingType.Physical:
+            totalDamage = (currentAd * currentPet.info[type === EAttackType.AUTO_ATTACK ? 'autoAttack' : 'activeSkill'].damage) / 100;
+            actualDamage = Math.max(0, totalDamage - targetAr);
+            break;
+        case EScalingType.Magical:
+            totalDamage = (currentAp * currentPet.info[type === EAttackType.AUTO_ATTACK ? 'autoAttack' : 'activeSkill'].damage) / 100;
+            actualDamage = Math.max(0, totalDamage - targetMr);
+            break;
+        case EScalingType.Hybrid:
+            totalDamage =
+                (currentAd * currentPet.info[type === EAttackType.AUTO_ATTACK ? 'autoAttack' : 'activeSkill'].damage) / 100 +
+                (currentAp * currentPet.info[type === EAttackType.AUTO_ATTACK ? 'autoAttack' : 'activeSkill'].damage) / 100;
+            actualDamage = Math.max(0, totalDamage - targetAr - targetMr);
+            break;
     }
-
-    const actualDamage = Math.max(0, totalDamage - (currentAttackType === EScalingType.Physical ? targetAr : targetMr));
-    return Math.floor(Math.max(0, targetPet.stats.currentStats.hp - actualDamage));
-};
-
-export const hpAfterDealASDame = (currentPet: IBPet, targetPet: IBPet) => {
-    const currentAttackType = currentPet.info.activeSkill.scalingType;
-    const currentAd = currentPet.stats.currentStats.ad;
-    const currentAp = currentPet.stats.currentStats.ap;
-    const targetAr = targetPet.stats.currentStats.ar;
-    const targetMr = targetPet.stats.currentStats.mr;
-
-    let totalDamage =
-        ((currentAttackType === EScalingType.Physical ? currentAd : currentAp) * currentPet.info.activeSkill.damage) /
-        100;
-
-    if (currentAttackType === EScalingType.Hybrid) {
-        totalDamage =
-            ((currentAd * currentPet.info.activeSkill.damage) / 100 +
-                (currentAp * currentPet.info.activeSkill.damage) / 100) /
-            2;
-    }
-
-    const actualDamage = Math.max(0, totalDamage - (currentAttackType === EScalingType.Physical ? targetAr : targetMr));
     return Math.floor(Math.max(0, targetPet.stats.currentStats.hp - actualDamage));
 };
 
@@ -265,20 +249,40 @@ export const processTeam = (
                         mr: member.userPet.pet.statistic.mr_per_level
                     },
                     originalStats: {
-                        hp: member.userPet.pet.statistic.hp + getAdditionalStats(member.userPet.pet.statistic.hp_per_level, currentLevel),
-                        mana: member.userPet.pet.statistic.mana,    
-                        ad: member.userPet.pet.statistic.ad + getAdditionalStats(member.userPet.pet.statistic.ad_per_level, currentLevel),
-                        ap: member.userPet.pet.statistic.ap + getAdditionalStats(member.userPet.pet.statistic.ap_per_level, currentLevel),
-                        ar: member.userPet.pet.statistic.ar + getAdditionalStats(member.userPet.pet.statistic.ar_per_level, currentLevel),
-                        mr: member.userPet.pet.statistic.mr + getAdditionalStats(member.userPet.pet.statistic.mr_per_level, currentLevel)
+                        hp:
+                            member.userPet.pet.statistic.hp +
+                            getAdditionalStats(member.userPet.pet.statistic.hp_per_level, currentLevel),
+                        mana: member.userPet.pet.statistic.mana,
+                        ad:
+                            member.userPet.pet.statistic.ad +
+                            getAdditionalStats(member.userPet.pet.statistic.ad_per_level, currentLevel),
+                        ap:
+                            member.userPet.pet.statistic.ap +
+                            getAdditionalStats(member.userPet.pet.statistic.ap_per_level, currentLevel),
+                        ar:
+                            member.userPet.pet.statistic.ar +
+                            getAdditionalStats(member.userPet.pet.statistic.ar_per_level, currentLevel),
+                        mr:
+                            member.userPet.pet.statistic.mr +
+                            getAdditionalStats(member.userPet.pet.statistic.mr_per_level, currentLevel)
                     },
                     currentStats: {
-                        hp: member.userPet.pet.statistic.hp + getAdditionalStats(member.userPet.pet.statistic.hp_per_level, currentLevel),
+                        hp:
+                            member.userPet.pet.statistic.hp +
+                            getAdditionalStats(member.userPet.pet.statistic.hp_per_level, currentLevel),
                         mana: member.userPet.pet.statistic.mana,
-                        ad: member.userPet.pet.statistic.ad + getAdditionalStats(member.userPet.pet.statistic.ad_per_level, currentLevel),
-                        ap: member.userPet.pet.statistic.ap + getAdditionalStats(member.userPet.pet.statistic.ap_per_level, currentLevel),
-                        ar: member.userPet.pet.statistic.ar + getAdditionalStats(member.userPet.pet.statistic.ar_per_level, currentLevel),
-                        mr: member.userPet.pet.statistic.mr + getAdditionalStats(member.userPet.pet.statistic.mr_per_level, currentLevel)
+                        ad:
+                            member.userPet.pet.statistic.ad +
+                            getAdditionalStats(member.userPet.pet.statistic.ad_per_level, currentLevel),
+                        ap:
+                            member.userPet.pet.statistic.ap +
+                            getAdditionalStats(member.userPet.pet.statistic.ap_per_level, currentLevel),
+                        ar:
+                            member.userPet.pet.statistic.ar +
+                            getAdditionalStats(member.userPet.pet.statistic.ar_per_level, currentLevel),
+                        mr:
+                            member.userPet.pet.statistic.mr +
+                            getAdditionalStats(member.userPet.pet.statistic.mr_per_level, currentLevel)
                     }
                 },
                 effects: []
@@ -392,7 +396,7 @@ export const processTurn = (
                 const deadPosition = new Set<number>();
                 for (const position of ASTargetPosition) {
                     const targetPet = defenderTeam[position];
-                    const remainingHp = hpAfterDealASDame(currentPet, targetPet);
+                    const remainingHp = hpAfterDealDamage(currentPet, targetPet, EAttackType.ACTIVE_SKILL);
                     if (remainingHp > 0) {
                         const receivedManaPercent = manaAfterDealDamage(targetPet.stats.currentStats.hp, remainingHp);
                         const receivedMana = Math.ceil(targetPet.stats.currentStats.mana * receivedManaPercent);
@@ -430,7 +434,7 @@ export const processTurn = (
         const deadPosition = new Set<number>();
         for (const position of AATargetPosition) {
             const targetPet = defenderTeam[position];
-            const remainingHp = hpAfterDealAADame(currentPet, targetPet);
+            const remainingHp = hpAfterDealDamage(currentPet, targetPet, EAttackType.AUTO_ATTACK);
             if (remainingHp > 0) {
                 const receivedManaPercent = manaAfterDealDamage(targetPet.stats.currentStats.hp, remainingHp);
                 const receivedMana = Math.ceil(targetPet.stats.currentStats.mana * receivedManaPercent);

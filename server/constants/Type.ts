@@ -120,3 +120,5 @@ export interface ICloudinaryImage {
     public_id: string;
     secure_url: string;
 }
+
+export type PositionPetMap = Record<string, number>;

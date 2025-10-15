@@ -79,15 +79,32 @@ export enum EHuntMenuStatus {
     HUNT_X30 = 'hunt_x30',
 }
 
+export enum ENormalStatus {
+    EXECUTE = 'execute',
+    CANCEL = 'cancel',
+}
+
+export enum EAddPetToTeam {
+    POSITION_1 = '1',
+    POSITION_2 = '2',
+    POSITION_3 = '3'
+}
+
 export enum EInteractiveMessageType {
     EXCHANGE,
     UPLV,
     GACHA,
-    HUNT
+    HUNT,
+    ADD_PET_TO_TEAM
 }
 
 export enum EAsyncMutexMsgType {
     HUNT,
     UPLV,
     EXCHANGE
+}
+
+export enum EAttackType {
+    AUTO_ATTACK = 'autoAttack',
+    ACTIVE_SKILL = 'activeSkill'
 }
