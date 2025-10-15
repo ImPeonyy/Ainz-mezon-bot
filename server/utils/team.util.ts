@@ -95,7 +95,7 @@ export const getAddPetToTeamMessage = (
         type: EMessageComponentType.BUTTON,
         component: {
             label: 'Add Pets',
-            style: EButtonMessageStyle.SECONDARY
+            style: EButtonMessageStyle.SUCCESS
         }
     };
 
