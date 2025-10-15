@@ -1,19 +1,30 @@
-import { MAX_TEAM_NAME_LENGTH } from '@/constants';
+import { BOT_ID, EInteractiveMessageType, ENormalStatus, MAX_LENGTH } from '@/constants';
 import { prisma } from '@/lib/db';
 import {
     addPetToTeam,
     fillTeamMembers,
     getTeam,
     getTeamForCalcCP,
-    getUserPetByPetName,
+    getUserPets,
     getUserPetsByRarityAndLevel,
     updatePetPosition,
     updateTeamCombatPower,
-    updateTeamMember,
     updateTeamName
 } from '@/services';
-import { calculateTeamCP, isValidPosition, teamInfoMessage, textMessage } from '@/utils';
+import {
+    calculateTeamCP,
+    findDuplicatePositions,
+    getAddPetToTeamMessage,
+    isValidPosition,
+    teamInfoMessage,
+    textMessage
+} from '@/utils';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
+import { interactiveMsgManager } from '@/managers';
+import { MezonClient } from 'mezon-sdk';
+import { User } from '@prisma/client';
+
+const addPetToTeamMenu = interactiveMsgManager;
 
 export const getTeamController = async (userId: string, message: Message, channel: any) => {
     let messageFetch: any;
@@ -65,9 +76,9 @@ export const updateTeamController = async (teamName: string, userId: string, mes
             return;
         }
 
-        if (teamName.length > MAX_TEAM_NAME_LENGTH) {
+        if (teamName.length > MAX_LENGTH.TEAM_NAME) {
             await messageFetch.update(
-                textMessage(`❌ Team name is too long! Maximum ${MAX_TEAM_NAME_LENGTH} characters allowed.`)
+                textMessage(`❌ Team name is too long! Maximum ${MAX_LENGTH.TEAM_NAME} characters allowed.`)
             );
             return;
         }
@@ -96,39 +107,17 @@ export const updateTeamController = async (teamName: string, userId: string, mes
 };
 
 export const addPetToTeamController = async (
-    pos: number,
-    petName: string,
-    userId: string,
+    existingUser: User,
     message: Message,
-    channel: any
+    channel: any,
+    client: MezonClient
 ) => {
     let messageFetch: any;
     try {
-        const messageReply = await message.reply(textMessage('🔍 Adding pet to your team...'));
+        const messageReply = await message.reply(textMessage('🔍 Getting pets for your team...'));
         messageFetch = await channel.messages.fetch(messageReply.message_id);
 
-        if (!pos) {
-            await messageFetch.update(
-                textMessage('❓ Plz provide a position! \n→ Usage: *ainz team add [position] [pet name]')
-            );
-            return;
-        }
-
-        if (!petName) {
-            await messageFetch.update(
-                textMessage('❓ Plz provide a pet name! \n→ Usage: *ainz team add [position] [pet name]')
-            );
-            return;
-        }
-
-        if (!isValidPosition(pos)) {
-            await messageFetch.update(
-                textMessage('🚨 Position must be 1, 2 or 3! \n→ Usage: *ainz team add [position] [pet name]')
-            );
-            return;
-        }
-
-        const existingTeam = await getTeam(userId);
+        const existingTeam = await getTeam(existingUser.id);
         if (!existingTeam) {
             await messageFetch.update(
                 textMessage(
@@ -138,56 +127,93 @@ export const addPetToTeamController = async (
             return;
         }
 
-        const capitalizedPetName = petName
-            .toLowerCase()
-            .split(' ')
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+        const userPet = await getUserPets(prisma, existingUser.id);
+        messageFetch.update(getAddPetToTeamMessage(existingUser, userPet));
 
-        // const pet = await getPet(petName);
-        // if (!pet) {
-        //     await messageFetch.update(
-        //         textMessage(
-        //             `🚨 Pet "${capitalizedPetName}" is not found! \nPlz choose another pet! \n→ Usage: *ainz team add [position] [pet name]`
-        //         )
-        //     );
-        //     return;
-        // }
-
-        const userPet = await getUserPetByPetName(userId, petName);
-        if (!userPet) {
-            await messageFetch.update(
-                textMessage(`🚨 Invalid pet name or nickname! \nPlz check your pet name or nickname!`)
-            );
-            return;
-        }
-
-        const isExistingPet = existingTeam.members.some(
-            (member) => member.userPet.pet.name.toLowerCase() === petName.toLowerCase()
+        const expireTimer = setTimeout(
+            () => {
+                addPetToTeamMenu.forceClose(
+                    existingUser.id,
+                    EInteractiveMessageType.ADD_PET_TO_TEAM,
+                    '⏰ Add pet to team menu has expired and has been closed automatically!'
+                );
+            },
+            5 * 60 * 1000
         );
-        if (isExistingPet) {
-            await messageFetch.update(
-                textMessage(`🚨 Pet "${capitalizedPetName}" is already in your team. \nPlz choose another pet!`)
-            );
-            return;
-        }
 
-        const existingPosition = existingTeam.members.find((member) => member.position === pos);
-        if (existingPosition) {
-            await updateTeamMember({ id: existingPosition.id }, { user_pet_id: userPet.id });
-            await messageFetch.update(
-                textMessage(`🔄 Successfully moved pet "${capitalizedPetName}" to position ${pos}!`)
-            );
-            const currentTeam = await getTeamForCalcCP(userId);
-            if (currentTeam) {
-                await updateTeamCombatPower(prisma, currentTeam.id, calculateTeamCP(currentTeam));
+        addPetToTeamMenu.register({
+            userId: existingUser.id,
+            message: messageFetch,
+            type: EInteractiveMessageType.ADD_PET_TO_TEAM,
+            expireTimer
+        });
+
+        client.onMessageButtonClicked(async (event: any) => {
+            try {
+                const { sender_id, user_id, button_id, extra_data } = event;
+                if (
+                    sender_id === BOT_ID &&
+                    user_id === existingUser.id &&
+                    messageFetch.id === event.message_id &&
+                    addPetToTeamMenu.has(existingUser.id, EInteractiveMessageType.ADD_PET_TO_TEAM)
+                ) {
+                    if (button_id === ENormalStatus.CANCEL) {
+                        addPetToTeamMenu.forceClose(
+                            existingUser.id,
+                            EInteractiveMessageType.ADD_PET_TO_TEAM,
+                            '🚨 Add pet to team menu has been canceled!'
+                        );
+                        return;
+                    }
+                    if (button_id === ENormalStatus.EXECUTE) {
+                        if (extra_data === '') {
+                            await messageFetch.update(
+                                getAddPetToTeamMessage(existingUser, userPet, false, `🚨 Invalid positions found!`)
+                            );
+                            return;
+                        }
+                        const parsedExtraData = JSON.parse(extra_data);
+                        const duplicatePositions = findDuplicatePositions(parsedExtraData);
+
+                        if (duplicatePositions.length > 0) {
+                            await messageFetch.update(
+                                getAddPetToTeamMessage(
+                                    existingUser,
+                                    userPet,
+                                    false,
+                                    `🚨 Duplicate positions found! ${duplicatePositions.join(' - ')}`
+                                )
+                            );
+                            return;
+                        }
+                        await messageFetch.update(
+                            getAddPetToTeamMessage(existingUser, userPet, true, '🔄 Adding pets to team...')
+                        );
+                        await prisma.$transaction(async (tx) => {
+                            for (const [position, userPetId] of Object.entries(parsedExtraData)) {
+                                await addPetToTeam(tx, existingTeam.id, Number(userPetId), Number(position));
+                            }
+                        });
+                        const updatedTeam = await getTeam(existingUser.id);
+                        addPetToTeamMenu.forceClose(existingUser.id, EInteractiveMessageType.ADD_PET_TO_TEAM);
+                        setTimeout(async () => {
+                            await messageFetch.update(teamInfoMessage(updatedTeam!));
+                        }, 1000);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error adding pet to team:', error);
+                addPetToTeamMenu.forceClose(
+                    existingUser.id,
+                    EInteractiveMessageType.ADD_PET_TO_TEAM,
+                    '❌ Internal server error'
+                );
+                return;
             }
-            return;
-        }
+        });
 
-        await addPetToTeam(existingTeam.id, userPet.id, pos);
-        await messageFetch.update(textMessage(`✅ Successfully added pet "${capitalizedPetName}" to your team!`));
-        const currentTeam = await getTeamForCalcCP(userId);
+        const currentTeam = await getTeamForCalcCP(existingUser.id);
         if (currentTeam) {
             await updateTeamCombatPower(prisma, currentTeam.id, calculateTeamCP(currentTeam));
         }

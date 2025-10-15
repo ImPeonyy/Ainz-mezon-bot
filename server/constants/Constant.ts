@@ -81,8 +81,11 @@ export const RARITY_CP_MULTIPLIERS: Record<ERarity, number> = {
     [ERarity.Limited]: 3.5
 };
 
-export const MAX_TEAM_NAME_LENGTH = 31;
-export const MAX_USER_NAME_LENGTH = 27;
+export const MAX_LENGTH = {
+    TEAM_NAME: 31,
+    USER_NAME: 27,
+    PET_NICKNAME: 18
+}
 export const BOT_ID = process.env.BOT_ID || '';
 export const IGNORED_CHANNELS = ['1950103202913325056', '1969618936873881600'];
 

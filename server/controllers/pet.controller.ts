@@ -5,6 +5,7 @@ import {
     EHuntMenuStatus,
     EInteractiveMessageType,
     LIMIT_PET_PER_HUNT,
+    MAX_LENGTH,
     USE_DAILY_ACTIVITY
 } from '@/constants';
 import {
@@ -167,10 +168,11 @@ export const huntPetController = async (existingUser: User, message: Message, ch
 
         const expireTimer = setTimeout(
             () => {
-                huntMenu.forceClose(existingUser.id, EInteractiveMessageType.HUNT);
-                if (messageFetch) {
-                    messageFetch.update(textMessage('⏰ Hunt has expired and has been closed automatically!'));
-                }
+                huntMenu.forceClose(
+                    existingUser.id,
+                    EInteractiveMessageType.HUNT,
+                    '⏰ Hunt has expired and has been closed automatically!'
+                );
             },
             5 * 60 * 1000
         );
@@ -200,7 +202,11 @@ export const huntPetController = async (existingUser: User, message: Message, ch
                     const isFreeHunt = !todayActivity || todayActivity.hunt === 0;
                     const maxHunt = Math.floor(userFetch.z_coin / USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN);
 
-                    if (userFetch.z_coin < USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN) {
+                    if (
+                        userFetch.z_coin < USE_DAILY_ACTIVITY.HUNT.COST.HUNT.Z_COIN &&
+                        todayActivity &&
+                        todayActivity.hunt === USE_DAILY_ACTIVITY.HUNT.HUNT_PER_DAY
+                    ) {
                         huntMenu.forceClose(
                             userFetch.id,
                             EInteractiveMessageType.HUNT,
@@ -377,23 +383,13 @@ export const huntPetController = async (existingUser: User, message: Message, ch
                 }
             } catch (error) {
                 console.error('Error hunting pet:', error);
-                huntMenu.forceClose(existingUser.id, EInteractiveMessageType.HUNT);
-                if (messageFetch) {
-                    await messageFetch.update(textMessage('❌ Internal server error'));
-                } else {
-                    await message.reply(textMessage('❌ Internal server error'));
-                }
+                huntMenu.forceClose(existingUser.id, EInteractiveMessageType.HUNT, '❌ Internal server error');
                 return;
             }
         });
     } catch (error) {
         console.error('Error setup hunt menu:', error);
-        huntMenu.forceClose(existingUser.id, EInteractiveMessageType.HUNT);
-        if (messageFetch) {
-            await messageFetch.update(textMessage('❌ Internal server error'));
-        } else {
-            await message.reply(textMessage('❌ Internal server error'));
-        }
+        huntMenu.forceClose(existingUser.id, EInteractiveMessageType.HUNT, '❌ Internal server error');
         return;
     }
 };
@@ -457,6 +453,12 @@ export const renamePetController = async (
         const userPet = await getUserPetByName(prisma, userId, petName);
         if (!userPet) {
             await messageFetch.update(textMessage("You don't have this pet!"));
+            return;
+        }
+        if (nickname.length > MAX_LENGTH.PET_NICKNAME) {
+            await messageFetch.update(
+                textMessage(`🚨 Nickname is too long! Maximum ${MAX_LENGTH.PET_NICKNAME} characters allowed.`)
+            );
             return;
         }
 

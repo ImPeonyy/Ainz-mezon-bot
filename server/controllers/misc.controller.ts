@@ -195,16 +195,7 @@ export const getActionController = async (
                         );
                         return updateTeamPayload;
                     case 'add':
-                        const parts = targetRawTeam?.split(' ') || [];
-                        const pos = parts[0];
-                        const name = parts.slice(1).join(' ');
-                        const addPetToTeamPayload = await addPetToTeamController(
-                            Number(pos),
-                            name,
-                            sender_id,
-                            message,
-                            channel
-                        );
+                        const addPetToTeamPayload = await addPetToTeamController(existingUser, message, channel, client);
                         return addPetToTeamPayload;
                     case 'swap':
                         const [pos1, pos2] = targetRawTeam?.split(' ') || [];
@@ -267,7 +258,9 @@ export const getActionController = async (
             if (action === COMMANDS.challenge) {
                 const targetId = mentions[0]?.user_id || references[0]?.message_sender_id;
                 if (!targetId) {
-                    return textMessage('🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
+                    return textMessage(
+                        '🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]'
+                    );
                 }
                 if (existingUser.id === targetId) {
                     await message.reply(textMessage('🚨 You cannot challenge yourself!'));
@@ -278,11 +271,15 @@ export const getActionController = async (
                     return textMessage('🚨 Target Opponent not found!\nPlz search for another opponent!');
                 }
                 if (!targetRaw) {
-                    return textMessage('🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
+                    return textMessage(
+                        '🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]'
+                    );
                 }
-                const {bet, target} = parseChallengeCommand(targetRaw);
+                const { bet, target } = parseChallengeCommand(targetRaw);
                 if (bet === null) {
-                    return textMessage('🚨 Wrong format!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]');
+                    return textMessage(
+                        '🚨 Wrong format!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]'
+                    );
                 }
                 if (bet < 1000) {
                     return textMessage('🚨 Bet must be greater than 1000!');
@@ -298,8 +295,15 @@ export const getActionController = async (
                         '🚨 Missing target!\nUsage: *ainz vs [bet] [@user] or reply user with *ainz vs [bet]'
                     );
                 }
-                
-                const challengePayload = await challengeController(existingUser, opponent, bet, channel, message, client);
+
+                const challengePayload = await challengeController(
+                    existingUser,
+                    opponent,
+                    bet,
+                    channel,
+                    message,
+                    client
+                );
                 return challengePayload;
             }
 
@@ -476,7 +480,11 @@ export const getBagController = async (
     }
 };
 
-export const worldAnnouncementController = async (user: User, pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[], client: MezonClient) => {
+export const worldAnnouncementController = async (
+    user: User,
+    pets: Prisma.PetGetPayload<{ include: { rarity: true } }>[],
+    client: MezonClient
+) => {
     try {
         const channel = await client.channels.fetch(WORLD_ANNOUNCEMENTS_CHANNEL_ID);
         for (const pet of pets) {

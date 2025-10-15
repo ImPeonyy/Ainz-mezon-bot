@@ -186,31 +186,6 @@ export const getBagMessageByRarity = (
     return messagePayload;
 };
 
-export const teamInfoMessage = (
-    team: Prisma.TeamGetPayload<{ include: { members: { include: { userPet: { include: { pet: true } } } } } }>
-) => {
-    let messagePayload: ChannelMessageContent = {
-        t: `Your team "${team.name}" contains the following pets:\nCombat Power: ${team.combat_power}\n`,
-        ej: []
-    };
-
-    const Position = ['1️⃣', '2️⃣', '3️⃣'];
-
-    team.members.forEach((member) => {
-        const currentLevel = getPetLevelFromExp(member.userPet.exp);
-        messagePayload.t += `${Position[member.position - 1]}: `;
-        messagePayload.t += `Lv. ${currentLevel} - `;
-        messagePayload.ej?.push({
-            emojiid: member.userPet.pet.mezon_emoji_id,
-            s: messagePayload.t?.length || 0,
-            e: messagePayload.t?.length || 0 + 1
-        });
-        messagePayload.t += ` ${member.userPet.nickname || member.userPet.pet.name}\n`;
-    });
-
-    return messagePayload;
-};
-
 export const getActionMessage = (action: string, actor: string, target?: string) => {
     if (!ACTIONS[action]) {
         return {

@@ -9,7 +9,6 @@ import {
     getDexMessage,
     getHuntResultMessage,
     getMyDexMessage,
-    teamInfoMessage,
     textMessage,
     getChallengeMessage,
     getChallengeRequestMessage,
@@ -41,8 +40,7 @@ import {
     getCurrentManaAfterReceive,
     getPositionByDistance,
     getPositionByHp,
-    hpAfterDealAADame,
-    hpAfterDealASDame,
+    hpAfterDealDamage,
     manaAfterDealDamage,
     processEffects,
     processTeam,
@@ -52,7 +50,13 @@ import { getDailyReward, getMidnightRemainingTime, getRandomInt } from './daily.
 import { getRandomPet, getRarityPets } from './pet.util';
 import { huntPet, shuffleRarities, getHuntMenuMessage } from './hunt.util';
 import { getHelpMessage, getForFunHelpMessage } from './help.util';
-import { isValidPosition, calculateTeamCP } from './team.util';
+import {
+    isValidPosition,
+    calculateTeamCP,
+    teamInfoMessage,
+    getAddPetToTeamMessage,
+    findDuplicatePositions,
+} from './team.util';
 import {
     myLeaderBoard,
     levelLeaderBoard,
@@ -96,8 +100,7 @@ export {
     getAttackPosition,
     getPositionByDistance,
     getPositionByHp,
-    hpAfterDealAADame,
-    hpAfterDealASDame,
+    hpAfterDealDamage,
     processTeam,
     processTurn,
     expToUserLevel,
@@ -137,5 +140,7 @@ export {
     getNormalGachaMessage,
     getMidAutumn2025GachaMessage,
     getGachaCountMessage,
-    getHuntMenuMessage
+    getHuntMenuMessage,
+    getAddPetToTeamMessage,
+    findDuplicatePositions,
 };

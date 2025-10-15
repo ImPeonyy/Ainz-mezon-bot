@@ -72,14 +72,60 @@ export const updateTeamName = async (name: string, userId: string) => {
     }
 };
 
-export const addPetToTeam = async (teamId: number, petId: number, pos: number) => {
+export const addPetToTeam = async (
+    prismaClient: PrismaClient | Prisma.TransactionClient,
+    team_id: number,
+    user_pet_id: number,
+    position: number
+) => {
     try {
-        return prisma.teamMember.create({
-            data: {
-                team_id: teamId,
-                user_pet_id: petId,
-                position: pos
+        const petAtNewPos = await prismaClient.teamMember.findUnique({
+            where: { team_id_position: { team_id, position } }
+        });
+
+        const currentPet = await prismaClient.teamMember.findFirst({
+            where: { team_id, user_pet_id }
+        });
+
+        if (!currentPet) {
+            if (petAtNewPos) {
+                return prismaClient.teamMember.update({
+                    where: { id: petAtNewPos.id },
+                    data: { user_pet_id }
+                });
             }
+
+            return prismaClient.teamMember.create({
+                data: { team_id, user_pet_id, position }
+            });
+        }
+
+        if (currentPet.position === position) {
+            return currentPet;
+        }
+
+        if (petAtNewPos) {
+            await prismaClient.teamMember.update({
+                where: { id: petAtNewPos.id },
+                data: { position: -1 }
+            });
+
+            await prismaClient.teamMember.update({
+                where: { id: currentPet.id },
+                data: { position }
+            });
+
+            await prismaClient.teamMember.update({
+                where: { id: petAtNewPos.id },
+                data: { position: currentPet.position }
+            });
+
+            return;
+        }
+
+        return prismaClient.teamMember.update({
+            where: { id: currentPet.id },
+            data: { position }
         });
     } catch (error) {
         console.error('Error adding pet to team:', error);
@@ -217,21 +263,6 @@ export const getRandomTeamForBattle = async (currentUserId: string, currentUserC
         return validTeams[randomIndex];
     } catch (error) {
         console.error('Error getting team:', error);
-        throw error;
-    }
-};
-
-export const updateTeamMember = async (
-    where: Prisma.TeamMemberWhereUniqueInput,
-    data: Prisma.TeamMemberUncheckedUpdateInput
-) => {
-    try {
-        return prisma.teamMember.update({
-            where,
-            data
-        });
-    } catch (error) {
-        console.error('Error updating team member:', error);
         throw error;
     }
 };

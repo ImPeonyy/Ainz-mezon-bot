@@ -37,7 +37,7 @@ class InteractiveMessageManager {
     }
 
     /** Đóng message (có thể chỉ loại cụ thể hoặc tất cả) */
-    public async forceClose(userId: string, type?: EInteractiveMessageType, reason = '🔒 Interaction closed.') {
+    public async forceClose(userId: string, type?: EInteractiveMessageType, reason = '') {
         const list = this.getUserMessages(userId);
         if (list.length === 0) return false;
 
@@ -47,7 +47,9 @@ class InteractiveMessageManager {
             if (msg.expireTimer) clearTimeout(msg.expireTimer);
 
             try {
-                await msg.message.update(textMessage(reason));
+                if (reason !== '') {
+                    await msg.message.update(textMessage(reason));
+                }
             } catch (err) {
                 console.error('Error updating message:', err);
             }

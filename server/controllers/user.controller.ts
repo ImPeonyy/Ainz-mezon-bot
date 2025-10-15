@@ -1,7 +1,7 @@
 import { createProfileCard, expToUserLevel, getUserLevelFromExp, textMessage } from '@/utils';
 import { createLeaderBoard, createTeam, createUser, getTodayUserDailyActivity, getUserWithTeam, sendDMToUser, updateUser, uploadImageToCloudinary } from '@/services';
 
-import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER, MAX_USER_NAME_LENGTH } from '@/constants';
+import { AINZ_DEFAULT_AVATAR, CLOUDINARY_PROFILE_FOLDER, MAX_LENGTH } from '@/constants';
 import { Message } from 'mezon-sdk/dist/cjs/mezon-client/structures/Message';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
@@ -80,7 +80,7 @@ export const createUserController = async (
         }
 
         const user = await createUser(prisma, { username: display_name || username, id: mezon_id, avatar, z_coin: 6666 });
-        await createTeam(username.slice(0, MAX_USER_NAME_LENGTH), user.id);
+        await createTeam(username.slice(0, MAX_LENGTH.USER_NAME), user.id);
         await createLeaderBoard(user.id);
 
         const currentLevel = getUserLevelFromExp(user?.exp || 0);
@@ -142,9 +142,9 @@ export const updateUserController = async (
             usernameUpdate = username;
         }
 
-        if (usernameUpdate.length > MAX_USER_NAME_LENGTH) {
+        if (usernameUpdate.length > MAX_LENGTH.USER_NAME) {
             await messageFetch.update(
-                textMessage(`❌ Username is too long! Maximum ${MAX_USER_NAME_LENGTH} characters allowed.`)
+                textMessage(`❌ Username is too long! Maximum ${MAX_LENGTH.USER_NAME} characters allowed.`)
             );
             return;
         }

@@ -16,8 +16,7 @@ import {
     RANK,
     RARITY_CP_MULTIPLIERS,
     UPDATE_LEADERBOARD_CRON_SCHEDULE,
-    MAX_TEAM_NAME_LENGTH,
-    MAX_USER_NAME_LENGTH,
+    MAX_LENGTH,
     BOT_ID,
     CLOUDINARY_CHALLENGE_FOLDER,
     IGNORED_CHANNELS,
@@ -40,7 +39,10 @@ import {
     EGachaStatus,
     EInteractiveMessageType,
     EHuntMenuStatus,
-    EAsyncMutexMsgType
+    EAsyncMutexMsgType,
+    ENormalStatus,
+    EAddPetToTeam,
+    EAttackType
 } from './Enum';
 import {
     IBattle,
@@ -51,7 +53,8 @@ import {
     IMeme,
     ParsedAction,
     IMyLeaderBoard,
-    ICloudinaryImage
+    ICloudinaryImage,
+    PositionPetMap,
 } from './Type';
 
 export {
@@ -89,8 +92,7 @@ export {
     RANK,
     RARITY_CP_MULTIPLIERS,
     UPDATE_LEADERBOARD_CRON_SCHEDULE,
-    MAX_TEAM_NAME_LENGTH,
-    MAX_USER_NAME_LENGTH,
+    MAX_LENGTH,
     BOT_ID,
     CLOUDINARY_CHALLENGE_FOLDER,
     IGNORED_CHANNELS,
@@ -104,5 +106,9 @@ export {
     EGachaStatus,
     EInteractiveMessageType,
     EHuntMenuStatus,
-    EAsyncMutexMsgType
+    EAsyncMutexMsgType,
+    ENormalStatus,
+    EAddPetToTeam,
+    PositionPetMap,
+    EAttackType
 };

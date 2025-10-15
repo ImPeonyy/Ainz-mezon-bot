@@ -32,7 +32,7 @@ export const getHelpMessage = () => {
             },
             {
                 name: '👥 Team',
-                value: 'team info | team fill | team update [team name] | team add [position] [pet name] | team swap [position1] [position2]',
+                value: 'team info | team fill | team update [team name] | team add | team swap [position1] [position2]',
                 inline: false
             },
             {
