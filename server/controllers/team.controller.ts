@@ -94,7 +94,7 @@ export const updateTeamController = async (teamName: string, userId: string, mes
         }
 
         const team = await updateTeamName(teamName, userId);
-        await messageFetch.update(textMessage(`✅ Your team "${team.name}" has been updated successfully]`));
+        await messageFetch.update(textMessage(`✅ Your team "${team.name}" has been updated successfully`));
     } catch (error) {
         console.error('Error updating team:', error);
         if (messageFetch) {
