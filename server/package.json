@@ -6,8 +6,6 @@
         "dev": "npx nodemon",
         "build": "npm dedupe && npm prune --production && npx prisma generate && rimraf ./dist && tsc && tsc-alias",
         "start": "node dist/server.js",
-        "lint": "eslint .",
-        "lint:fix": "eslint . --fix",
         "prettier": "prettier --check .",
         "prettier:fix": "prettier --write .",
         "seed": "prisma db seed"
@@ -40,17 +38,8 @@
         "npm": "10.x"
     },
     "devDependencies": {
-        "@eslint/css": "^0.10.0",
-        "@eslint/js": "^9.32.0",
-        "@eslint/json": "^0.13.1",
-        "@eslint/markdown": "^7.1.0",
         "@mermaid-js/mermaid-cli": "^11.9.0",
         "@types/node-cron": "^3.0.11",
-        "@typescript-eslint/eslint-plugin": "^8.38.0",
-        "@typescript-eslint/parser": "^8.38.0",
-        "eslint": "^9.32.0",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-prettier": "^5.5.3",
         "globals": "^16.3.0",
         "jiti": "^2.5.1",
         "node-gyp": "^11.4.2",
@@ -61,7 +50,6 @@
         "rimraf": "^6.0.1",
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.16",
-        "tsx": "^4.20.3",
-        "typescript-eslint": "^8.38.0"
+        "tsx": "^4.20.3"
     }
 }
