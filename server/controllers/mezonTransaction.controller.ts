@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import { textMessage } from '@/utils';
 import { sendDMToUser, sendTokenToUser, updateUser, upsertUser } from '@/services';
 import { prisma } from '@/lib/db';
